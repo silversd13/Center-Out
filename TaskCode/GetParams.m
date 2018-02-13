@@ -3,9 +3,10 @@ function Params = GetParams(Params)
 %% Experiment
 Params.Task = 'Center-Out';
 switch Params.ControlMode,
-    case 1, Params.ControlModeStr = 'Mouse';
-    case 2, Params.ControlModeStr = 'ReFit';
-    case 3, Params.ControlModeStr = 'Open';
+    case 1, Params.ControlModeStr = 'MousePosition';
+    case 2, Params.ControlModeStr = 'MouseVelocity';
+    case 3, Params.ControlModeStr = 'ReFit';
+    case 4, Params.ControlModeStr = 'Open';
 end
 
 %% Current Date and Time
@@ -65,6 +66,9 @@ Params.InstructedDelay = 0;
 Params.MaxStartTime = 15;
 Params.MaxReachTime = 15;
 Params.InterBlockInterval = 0;
+
+%% Reward
+Params.RewardFb = 0;
 
 %% Save Parameters
 save(fullfile(Params.datadir,'Params.mat'),'Params');

@@ -146,26 +146,17 @@ end % Cue Loop
 Screen('Flip', Params.WPTR);
 
 
-% %% Completed Trial - Give Feedback
-% if (Data.TargetID==1 && Data.CueAngle >= 0) || (Data.TargetID==-1 && Data.CueAngle <= 0)
-%     Data.ErrorID = 0;
-%     Data.ErrorStr = 'Correct Target';
-% else
-%     Data.ErrorID = 1;
-%     Data.ErrorStr = 'Wrong Target';
-% end
-% 
-% if Data.Fb
-%     if Data.ErrorID == 0
-%         Screen('DrawTexture', Params.WPTR, Params.Correct);
-%     else
-%         Screen('DrawTexture', Params.WPTR, Params.Wrong);
-%     end
-% end
-% Screen('Flip', Params.WPTR);
-% WaitSecs(Params.FeedbackDelay);
-% 
-% % clear screen
-% Screen('Flip', Params.WPTR);
+%% Completed Trial - Give Feedback
+if isnan(Data.ErrorID),
+    fprintf('SUCCESS\n')
+else
+    fprintf('ERROR: %s',Data.ErrorStr)
+end
+
+if Params.RewardFb, RewardSound(); end
+WaitSecs(Params.InterTrialInterval);
+
+
+
 
 
