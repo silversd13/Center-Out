@@ -1,7 +1,9 @@
-function ExperimentStart(Subject,ControlMode)
+function ExperimentStart(Subject,ControlMode,DEBUG)
 % function ExperimentStart(Subject,ControlMode)
 % Subject - string for the subject id
 % ControlMode - [1,2,3] for mouse, refit, & open control
+% DEBUG - [0,1] if 1, enters DEBUG mode in which screen is small and cursor
+%   remains unhidden
 
 %% Clear All and Close All
 clearvars -except Subject SessionID
@@ -10,16 +12,12 @@ warning off
 
 if ~exist('Subject','var'), Subject = 'Test'; end
 if ~exist('ControlMode','var'), ControlMode = 1; end
+if ~exist('DEBUG','var'), DEBUG = 0; end
 
 addpath(genpath('/Applications/Psychtoolbox'));
 AssertOpenGL;
 
-if strcmpi(Subject,'Test'),
-    Subject = 'Test';
-    DEBUG = true;
-else,
-    DEBUG = false;
-end
+if strcmpi(Subject,'Test'), Subject = 'Test'; end
 
 %% Initialize Window
 Screen('Preference', 'SkipSyncTests', 1);
