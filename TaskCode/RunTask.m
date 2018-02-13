@@ -1,4 +1,6 @@
 function RunTask(Params)
+% Explains the task to the subject, and serves as a reminder for pausing
+% and quitting the experiment (w/o killing matlab or something)
 switch Params.ControlMode 
     case 1, % Mouse Position
         Instructions = [...
@@ -20,5 +22,6 @@ InstructionScreen(Params,Instructions);
 RunLoop(Params);
 
 % Pause and Finish!
-WaitSecs(.5)
 ExperimentStop(Params);
+
+end % RunTask

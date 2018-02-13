@@ -1,4 +1,5 @@
 function Cursor = UpdateCursor(Params,Cursor,dt)
+% Updates the state of the cursor using the method in Params.ControlMode
 if isempty(Cursor), % initialize cursor to random position on screen
     x = randi([Params.ScreenRectangle(1),Params.ScreenRectangle(3)],1);
     y = randi([Params.ScreenRectangle(2),Params.ScreenRectangle(4)],1);
@@ -22,4 +23,7 @@ switch Params.ControlMode, % Update cursor according to control scheme
         Cursor.Position(2) = max([Cursor.Position(2),Params.ScreenRectangle(2)]); % y-left
         Cursor.Position(2) = min([Cursor.Position(2),Params.ScreenRectangle(4)]); % y-right
     case 3,
+    case 4,
 end
+
+end % UpdateCursor

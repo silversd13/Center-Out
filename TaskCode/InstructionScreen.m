@@ -18,3 +18,5 @@ end
 
 Screen('Flip', Params.WPTR);
 WaitSecs(.1);
+
+end % InstructionScreen

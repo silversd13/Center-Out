@@ -1,4 +1,6 @@
 function RunLoop(Params)
+% Defines the structure of collected data on each trial
+% Loops through blocks and trials within blocks
 global Cursor
 
 %% Start Experiment
@@ -51,7 +53,7 @@ for Block=1:Params.NumBlocks, % Block Loop
     
 end % Block Loop
 
-end
+end % RunLoop
 
 
 

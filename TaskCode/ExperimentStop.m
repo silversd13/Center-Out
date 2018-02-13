@@ -1,6 +1,5 @@
 function ExperimentStop(Params)
-
-%% Close Figure and Audio
+% Close Screen, Combine individual trials into datafile
 Screen('CloseAll');
 
 % %% Save All Data
@@ -17,3 +16,4 @@ save(fullfile(Params.datadir,sprintf('DATA.mat')),'TrialData');
 %% quit
 keyboard;
 
+end % ExperimentStop

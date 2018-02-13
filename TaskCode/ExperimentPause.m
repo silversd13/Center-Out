@@ -8,14 +8,14 @@ Screen('Flip', Params.WPTR);
 
 [~, ~, keyCode, ~] = KbCheck;
 WaitSecs(.1);
-while (1) % pause until subject presses p again
+while (1) % pause until subject presses p again or quits
     [~, ~, keyCode, ~] = KbCheck;
     if keyCode(KbName('p'))==1,
         keyCode(KbName('p'))=0;
         fprintf('\b') % remove input keys
         break;
     end
-    if keyCode(KbName('escape'))==1,
+    if keyCode(KbName('escape'))==1, % quit experiment
         ExperimentStop(Params);
         break;
     end
@@ -23,3 +23,5 @@ end
 
 Screen('Flip', Params.WPTR);
 WaitSecs(.1);
+
+end % ExperimentPause

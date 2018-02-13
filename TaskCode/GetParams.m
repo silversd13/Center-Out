@@ -1,4 +1,8 @@
 function Params = GetParams(Params)
+% Experimental Parameters
+% These parameters are meant to be changed as necessary (day-to-day,
+% subject-to-subject, experiment-to-experiment)
+% The parameters are all saved in 'Params.mat' for each experiment
 
 %% Experiment
 Params.Task = 'Center-Out';
@@ -61,10 +65,10 @@ Params.NumTrials = Params.NumBlocks*Params.NumTrialsPerBlock;
 %% Hold Times
 Params.TargetHoldTime = 1;
 Params.InterTrialInterval = 0;
-Params.InstructedDelay = 0;
+Params.InstructedDelayTime = 1;
 Params.MaxStartTime = 15;
 Params.MaxReachTime = 15;
-Params.InterBlockInterval = 2;
+Params.InterBlockInterval = 1;
 
 %% Feedback
 Params.FeedbackSound = 1;
@@ -80,5 +84,5 @@ Params.Gain = 1;
 %% Save Parameters
 save(fullfile(Params.datadir,'Params.mat'),'Params');
 
-
+end % GetParams
 
