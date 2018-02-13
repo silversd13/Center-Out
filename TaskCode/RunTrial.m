@@ -1,9 +1,9 @@
 function Data = RunTrial(Params,Data)
+global Cursor
 
 %% Set up trial
 StartTargetPos = Params.StartTargetPosition;
 ReachTargetPos = Data.TargetPosition;
-Cursor = [];
 
 % Output to Command Line
 fprintf('Trial: %i\n',Data.Trial)

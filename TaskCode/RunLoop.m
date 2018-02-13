@@ -1,4 +1,5 @@
 function RunLoop(Params)
+global Cursor
 
 %% Start Experiment
 DataFields = struct(...
@@ -17,8 +18,8 @@ DataFields = struct(...
     );
 
 %%  Loop Through Blocks of Trials
-
 Trial = 0;
+Cursor = [];
 for Block=1:Params.NumBlocks, % Block Loop
     % random order of reach targets for each block
     TargetOrder = randperm(Params.NumTrialsPerBlock);

@@ -30,7 +30,6 @@ datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMS
 Params.datadir = datadir;
 if ~exist(Params.datadir,'dir'), mkdir(Params.datadir); end
 
-
 %% Targets
 Params.TargetSize = 30;
 Params.OutTargetColor = [0,255,0];
@@ -69,6 +68,9 @@ Params.InterBlockInterval = 0;
 
 %% Reward
 Params.RewardFb = 0;
+
+%% Control
+Params.Gain = 1;
 
 %% Save Parameters
 save(fullfile(Params.datadir,'Params.mat'),'Params');
