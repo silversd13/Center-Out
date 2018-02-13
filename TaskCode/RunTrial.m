@@ -6,7 +6,7 @@ StartTargetPos = Params.StartTargetPosition;
 ReachTargetPos = Data.TargetPosition;
 
 % Output to Command Line
-fprintf('Trial: %i\n',Data.Trial)
+fprintf('\nTrial: %i\n',Data.Trial)
 fprintf('Target: %i\n',Data.TargetAngle)
 
 %% Go to start target
@@ -163,7 +163,7 @@ else
     if Params.FeedbackSound,
         sound(Params.ErrorSound)
     end
-    WaitSecs(Params.ErrorWaitTime)
+    WaitSecs(Params.ErrorWaitTime);
     Cursor = [];
 end
 
