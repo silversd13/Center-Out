@@ -64,10 +64,15 @@ Params.InterTrialInterval = 0;
 Params.InstructedDelay = 0;
 Params.MaxStartTime = 15;
 Params.MaxReachTime = 15;
-Params.InterBlockInterval = 0;
+Params.InterBlockInterval = 2;
 
-%% Reward
-Params.RewardFb = 0;
+%% Feedback
+Params.FeedbackSound = 1;
+Params.ErrorWaitTime = 2;
+Params.ErrorSound = 1000*audioread('buzz.wav');
+Params.RewardSound = 1000*audioread('smw_coin.wav');
+% play sounds silently once so Matlab gets used to it
+sound(0*Params.ErrorSound)
 
 %% Control
 Params.Gain = 1;

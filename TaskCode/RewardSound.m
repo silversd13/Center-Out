@@ -1,3 +1,2 @@
-function RewardSound()
-snd = 1000*audioread('smw_coin.wav');
+function RewardSound(snd)
 sound(snd)
