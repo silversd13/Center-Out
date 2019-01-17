@@ -17,11 +17,10 @@ switch Params.ControlMode
     
 end
 
-Params = GetParams(Params);
 InstructionScreen(Params,Instructions);
 RunLoop(Params);
 
 % Pause and Finish!
-ExperimentStop(Params);
+ExperimentStop();
 
 end % RunTask

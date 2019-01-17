@@ -27,12 +27,15 @@ if strcmpi(Params.Subject,'Test'),
     Params.HHMMSS = 'HHMMSS';
 end
 
-projectdir = fullfile('~','Projects','Center-Out');
+projectdir = fullfile('C:\Users\ganguly-lab2\Documents\MATLAB\Center-Out\TaskCode');
 datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMSS);
 
 % create folder for saving
 Params.datadir = datadir;
 if ~exist(Params.datadir,'dir'), mkdir(Params.datadir); end
+
+%% Timing
+Params.RefreshRate = 50; % Hz
 
 %% Targets
 Params.TargetSize = 30;
@@ -63,8 +66,8 @@ Params.NumTrialsPerBlock = length(Params.ReachTargetAngles);
 Params.NumTrials = Params.NumBlocks*Params.NumTrialsPerBlock;
 
 %% Hold Times
-Params.TargetHoldTime = 1;
-Params.InterTrialInterval = 0;
+Params.TargetHoldTime = .4;
+Params.InterTrialInterval = .5;
 Params.InstructedDelayTime = 1;
 Params.MaxStartTime = 15;
 Params.MaxReachTime = 15;
@@ -80,6 +83,24 @@ sound(0*Params.ErrorSound)
 
 %% Control
 Params.Gain = 1;
+
+%% BlackRock Params
+Params.Fs = 1000;
+Params.NumChannels = 128;
+Params.BufferTime = 4; % secs longer for better phase estimation of low frqs
+Params.BufferSamps = Params.BufferTime * Params.Fs;
+Params.FilterBank(1).fpass = [.5,4];    % delta
+Params.FilterBank(2).fpass = [4,8];     % theta
+Params.FilterBank(3).fpass = [8,13];    % alpha
+Params.FilterBank(4).fpass = [13,19];   % beta1
+Params.FilterBank(5).fpass = [19,30];   % beta2
+Params.FilterBank(6).fpass = [30,39];   % low gamma1 
+Params.FilterBank(7).fpass = [39,50];   % low gamma2 
+Params.FilterBank(8).fpass = [70,90];   % high gamma1
+Params.FilterBank(9).fpass = [90,116];  % high gamma2
+Params.FilterBank(10).fpass = [116,150];% high gamma3
+Params.NumFeatures = length(Params.FilterBank) + 1;
+Params.BadChannels = [];
 
 %% Save Parameters
 save(fullfile(Params.datadir,'Params.mat'),'Params');
