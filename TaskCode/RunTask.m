@@ -14,7 +14,6 @@ switch Params.ControlMode,
         '\n\nPress the ''Space Bar'' to begin!' ];
     case 3, % Adaptive decode
     case 4, % Open-Loop decode
-    
 end
 
 InstructionScreen(Params,Instructions);

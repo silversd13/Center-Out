@@ -1,11 +1,20 @@
-function Cursor = UpdateCursor(Params,Cursor,dt)
+function Cursor = UpdateCursor(Params,Cursor,dt,newpos)
+% Cursor = UpdateCursor(Params,Cursor,dt,newpos)
 % Updates the state of the cursor using the method in Params.ControlMode
+%   1 - position control
+%   2 - velocity control
+% 
+% Cursor - structure with position parameters
+% dt - elapsed time
+% newpos - newpos is given, cursor control is overridden
+
+% deal with inputs
 if isempty(Cursor), % initialize cursor to random position on screen
     x = randi([Params.ScreenRectangle(1),Params.ScreenRectangle(3)],1);
     y = randi([Params.ScreenRectangle(2),Params.ScreenRectangle(4)],1);
     Cursor.Position = [x,y];
 end
-
+        
 switch Params.ControlMode, % Update cursor according to control scheme
     case 1, % Copy Mouse Position
         [x,y] = GetMouse();
@@ -24,6 +33,11 @@ switch Params.ControlMode, % Update cursor according to control scheme
         Cursor.Position(2) = min([Cursor.Position(2),Params.ScreenRectangle(4)]); % y-right
     case 3,
     case 4,
+end
+
+% Override cursor control
+if exist('newpos','var'),
+    Cursor.Position = newpos;
 end
 
 end % UpdateCursor

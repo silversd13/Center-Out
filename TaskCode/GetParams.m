@@ -30,13 +30,15 @@ end
 projectdir = fullfile('C:\Users\ganguly-lab2\Documents\MATLAB\Center-Out\TaskCode');
 datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMSS);
 
-% create folder for saving
+% create folders for saving
 Params.datadir = datadir;
+Params.imagined_datadir = fullfile(datadir,'Imagined');
 if ~exist(Params.datadir,'dir'), mkdir(Params.datadir); end
+if ~exist(Params.imagined_datadir,'dir'), mkdir(Params.imagined_datadir); end
 
 %% Timing
 Params.RefreshRate = 50; % Hz
-Params.BaselineTime = 60;
+Params.BaselineTime = 10;
 
 %% Targets
 Params.TargetSize = 30;
@@ -63,8 +65,10 @@ Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
 
 %% Trial and Block Types
 Params.NumBlocks = 1;
+Params.NumImaginedBlocks = 1;
 Params.NumTrialsPerBlock = length(Params.ReachTargetAngles);
 Params.NumTrials = Params.NumBlocks*Params.NumTrialsPerBlock;
+Params.NumImaginedTrials = Params.NumImaginedBlocks*Params.NumTrialsPerBlock;
 
 %% Hold Times
 Params.TargetHoldTime = .4;
@@ -90,6 +94,7 @@ Params.Fs = 1000;
 Params.NumChannels = 128;
 Params.BufferTime = 4; % secs longer for better phase estimation of low frqs
 Params.BufferSamps = Params.BufferTime * Params.Fs;
+Params.BadChannels = [];
 
 % filter bank - each element is a filter bank
 % fpass - bandpass cutoff freqs
@@ -117,7 +122,6 @@ Params.FilterBank(end).feature = 6;
 Params.FilterBank(end+1).fpass = [116,150]; % high gamma3
 Params.FilterBank(end).feature = 6;
 Params.NumFeatures = length(unique([Params.FilterBank.feature])) + 1;
-Params.BadChannels = [];
 
 %% Save Parameters
 save(fullfile(Params.datadir,'Params.mat'),'Params');
