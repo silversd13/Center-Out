@@ -1,4 +1,4 @@
-function [Data, delta_buffer] = RunTrial(Params,Data,delta_buffer)
+function [Data, delta_buffer] = RunTrial(Params,Data,delta_buffer,BaseNeuralFeatures)
 % Runs a trial, saves useful data along the way
 % Each trial contains the following pieces
 % 1) Inter-trial interval
@@ -21,7 +21,7 @@ fprintf('Target: %i\n',Data.TargetAngle)
 if Params.BLACKROCK,
     [~, neural_data] = ReadBR(Params);
     [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
-    [delta_buffer, ~] = CompNeuralFeatures(delta_buffer, filtered_data, Params.BadChannels);
+    [delta_buffer, ~] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
 end
 
 %% Inter Trial Interval
@@ -51,7 +51,8 @@ if ~Data.ErrorID,
             if Params.BLACKROCK,
                 [timestamp, neural_data, num_samps] = ReadBR(Params);
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
-                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params.BadChannels);
+                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
+                [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
                 Data.NeuralTime(end+1,1) = timestamp;
                 Data.NeuralSamps(end+1,1) = num_samps;
                 Data.NeuralFeatures(:,:,end+1) = neural_features;
@@ -107,7 +108,8 @@ if ~Data.ErrorID,
             if Params.BLACKROCK,
                 [timestamp, neural_data, num_samps] = ReadBR(Params);
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
-                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params.BadChannels);
+                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
+                [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
                 Data.NeuralTime(end+1,1) = timestamp;
                 Data.NeuralSamps(end+1,1) = num_samps;
                 Data.NeuralFeatures(:,:,end+1) = neural_features;
@@ -188,7 +190,8 @@ if ~Data.ErrorID,
             if Params.BLACKROCK,
                 [timestamp, neural_data, num_samps] = ReadBR(Params);
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
-                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params.BadChannels);
+                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
+                [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
                 Data.NeuralTime(end+1,1) = timestamp;
                 Data.NeuralSamps(end+1,1) = num_samps;
                 Data.NeuralFeatures(:,:,end+1) = neural_features;
@@ -262,21 +265,20 @@ if ~Data.ErrorID,
         % Update Screen
         if (tim-tlast) > 1/Params.RefreshRate,
             % time
-            dt = tim - tlast
+            dt = tim - tlast;
             tlast = tim;
             Data.Time(end+1,1) = tim;
 
             % grab and process neural data
             if Params.BLACKROCK,
-                tic;
                 [timestamp, neural_data, num_samps] = ReadBR(Params);
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
-                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params.BadChannels);
+                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
+                [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
                 Data.NeuralTime(end+1,1) = timestamp;
                 Data.NeuralSamps(end+1,1) = num_samps;
                 Data.NeuralFeatures(:,:,end+1) = neural_features;
                 Data.ProcessedData{end+1} = filtered_data;
-                toc
             end
             
             % cursor

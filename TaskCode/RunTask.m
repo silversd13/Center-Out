@@ -1,7 +1,7 @@
-function RunTask(Params)
+function RunTask(Params, BaseNeuralFeatures)
 % Explains the task to the subject, and serves as a reminder for pausing
 % and quitting the experiment (w/o killing matlab or something)
-switch Params.ControlMode 
+switch Params.ControlMode,
     case 1, % Mouse Position
         Instructions = [...
         '\n\nMouse Position Control\n\n'...
@@ -18,7 +18,7 @@ switch Params.ControlMode
 end
 
 InstructionScreen(Params,Instructions);
-RunLoop(Params);
+RunLoop(Params, BaseNeuralFeatures);
 
 % Pause and Finish!
 ExperimentStop();

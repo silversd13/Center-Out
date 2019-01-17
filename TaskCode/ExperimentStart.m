@@ -61,12 +61,17 @@ for i=1:length(Params.FilterBank),
 end
 
 %% Start
-% try
+try
+    % Baseline 
+    [mu, sigma] = RunBaseline(Params);
+    BaseNeuralFeatures.mu = mu;
+    BaseNeuralFeatures.sigma = sigma;
+    
     % Experiment Loop
-    RunTask(Params);
-% catch ME
-%     Screen('CloseAll')
-%     ME.message
-% end
+    RunTask(Params, BaseNeuralFeatures);
+catch ME
+    Screen('CloseAll')
+    ME.message
+end
 
 end % ExperimentStart

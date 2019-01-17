@@ -1,4 +1,4 @@
-function RunLoop(Params)
+function RunLoop(Params, BaseNeuralFeatures)
 % Defines the structure of collected data on each trial
 % Loops through blocks and trials within blocks
 global Cursor
@@ -22,7 +22,6 @@ DataFields = struct(...
     'ErrorStr','',...
     'Events',[]...
     );
-%     'ProcessedData',zeros(0,Params.NumChannels,length(Params.FilterBank)),...
 
 %%  Loop Through Blocks of Trials
 Trial = 0;
@@ -46,7 +45,7 @@ for Block=1:Params.NumBlocks, % Block Loop
         
         % Run Trial
         TrialData.TrialStartTime  = GetSecs;
-        TrialData = RunTrial(Params,TrialData,delta_buffer);
+        TrialData = RunTrial(Params,TrialData,delta_buffer,BaseNeuralFeatures);
         TrialData.TrialEndTime    = GetSecs;
                 
         % Save Data from Single Trial
