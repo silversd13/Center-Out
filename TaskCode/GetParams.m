@@ -27,7 +27,7 @@ if strcmpi(Params.Subject,'Test'),
     Params.HHMMSS = 'HHMMSS';
 end
 
-projectdir = fullfile('C:\Users\ganguly-lab2\Documents\MATLAB\Center-Out\TaskCode');
+projectdir = fullfile('C:\Users\ganguly-lab2\Documents\MATLAB\Center-Out');
 datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMSS);
 
 % create folders for saving
@@ -111,16 +111,29 @@ Params.FilterBank(end+1).fpass = [13,19];   % beta1
 Params.FilterBank(end).feature = 4;
 Params.FilterBank(end+1).fpass = [19,30];   % beta2
 Params.FilterBank(end).feature = 4;
-Params.FilterBank(end+1).fpass = [30,39];   % low gamma1 
+Params.FilterBank(end+1).fpass = [30,36];   % low gamma1 
 Params.FilterBank(end).feature = 5;
-Params.FilterBank(end+1).fpass = [39,50];   % low gamma2 
+Params.FilterBank(end+1).fpass = [36,42];   % low gamma2 
 Params.FilterBank(end).feature = 5;
-Params.FilterBank(end+1).fpass = [70,90];   % high gamma1
+Params.FilterBank(end+1).fpass = [42,50];   % low gamma3
+Params.FilterBank(end).feature = 5;
+Params.FilterBank(end+1).fpass = [70,77];   % high gamma1
 Params.FilterBank(end).feature = 6;
-Params.FilterBank(end+1).fpass = [90,116];  % high gamma2
+Params.FilterBank(end+1).fpass = [77,85];   % high gamma2
 Params.FilterBank(end).feature = 6;
-Params.FilterBank(end+1).fpass = [116,150]; % high gamma3
+Params.FilterBank(end+1).fpass = [85,93];   % high gamma3
 Params.FilterBank(end).feature = 6;
+Params.FilterBank(end+1).fpass = [93,102];  % high gamma4
+Params.FilterBank(end).feature = 6;
+Params.FilterBank(end+1).fpass = [102,113]; % high gamma5
+Params.FilterBank(end).feature = 6;
+Params.FilterBank(end+1).fpass = [113,124]; % high gamma6
+Params.FilterBank(end).feature = 6;
+Params.FilterBank(end+1).fpass = [124,136]; % high gamma7
+Params.FilterBank(end).feature = 6;
+Params.FilterBank(end+1).fpass = [136,150]; % high gamma8
+Params.FilterBank(end).feature = 6;
+
 Params.NumFeatures = length(unique([Params.FilterBank.feature])) + 1;
 
 %% Save Parameters
