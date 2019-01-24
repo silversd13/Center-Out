@@ -37,7 +37,7 @@ if ~exist(Params.datadir,'dir'), mkdir(Params.datadir); end
 if ~exist(Params.imagined_datadir,'dir'), mkdir(Params.imagined_datadir); end
 
 %% Timing
-Params.RefreshRate = 60; % Hz
+Params.RefreshRate = 50; % Hz
 Params.NeuralRefreshRate = 10; % Hz
 Params.BaselineTime = 1;
 

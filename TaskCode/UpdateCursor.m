@@ -42,8 +42,8 @@ if ~isempty(targetvec), % assistance
     ortho_uvec = target_uvec * [0 -1; 1 0];
     ortho_uvec = ortho_uvec * (1 - Params.Assistance); % rescale to limit orthogonal cursor movement
     % project dx and dy onto new basis
-    dxdy = [dx,dy] * target_uvec' * target_uvec ...
-        + [dx,dy] * ortho_uvec' * ortho_uvec;
+    dxdy = ([dx,dy] * target_uvec') * target_uvec ...
+        + ([dx,dy] * ortho_uvec') * ortho_uvec;
 else,
     dxdy = [dx,dy];
 end

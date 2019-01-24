@@ -57,7 +57,8 @@ if ~Data.ErrorID,
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
                 [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
                 [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
-                Data.NeuralTime(end+1,1) = timestamp;
+                Data.NeuralTime(end+1,1) = tim;
+                Data.NeuralTimeBR(end+1,1) = timestamp;
                 Data.NeuralSamps(end+1,1) = num_samps;
                 Data.NeuralFeatures(:,:,end+1) = neural_features;
                 Data.ProcessedData{end+1} = filtered_data;
@@ -124,7 +125,8 @@ if ~Data.ErrorID,
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
                 [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
                 [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
-                Data.NeuralTime(end+1,1) = timestamp;
+                Data.NeuralTime(end+1,1) = tim;
+                Data.NeuralTimeBR(end+1,1) = timestamp;
                 Data.NeuralSamps(end+1,1) = num_samps;
                 Data.NeuralFeatures(:,:,end+1) = neural_features;
                 Data.ProcessedData{end+1} = filtered_data;
@@ -211,7 +213,8 @@ if ~Data.ErrorID,
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
                 [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
                 [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
-                Data.NeuralTime(end+1,1) = timestamp;
+                Data.NeuralTime(end+1,1) = tim;
+                Data.NeuralTimeBR(end+1,1) = timestamp;
                 Data.NeuralSamps(end+1,1) = num_samps;
                 Data.NeuralFeatures(:,:,end+1) = neural_features;
                 Data.ProcessedData{end+1} = filtered_data;
@@ -300,7 +303,8 @@ if ~Data.ErrorID,
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
                 [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
                 [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
-                Data.NeuralTime(end+1,1) = timestamp;
+                Data.NeuralTime(end+1,1) = tim;
+                Data.NeuralTimeBR(end+1,1) = timestamp;
                 Data.NeuralSamps(end+1,1) = num_samps;
                 Data.NeuralFeatures(:,:,end+1) = neural_features;
                 Data.ProcessedData{end+1} = filtered_data;
@@ -366,7 +370,6 @@ else
         sound(Params.ErrorSound)
     end
     WaitSecs(Params.ErrorWaitTime);
-    Cursor = [];
 end
 
 end % RunTrial
