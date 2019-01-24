@@ -25,6 +25,8 @@ if Params.BLACKROCK,
 end
 
 %% Inter Trial Interval
+% define optimal axis
+optimal_axis = StartTargetPos - Cursor.Position;
 if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(1).Time = tstart;
@@ -60,7 +62,7 @@ if ~Data.ErrorID,
             end
             
             % cursor
-            if ~Params.CenterReset, Cursor = UpdateCursor(Params,Cursor,dt);
+            if ~Params.CenterReset, Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             else, Cursor = UpdateCursor(Params,Cursor,dt,StartTargetPos);
             end
             CursorRect = Params.CursorRect;
@@ -83,6 +85,8 @@ if ~Data.ErrorID,
 end % only complete if no errors
 
 %% Go to Start Target
+% define optimal axis (used for assistance mode)
+optimal_axis = StartTargetPos - Cursor.Position;
 if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(2).Time = tstart;
@@ -121,7 +125,7 @@ if ~Data.ErrorID,
             end
             
             % cursor
-            Cursor = UpdateCursor(Params,Cursor,dt);
+            Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
             CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
@@ -167,6 +171,8 @@ if ~Data.ErrorID,
 end % only complete if no errors
 
 %% Instructed Delay
+% define optimal axis
+optimal_axis = ReachTargetPos - StartTargetPos;
 if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(3).Time = tstart;
@@ -203,7 +209,7 @@ if ~Data.ErrorID,
             end
             
             % cursor
-            Cursor = UpdateCursor(Params,Cursor,dt);
+            Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
             CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
@@ -250,6 +256,8 @@ if ~Data.ErrorID,
 end % only complete if no errors
 
 %% Go to reach target
+% define optimal axis
+optimal_axis = ReachTargetPos - StartTargetPos;
 if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(4).Time = tstart;
@@ -286,7 +294,7 @@ if ~Data.ErrorID,
             end
             
             % cursor
-            Cursor = UpdateCursor(Params,Cursor,dt);
+            Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
             CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos

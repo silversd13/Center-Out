@@ -1,4 +1,4 @@
-function [Data, delta_buffer] = RunImaginedTrial(Params,Data,delta_buffer,BaseNeuralFeatures)
+function [Data, delta_buffer] = RunTrial(Params,Data,delta_buffer,BaseNeuralFeatures)
 % Runs a trial, saves useful data along the way
 % Each trial contains the following pieces
 % 1) Inter-trial interval
@@ -25,10 +25,8 @@ if Params.BLACKROCK,
 end
 
 %% Inter Trial Interval
-OptimalCursorTraj = ...
-    GenerateCursorTraj(Cursor.Position,Cursor.Position,Params.InterTrialInterval,Params);
-ct = 1;
-
+% define optimal axis
+optimal_axis = StartTargetPos - Cursor.Position;
 if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(1).Time = tstart;
@@ -52,7 +50,7 @@ if ~Data.ErrorID,
             Data.Time(end+1,1) = tim;
             
             % grab and process neural data
-            if Params.BLACKROCK,
+            if Params.BLACKROCK && ((tim-tlast) > 1/Params.RefreshRate)
                 [timestamp, neural_data, num_samps] = ReadBR(Params);
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
                 [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
@@ -64,10 +62,9 @@ if ~Data.ErrorID,
             end
             
             % cursor
-            if ~Params.CenterReset, Cursor = UpdateCursor(Params,Cursor,dt,OptimalCursorTraj(ct,:));
+            if ~Params.CenterReset, Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             else, Cursor = UpdateCursor(Params,Cursor,dt,StartTargetPos);
             end
-            ct = ct + 1;
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
             CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
@@ -88,11 +85,8 @@ if ~Data.ErrorID,
 end % only complete if no errors
 
 %% Go to Start Target
-OptimalCursorTraj = [...
-    GenerateCursorTraj(Cursor.Position,StartTargetPos,1,Params);
-    GenerateCursorTraj(StartTargetPos,StartTargetPos,Params.TargetHoldTime,Params)];
-ct = 1;
-
+% define optimal axis (used for assistance mode)
+optimal_axis = StartTargetPos - Cursor.Position;
 if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(2).Time = tstart;
@@ -131,8 +125,7 @@ if ~Data.ErrorID,
             end
             
             % cursor
-            Cursor = UpdateCursor(Params,Cursor,dt,OptimalCursorTraj(ct,:));
-            ct = ct + 1;
+            Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
             CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
@@ -178,10 +171,8 @@ if ~Data.ErrorID,
 end % only complete if no errors
 
 %% Instructed Delay
-OptimalCursorTraj = ...
-    GenerateCursorTraj(StartTargetPos,StartTargetPos,Params.InstructedDelayTime,Params);
-ct = 1;
-
+% define optimal axis
+optimal_axis = ReachTargetPos - StartTargetPos;
 if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(3).Time = tstart;
@@ -218,8 +209,7 @@ if ~Data.ErrorID,
             end
             
             % cursor
-            Cursor = UpdateCursor(Params,Cursor,dt,OptimalCursorTraj(ct,:));
-            ct = ct + 1;
+            Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
             CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
@@ -266,11 +256,8 @@ if ~Data.ErrorID,
 end % only complete if no errors
 
 %% Go to reach target
-OptimalCursorTraj = [...
-    GenerateCursorTraj(StartTargetPos,ReachTargetPos,1,Params);
-    GenerateCursorTraj(ReachTargetPos,ReachTargetPos,Params.TargetHoldTime,Params)];
-ct = 1;
-
+% define optimal axis
+optimal_axis = ReachTargetPos - StartTargetPos;
 if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(4).Time = tstart;
@@ -307,8 +294,7 @@ if ~Data.ErrorID,
             end
             
             % cursor
-            Cursor = UpdateCursor(Params,Cursor,dt,OptimalCursorTraj(ct,:));
-            ct = ct + 1;
+            Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
             CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos

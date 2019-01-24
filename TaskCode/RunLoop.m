@@ -27,7 +27,7 @@ DataFields = struct(...
 Trial = 0;
 delta_buffer = zeros(Params.BufferSamps,Params.NumChannels);
 for Block=1:Params.NumBlocks, % Block Loop
-    Cursor = [];
+    Cursor.Position = Params.Center;
     % random order of reach targets for each block
     TargetOrder = randperm(Params.NumTrialsPerBlock);
 
