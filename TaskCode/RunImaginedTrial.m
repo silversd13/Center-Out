@@ -64,7 +64,9 @@ if ~Data.ErrorID,
             end
             
             % cursor
-            Cursor = UpdateCursor(Params,Cursor,dt,OptimalCursorTraj(ct,:));
+            if ~Params.CenterReset, Cursor = UpdateCursor(Params,Cursor,dt);
+            else, Cursor = UpdateCursor(Params,Cursor,dt,StartTargetPos);
+            end
             ct = ct + 1;
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
@@ -98,7 +100,9 @@ if ~Data.ErrorID,
 
     tim  = GetSecs;
     tlast = tim;
-    done = 0;
+    if ~Params.CenterReset, done = 0;
+    else, done = 1; % skip reach to center
+    end
     totalTime = 0;
     while ~done,
         % Update Time & Position

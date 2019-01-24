@@ -12,8 +12,6 @@ switch Params.ControlMode,
     case 3, Params.ControlModeStr = 'ReFit';
     case 4, Params.ControlModeStr = 'Open';
 end
-Params.CenterReset = true;
-Params.Assist = 0; % value btw 0 and 1, 1 full assist
 
 %% Current Date and Time
 % get today's date
