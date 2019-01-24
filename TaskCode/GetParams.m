@@ -38,7 +38,7 @@ if ~exist(Params.imagined_datadir,'dir'), mkdir(Params.imagined_datadir); end
 
 %% Timing
 Params.RefreshRate = 50; % Hz
-Params.BaselineTime = 10;
+Params.BaselineTime = 1;
 
 %% Targets
 Params.TargetSize = 30;
