@@ -1,4 +1,4 @@
-function RunTask(Params, BaseNeuralFeatures)
+function RunTask(Params)
 % Explains the task to the subject, and serves as a reminder for pausing
 % and quitting the experiment (w/o killing matlab or something)
 switch Params.ControlMode,
@@ -17,7 +17,7 @@ switch Params.ControlMode,
 end
 
 InstructionScreen(Params,Instructions);
-RunLoop(Params, BaseNeuralFeatures);
+RunLoop(Params);
 
 % Pause and Finish!
 ExperimentStop();

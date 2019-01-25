@@ -1,4 +1,4 @@
-function RunImaginedTask(Params, BaseNeuralFeatures)
+function RunImaginedTask(Params)
 % Explains the task to the subject, and serves as a reminder for pausing
 % and quitting the experiment (w/o killing matlab or something)
 Instructions = [...
@@ -9,6 +9,6 @@ Instructions = [...
     '\n\nPress the ''Space Bar'' to begin!' ];
 
 InstructionScreen(Params,Instructions);
-RunImaginedLoop(Params, BaseNeuralFeatures);
+RunImaginedLoop(Params);
 
 end % RunImaginedTask

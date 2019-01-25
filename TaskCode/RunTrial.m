@@ -1,4 +1,4 @@
-function [Data, delta_buffer] = RunTrial(Params,Data,delta_buffer,BaseNeuralFeatures)
+function [Data, delta_buffer] = RunTrial(Params,Data,delta_buffer)
 % Runs a trial, saves useful data along the way
 % Each trial contains the following pieces
 % 1) Inter-trial interval
@@ -20,6 +20,9 @@ fprintf('Target: %i\n',Data.TargetAngle)
 %% Begin Recording Neural Data
 if Params.BLACKROCK,
     [~, neural_data] = ReadBR(Params);
+    neural_data = RefNeuralData(neural_data,Params);
+    Params = UpdateNeuralStats(neural_data,Params);
+    neural_data = ZscoreNeuralData(neural_data,Params);
     [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
     [delta_buffer, ~] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
 end
@@ -53,9 +56,11 @@ if ~Data.ErrorID,
             % grab and process neural data
             if Params.BLACKROCK && ((tim-tlast_br)>1/Params.NeuralRefreshRate),
                 [timestamp, neural_data, num_samps] = ReadBR(Params);
+                neural_data = RefNeuralData(neural_data,Params);
+                Params = UpdateNeuralStats(neural_data,Params);
+                neural_data = ZscoreNeuralData(neural_data,Params);
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
                 [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
-                [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
                 tlast_br = tim;
                 Data.NeuralTime(end+1,1) = tim;
                 Data.NeuralTimeBR(end+1,1) = timestamp;
@@ -118,9 +123,11 @@ if ~Data.ErrorID,
             % grab and process neural data
             if Params.BLACKROCK && ((tim-tlast_br)>1/Params.NeuralRefreshRate),
                 [timestamp, neural_data, num_samps] = ReadBR(Params);
+                neural_data = RefNeuralData(neural_data,Params);
+                Params = UpdateNeuralStats(neural_data,Params);
+                neural_data = ZscoreNeuralData(neural_data,Params);
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
                 [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
-                [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
                 tlast_br = tim;
                 Data.NeuralTime(end+1,1) = tim;
                 Data.NeuralTimeBR(end+1,1) = timestamp;
@@ -204,9 +211,11 @@ if ~Data.ErrorID,
             % grab and process neural data
             if Params.BLACKROCK && ((tim-tlast_br)>1/Params.NeuralRefreshRate),
                 [timestamp, neural_data, num_samps] = ReadBR(Params);
+                neural_data = RefNeuralData(neural_data,Params);
+                Params = UpdateNeuralStats(neural_data,Params);
+                neural_data = ZscoreNeuralData(neural_data,Params);
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
                 [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
-                [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
                 tlast_br = tim;
                 Data.NeuralTime(end+1,1) = tim;
                 Data.NeuralTimeBR(end+1,1) = timestamp;
@@ -291,9 +300,11 @@ if ~Data.ErrorID,
             % grab and process neural data
             if Params.BLACKROCK && ((tim-tlast_br)>1/Params.NeuralRefreshRate),
                 [timestamp, neural_data, num_samps] = ReadBR(Params);
+                neural_data = RefNeuralData(neural_data,Params);
+                Params = UpdateNeuralStats(neural_data,Params);
+                neural_data = ZscoreNeuralData(neural_data,Params);
                 [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
                 [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
-                [neural_features] = ZScoreNeuralFeatures(neural_features, BaseNeuralFeatures);
                 tlast_br = tim;
                 Data.NeuralTime(end+1,1) = tim;
                 Data.NeuralTimeBR(end+1,1) = timestamp;

@@ -13,6 +13,11 @@ switch Params.ControlMode,
     case 4, Params.ControlModeStr = 'Open';
 end
 
+%% Control
+Params.Gain = 1;
+Params.CenterReset = false;
+Params.Assistance = 0; % value btw 0 and 1, 1 full assist
+
 %% Current Date and Time
 % get today's date
 now = datetime;
@@ -39,7 +44,7 @@ if ~exist(Params.imagined_datadir,'dir'), mkdir(Params.imagined_datadir); end
 %% Timing
 Params.RefreshRate = 50; % Hz
 Params.NeuralRefreshRate = 10; % Hz
-Params.BaselineTime = 1;
+Params.BaselineTime = 1; % secs
 
 %% Targets
 Params.TargetSize = 30;
@@ -86,17 +91,13 @@ Params.RewardSound = 1000*audioread('smw_coin.wav');
 % play sounds silently once so Matlab gets used to it
 sound(0*Params.ErrorSound)
 
-%% Control
-Params.Gain = 1;
-Params.CenterReset = false;
-Params.Assistance = .5; % value btw 0 and 1, 1 full assist
-
 %% BlackRock Params
 Params.Fs = 1000;
 Params.NumChannels = 128;
 Params.BufferTime = 4; % secs longer for better phase estimation of low frqs
 Params.BufferSamps = Params.BufferTime * Params.Fs;
 Params.BadChannels = [];
+Params.ReferenceMode = 0; % 0-no ref, 1-common mean, 2-common median
 
 % filter bank - each element is a filter bank
 % fpass - bandpass cutoff freqs

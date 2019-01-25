@@ -1,4 +1,4 @@
-function RunImaginedLoop(Params, BaseNeuralFeatures)
+function RunImaginedLoop(Params)
 % Defines the structure of collected data on each trial
 % Loops through blocks and trials within blocks
 global Cursor
@@ -46,7 +46,7 @@ for Block=1:Params.NumImaginedBlocks, % Block Loop
         
         % Run Trial
         TrialData.TrialStartTime  = GetSecs;
-        TrialData = RunImaginedTrial(Params,TrialData,delta_buffer,BaseNeuralFeatures);
+        TrialData = RunImaginedTrial(Params,TrialData,delta_buffer);
         TrialData.TrialEndTime    = GetSecs;
                 
         % Save Data from Single Trial

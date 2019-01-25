@@ -23,7 +23,7 @@ ang = angle(hilbert(delta_buffer));
 neural_features(1,:) = angle(sum(exp(1i*ang(end-samps+1:end,:))));
 
 % compute average pwr for all frq bands in last bin
-pwr = mean(filtered_data.^2, 1);
+pwr = log10(mean(filtered_data.^2, 1));
 
 % combine feature vectors and remove singleton dimension
 feature_idx = [Params.FilterBank.feature];

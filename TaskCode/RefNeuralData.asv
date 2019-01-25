@@ -1,0 +1,17 @@
+function ref_data = RefNeuralData(neural_data,Params),
+% function ref_data = RefNeuralData(neural_data,Params)
+% references neural data based on stored Parameters
+% 
+% neural_data - [ samples x channels ]
+% Params
+
+switch Params.ReferenceMode,
+    case 0, % no reference
+        ref_data = neural_data;
+    case 1, % common mean
+        neural_data = nea
+        mu = mean(neural_data,2);
+    case 2, % common median
+end % reference mode
+
+end % RefNeuralData

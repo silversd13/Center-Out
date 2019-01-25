@@ -59,23 +59,20 @@ for i=1:length(Params.FilterBank),
     Params.FilterBank(i).a = a;
     Params.FilterBank(i).state = [];
 end
-% initialize stats for each channel for z-scoring
-Params.NeuralStats.wSum1  = 0; % count
-Params.NeuralStats.wSum2  = 0; % squared count
-Params.NeuralStats.mean   = zeros(1,Params.NumChannels); % estimate of mean for each channel
-Params.NeuralStats.S      = zeros(1,Params.NumChannels); % aggregate deviation from estimated mean for each channel
-Params.NeuralStats.var    = zeros(1,Params.NumChannels); % estimate of variance for each channel
+% 
 
 %% Start
 try
     % Baseline 
-    Params = RunBaseline(Params);
+    [mu, sigma] = RunBaseline(Params);
+    BaseNeuralFeatures.mu = mu;
+    BaseNeuralFeatures.sigma = sigma;
     
     % Experiment Loop with Imagined Cursor Movements
-    RunImaginedTask(Params);
+    RunImaginedTask(Params, BaseNeuralFeatures);
     
     % Experiment Loop
-    RunTask(Params);
+    RunTask(Params, BaseNeuralFeatures);
 catch ME
     Screen('CloseAll')
     errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
