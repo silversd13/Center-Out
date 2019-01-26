@@ -36,7 +36,7 @@ switch Params.ControlMode,
 end
 
 % update cursor
-if ~isempty(targetvec), % assistance
+if ~isempty(targetvec) && Params.AssistMode==1, % assistance
     % define axis from cursor to target and orthogonal axis
     target_uvec = targetvec / norm(targetvec);
     ortho_uvec = target_uvec * [0 -1; 1 0];
@@ -44,6 +44,10 @@ if ~isempty(targetvec), % assistance
     % project dx and dy onto new basis
     dxdy = ([dx,dy] * target_uvec') * target_uvec ...
         + ([dx,dy] * ortho_uvec') * ortho_uvec;
+elseif ~isempty(targetvec) && Params.AssistMode==2, % assistance
+    Vopt = targetvec / 50; % optimal velocity is scaled targetvec
+    Vdec = [dx,dy]; % decoded velocity
+    dxdy = Params.Assistance*Vopt + (1-Params.Assistance)*Vdec; % output velocity
 else,
     dxdy = [dx,dy];
 end

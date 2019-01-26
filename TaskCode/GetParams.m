@@ -16,7 +16,8 @@ end
 %% Control
 Params.Gain = 1;
 Params.CenterReset = false;
-Params.Assistance = 0; % value btw 0 and 1, 1 full assist
+Params.AssistMode = 2; % 0 - off, 1 - limit ortho vel, 2 - help move to target
+Params.Assistance = .5; % value btw 0 and 1, 1 full assist
 
 %% Current Date and Time
 % get today's date
