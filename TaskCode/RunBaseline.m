@@ -1,13 +1,10 @@
-function Params = RunBaseline(Params)
-% Params = RunBaseline(Params)
+function Neuro = RunBaseline(Params,Neuro)
+% Neuro = RunBaseline(Params,Neuro)
 % Baseline period - grab neural features to get baseline for z-scoring
 % 
-% Params - contains NeuralStats structure w/ mean and var of each chan
+% Neuro - contains NeuralStats structure w/ mean and var of each chan
 
 fprintf('Collecting Baseline')
-
-% initialize
-delta_buffer = zeros(Params.BufferSamps,Params.NumChannels);
 
 tstart  = GetSecs;
 tlast = tstart;
@@ -25,12 +22,11 @@ while ~done,
         tlast = tim;
         
         % grab and process neural data
-        if Params.BLACKROCK,
-            [~, neural_data, ~] = ReadBR(Params);
-            neural_data = RefNeuralData(neural_data,Params);
-            Params = UpdateNeuralStats(neural_data,Params);
-            [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
-            [delta_buffer, ~] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
+        if Params.BLACKROCK && ((tim-Neuro.LastUpdateTime)>1/Params.NeuralRefreshRate),
+            Neuro.LastUpdateTime = tim;
+            Neuro = NeuroPipeline(Neuro);
+            % update command line with progress
+            fprintf('.')
         end
         
         % update screen with progress
@@ -38,8 +34,6 @@ while ~done,
         DrawFormattedText(Params.WPTR, tex,'center','center',255);
         Screen('Flip', Params.WPTR);
         
-        % update command line with progress
-        fprintf('.')
     end
     
     % end if takes too long

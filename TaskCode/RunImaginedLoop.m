@@ -1,4 +1,4 @@
-function RunImaginedLoop(Params)
+function Neuro = RunImaginedLoop(Params,Neuro)
 % Defines the structure of collected data on each trial
 % Loops through blocks and trials within blocks
 global Cursor
@@ -26,7 +26,6 @@ DataFields = struct(...
 
 %%  Loop Through Blocks of Trials
 Trial = 0;
-delta_buffer = zeros(Params.BufferSamps,Params.NumChannels);
 for Block=1:Params.NumImaginedBlocks, % Block Loop
     Cursor.Position = Params.Center;
     % random order of reach targets for each block
@@ -46,7 +45,7 @@ for Block=1:Params.NumImaginedBlocks, % Block Loop
         
         % Run Trial
         TrialData.TrialStartTime  = GetSecs;
-        TrialData = RunImaginedTrial(Params,TrialData,delta_buffer);
+        [TrialData,Neuro] = RunImaginedTrial(TrialData,Params,Neuro);
         TrialData.TrialEndTime    = GetSecs;
                 
         % Save Data from Single Trial

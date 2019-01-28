@@ -1,4 +1,4 @@
-function [Data, delta_buffer] = RunImaginedTrial(Params,Data,delta_buffer)
+function [Data, Neuro] = RunImaginedTrial(Data,Params,Neuro)
 % Runs a trial, saves useful data along the way
 % Each trial contains the following pieces
 % 1) Inter-trial interval
@@ -16,16 +16,6 @@ ReachTargetPos = Data.TargetPosition;
 % Output to Command Line
 fprintf('\nTrial: %i\n',Data.Trial)
 fprintf('Target: %i\n',Data.TargetAngle)
-
-%% Begin Recording Neural Data
-if Params.BLACKROCK,
-    [~, neural_data] = ReadBR(Params);
-    neural_data = RefNeuralData(neural_data,Params);
-    Params = UpdateNeuralStats(neural_data,Params);
-    neural_data = ZscoreNeuralData(neural_data,Params);
-    [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
-    [delta_buffer, ~] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
-end
 
 %% Inter Trial Interval
 OptimalCursorTraj = ...
@@ -55,18 +45,10 @@ if ~Data.ErrorID,
             Data.Time(end+1,1) = tim;
             
             % grab and process neural data
-            if Params.BLACKROCK,
-                [timestamp, neural_data, num_samps] = ReadBR(Params);
-                neural_data = RefNeuralData(neural_data,Params);
-                Params = UpdateNeuralStats(neural_data,Params);
-                neural_data = ZscoreNeuralData(neural_data,Params);
-                [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
-                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
+            if Params.BLACKROCK && ((tim-Neuro.LastUpdateTime)>1/Params.NeuralRefreshRate),
+                Neuro.LastUpdateTime = tim;
+                [Neuro,Data] = NeuroPipeline(Neuro,Data);
                 Data.NeuralTime(end+1,1) = tim;
-                Data.NeuralTimeBR(end+1,1) = timestamp;
-                Data.NeuralSamps(end+1,1) = num_samps;
-                Data.NeuralFeatures(:,:,end+1) = neural_features;
-                Data.ProcessedData{end+1} = filtered_data;
             end
             
             % cursor
@@ -125,18 +107,10 @@ if ~Data.ErrorID,
             Data.Time(end+1,1) = tim;
             
             % grab and process neural data
-            if Params.BLACKROCK,
-                [timestamp, neural_data, num_samps] = ReadBR(Params);
-                neural_data = RefNeuralData(neural_data,Params);
-                Params = UpdateNeuralStats(neural_data,Params);
-                neural_data = ZscoreNeuralData(neural_data,Params);
-                [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
-                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
+            if Params.BLACKROCK && ((tim-Neuro.LastUpdateTime)>1/Params.NeuralRefreshRate),
+                Neuro.LastUpdateTime = tim;
+                [Neuro,Data] = NeuroPipeline(Neuro,Data);
                 Data.NeuralTime(end+1,1) = tim;
-                Data.NeuralTimeBR(end+1,1) = timestamp;
-                Data.NeuralSamps(end+1,1) = num_samps;
-                Data.NeuralFeatures(:,:,end+1) = neural_features;
-                Data.ProcessedData{end+1} = filtered_data;
             end
             
             % cursor
@@ -215,18 +189,10 @@ if ~Data.ErrorID,
             Data.Time(end+1,1) = tim;
 
             % grab and process neural data
-            if Params.BLACKROCK,
-                [timestamp, neural_data, num_samps] = ReadBR(Params);
-                neural_data = RefNeuralData(neural_data,Params);
-                Params = UpdateNeuralStats(neural_data,Params);
-                neural_data = ZscoreNeuralData(neural_data,Params);
-                [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
-                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
+            if Params.BLACKROCK && ((tim-Neuro.LastUpdateTime)>1/Params.NeuralRefreshRate),
+                Neuro.LastUpdateTime = tim;
+                [Neuro,Data] = NeuroPipeline(Neuro,Data);
                 Data.NeuralTime(end+1,1) = tim;
-                Data.NeuralTimeBR(end+1,1) = timestamp;
-                Data.NeuralSamps(end+1,1) = num_samps;
-                Data.NeuralFeatures(:,:,end+1) = neural_features;
-                Data.ProcessedData{end+1} = filtered_data;
             end
             
             % cursor
@@ -307,18 +273,10 @@ if ~Data.ErrorID,
             Data.Time(end+1,1) = tim;
 
             % grab and process neural data
-            if Params.BLACKROCK,
-                [timestamp, neural_data, num_samps] = ReadBR(Params);
-                neural_data = RefNeuralData(neural_data,Params);
-                Params = UpdateNeuralStats(neural_data,Params);
-                neural_data = ZscoreNeuralData(neural_data,Params);
-                [filtered_data, Params] = ApplyFilterBank(neural_data,Params);
-                [delta_buffer, neural_features] = CompNeuralFeatures(delta_buffer, filtered_data, Params);
+            if Params.BLACKROCK && ((tim-Neuro.LastUpdateTime)>1/Params.NeuralRefreshRate),
+                Neuro.LastUpdateTime = tim;
+                [Neuro,Data] = NeuroPipeline(Neuro,Data);
                 Data.NeuralTime(end+1,1) = tim;
-                Data.NeuralTimeBR(end+1,1) = timestamp;
-                Data.NeuralSamps(end+1,1) = num_samps;
-                Data.NeuralFeatures(:,:,end+1) = neural_features;
-                Data.ProcessedData{end+1} = filtered_data;
             end
             
             % cursor
@@ -383,7 +341,7 @@ else
     WaitSecs(Params.ErrorWaitTime);
 end
 
-end % RunTrial
+end % RunImaginedTrial
 
 
 

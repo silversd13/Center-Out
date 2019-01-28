@@ -54,13 +54,7 @@ end
 %% Neural Signal Processing
 % create neuro structure for keeping track of all neuro updates/state
 % changes
-Neuro.FilterBank    = Params.FilterBank;
-Neuro.NumChannels   = Params.NumChannels;
-Neuro.BufferSamps   = Params.BufferSamps;
-Neuro.BadChannels   = Params.BadChannels;
-Neuro.ReferenceMode = Params.ReferenceMode;
-Neuro.NumFeatures   = Params.NumFeatures;
-Neuro.LastUpdateTime= GetSecs;
+Neuro.FilterBank = Params.FilterBank;
 
 % initialize filter bank state
 for i=1:length(Params.FilterBank),
@@ -75,7 +69,7 @@ Neuro.ChStats.S      = zeros(1,Params.NumChannels); % aggregate deviation from e
 Neuro.ChStats.var    = zeros(1,Params.NumChannels); % estimate of variance for each channel
 
 % create delta buffer
-Neuro.DeltaBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels);
+Neurodelta_buffer = zeros(Params.BufferSamps,Params.NumChannels);
 
 %% Start
 try
@@ -83,15 +77,11 @@ try
     Neuro = RunBaseline(Params,Neuro);
     
     % Experiment Loop with Imagined Cursor Movements
-    Neuro = RunImaginedTask(Params,Neuro);
+    RunImaginedTask(Params);
     
     % Experiment Loop
-    Neuro = RunTask(Params,Neuro);
-    
-    % Pause and Finish!
-    ExperimentStop();
-    
-catch ME, % handle errors gracefully
+    RunTask(Params);
+catch ME
     Screen('CloseAll')
     errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
         ME.stack(1).name, ME.stack(1).line, ME.message);

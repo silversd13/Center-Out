@@ -43,7 +43,7 @@ if ~exist(Params.datadir,'dir'), mkdir(Params.datadir); end
 if ~exist(Params.imagined_datadir,'dir'), mkdir(Params.imagined_datadir); end
 
 %% Timing
-Params.RefreshRate = 50; % Hz
+Params.RefreshRate = 60; % Hz
 Params.NeuralRefreshRate = 10; % Hz
 Params.BaselineTime = 1; % secs
 
@@ -137,6 +137,12 @@ Params.FilterBank(end+1).fpass = [124,136]; % high gamma7
 Params.FilterBank(end).feature = 6;
 Params.FilterBank(end+1).fpass = [136,150]; % high gamma8
 Params.FilterBank(end).feature = 6;
+% compute filter coefficients
+for i=1:length(Params.FilterBank),
+    [b,a] = butter(3,Params.FilterBank(i).fpass/(Params.Fs/2));
+    Params.FilterBank(i).b = b;
+    Params.FilterBank(i).a = a;
+end
 
 Params.NumFeatures = length(unique([Params.FilterBank.feature])) + 1;
 
