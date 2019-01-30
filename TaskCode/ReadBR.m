@@ -12,8 +12,10 @@ function Neuro = ReadBR(Neuro)
 % read data from blackrock
 [timestamp, X] = cbmex('trialdata',1); % read buffer
 try
-neural_data = double(horzcat(X{1:Neuro.NumChannels,3}));
+    neural_data = double(horzcat(X{1:Neuro.NumChannels,3}));
 catch
+    X{125,3} = downsample(X{125,3},30);
+    neural_data = double(horzcat(X{1:Neuro.NumChannels,3}));
 end
 
 % limit to buffer size

@@ -9,8 +9,7 @@ Params.Task = 'Center-Out';
 switch Params.ControlMode,
     case 1, Params.ControlModeStr = 'MousePosition';
     case 2, Params.ControlModeStr = 'MouseVelocity';
-    case 3, Params.ControlModeStr = 'ReFit';
-    case 4, Params.ControlModeStr = 'Open';
+    case 3, Params.ControlModeStr = 'KalmanVelocity';
 end
 
 %% Control
@@ -71,21 +70,21 @@ Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
 
 %% Trial and Block Types
 Params.NumBlocks = 1;
-Params.NumImaginedBlocks = 0;
+Params.NumImaginedBlocks = 10;
 Params.NumTrialsPerBlock = length(Params.ReachTargetAngles);
 Params.NumTrials = Params.NumBlocks*Params.NumTrialsPerBlock;
 Params.NumImaginedTrials = Params.NumImaginedBlocks*Params.NumTrialsPerBlock;
 
 %% Hold Times
-Params.TargetHoldTime = .4;
-Params.InterTrialInterval = .5;
-Params.InstructedDelayTime = 1;
+Params.TargetHoldTime = .2;
+Params.InterTrialInterval = 0;
+Params.InstructedDelayTime = .5;
 Params.MaxStartTime = 15;
 Params.MaxReachTime = 15;
 Params.InterBlockInterval = 1;
 
 %% Feedback
-Params.FeedbackSound = 1;
+Params.FeedbackSound = 0;
 Params.ErrorWaitTime = 2;
 Params.ErrorSound = 1000*audioread('buzz.wav');
 Params.RewardSound = 1000*audioread('smw_coin.wav');

@@ -19,7 +19,7 @@ fprintf('Target: %i\n',Data.TargetAngle)
 
 %% Inter Trial Interval
 % define optimal axis
-optimal_axis = StartTargetPos - Cursor.Position;
+optimal_axis = StartTargetPos - Cursor.State;
 if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(1).Time = tstart;
@@ -54,9 +54,9 @@ if ~Data.ErrorID,
             else, Cursor = UpdateCursor(Params,Cursor,dt,StartTargetPos);
             end
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.Position;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
+            Data.CursorPosition(end+1,:) = Cursor.State;
 
             % draw
             Screen('FillOval', Params.WPTR, Params.CursorColor, CursorRect);
@@ -74,7 +74,7 @@ end % only complete if no errors
 
 %% Go to Start Target
 % define optimal axis (used for assistance mode)
-optimal_axis = StartTargetPos - Cursor.Position;
+optimal_axis = StartTargetPos - Cursor.State;
 if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(2).Time = tstart;
@@ -109,13 +109,13 @@ if ~Data.ErrorID,
             
             % cursor
             if Params.AssistMode==2,
-                optimal_axis = StartTargetPos - Cursor.Position;
+                optimal_axis = StartTargetPos - Cursor.State;
             end
             Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.Position;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
+            Data.CursorPosition(end+1,:) = Cursor.State;
 
             % start target
             StartRect = Params.TargetRect; % centered at (0,0)
@@ -158,7 +158,7 @@ end % only complete if no errors
 
 %% Instructed Delay
 % define optimal axis
-optimal_axis = StartTargetPos - Cursor.Position;
+optimal_axis = StartTargetPos - Cursor.State;
 if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(3).Time = tstart;
@@ -191,13 +191,13 @@ if ~Data.ErrorID,
             
             % cursor
             if Params.AssistMode==2,
-                optimal_axis = StartTargetPos - Cursor.Position;
+                optimal_axis = StartTargetPos - Cursor.State;
             end
             Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.Position;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
+            Data.CursorPosition(end+1,:) = Cursor.State;
             
             % start target
             StartRect = Params.TargetRect; % centered at (0,0)
@@ -274,13 +274,13 @@ if ~Data.ErrorID,
             
             % cursor
             if Params.AssistMode==2,
-                optimal_axis = ReachTargetPos - Cursor.Position;
+                optimal_axis = ReachTargetPos - Cursor.State;
             end
             Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.Position;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
+            Data.CursorPosition(end+1,:) = Cursor.State;
 
             % reach target
             ReachRect = Params.TargetRect; % centered at (0,0)

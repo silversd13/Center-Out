@@ -84,7 +84,7 @@ try
     
     % Experiment Loop with Imagined Cursor Movements
     Neuro = RunImaginedTask(Params,Neuro);
-    
+        
     % Experiment Loop
     Neuro = RunTask(Params,Neuro);
     

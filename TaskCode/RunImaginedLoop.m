@@ -27,7 +27,7 @@ DataFields = struct(...
 %%  Loop Through Blocks of Trials
 Trial = 0;
 for Block=1:Params.NumImaginedBlocks, % Block Loop
-    Cursor.Position = Params.Center;
+    Cursor.State = Params.Center;
     % random order of reach targets for each block
     TargetOrder = randperm(Params.NumTrialsPerBlock);
 

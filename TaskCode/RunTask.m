@@ -12,8 +12,14 @@ switch Params.ControlMode,
         '\n\nMouse Velocity Control\n\n'...
         '\nAt any time, you can press ''p'' to briefly pause the task.'...
         '\n\nPress the ''Space Bar'' to begin!' ];
-    case 3, % Adaptive decode
-    case 4, % Open-Loop decode
+    case 3, % Kalman Filter Velocity Decoder
+        Instructions = [...
+        '\n\nKalman Brain Control\n\n'...
+        '\nAt any time, you can press ''p'' to briefly pause the task.'...
+        '\n\nPress the ''Space Bar'' to begin!' ];
+    
+    % Initialize Kalman Filter
+    Neuro.KF = InitializeKF(Params.imagined_datadir);
 end
 
 InstructionScreen(Params,Instructions);

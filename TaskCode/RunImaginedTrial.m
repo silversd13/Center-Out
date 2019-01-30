@@ -19,7 +19,7 @@ fprintf('Target: %i\n',Data.TargetAngle)
 
 %% Inter Trial Interval
 OptimalCursorTraj = ...
-    GenerateCursorTraj(Cursor.Position,Cursor.Position,Params.InterTrialInterval,Params);
+    GenerateCursorTraj(Cursor.State,Cursor.State,Params.InterTrialInterval,Params);
 ct = 1;
 
 if ~Data.ErrorID,
@@ -57,9 +57,9 @@ if ~Data.ErrorID,
             end
             ct = ct + 1;
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.Position;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
+            Data.CursorPosition(end+1,:) = Cursor.State;
 
             % draw
             Screen('FillOval', Params.WPTR, Params.CursorColor, CursorRect);
@@ -77,7 +77,7 @@ end % only complete if no errors
 
 %% Go to Start Target
 OptimalCursorTraj = [...
-    GenerateCursorTraj(Cursor.Position,StartTargetPos,1,Params);
+    GenerateCursorTraj(Cursor.State,StartTargetPos,1,Params);
     GenerateCursorTraj(StartTargetPos,StartTargetPos,Params.TargetHoldTime,Params)];
 ct = 1;
 
@@ -117,9 +117,9 @@ if ~Data.ErrorID,
             Cursor = UpdateCursor(Params,Cursor,dt,OptimalCursorTraj(ct,:));
             ct = ct + 1;
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.Position;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
+            Data.CursorPosition(end+1,:) = Cursor.State;
 
             % start target
             StartRect = Params.TargetRect; % centered at (0,0)
@@ -199,9 +199,9 @@ if ~Data.ErrorID,
             Cursor = UpdateCursor(Params,Cursor,dt,OptimalCursorTraj(ct,:));
             ct = ct + 1;
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.Position;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
+            Data.CursorPosition(end+1,:) = Cursor.State;
             
             % start target
             StartRect = Params.TargetRect; % centered at (0,0)
@@ -283,9 +283,9 @@ if ~Data.ErrorID,
             Cursor = UpdateCursor(Params,Cursor,dt,OptimalCursorTraj(ct,:));
             ct = ct + 1;
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.Position(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.Position(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.Position;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
+            Data.CursorPosition(end+1,:) = Cursor.State;
 
             % reach target
             ReachRect = Params.TargetRect; % centered at (0,0)

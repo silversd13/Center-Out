@@ -1,5 +1,5 @@
-function Cursor = UpdateCursor(Params,Cursor,dt,newpos,targetvec)
-% Cursor = UpdateCursor(Params,Cursor,dt,newpos,targetvec)
+function Cursor = PredictCursor(Params,Cursor,dt,newpos,targetvec)
+% Cursor = PredictCursor(Params,Cursor,dt,newpos,targetvec)
 % Updates the state of the cursor using the method in Params.ControlMode
 %   1 - position control
 %   2 - velocity control
@@ -14,26 +14,12 @@ function Cursor = UpdateCursor(Params,Cursor,dt,newpos,targetvec)
 if isempty(Cursor), % initialize cursor to random position on screen
     x = randi([Params.ScreenRectangle(1),Params.ScreenRectangle(3)],1);
     y = randi([Params.ScreenRectangle(2),Params.ScreenRectangle(4)],1);
-    Cursor.Position = [x,y];
+    Cursor.State = [x,y,0,0,1];
 end
 if ~exist('newpos','var'), newpos = []; end
 if ~exist('targetvec','var'), targetvec = []; end
 
-% find dx and dy using control scheme
-switch Params.ControlMode, 
-    case 1, % Copy Mouse Position
-        [x,y] = GetMouse();
-        dx = x - Cursor.Position(1);
-        dy = y - Cursor.Position(2);
-    case 2, % Use Mouse Position as a Velocity Input (Center-Joystick)
-        [x,y] = GetMouse();
-        vx = x - Params.Center(1);
-        vy = y - Params.Center(2);
-        dx = Params.Gain * vx * dt;
-        dy = Params.Gain * vy * dt;
-    case 3,
-    case 4,
-end
+
 
 % update cursor
 if ~isempty(targetvec) && Params.AssistMode==1, % assistance
@@ -45,23 +31,23 @@ if ~isempty(targetvec) && Params.AssistMode==1, % assistance
     dxdy = ([dx,dy] * target_uvec') * target_uvec ...
         + ([dx,dy] * ortho_uvec') * ortho_uvec;
 elseif ~isempty(targetvec) && Params.AssistMode==2, % assistance
-    Vopt = targetvec / 50; % optimal velocity is scaled targetvec
+    Vopt = 10 * dt * targetvec / norm(targetvec); % optimal velocity is scaled targetvec
     Vdec = [dx,dy]; % decoded velocity
     dxdy = Params.Assistance*Vopt + (1-Params.Assistance)*Vdec; % output velocity
 else,
     dxdy = [dx,dy];
 end
-Cursor.Position = Cursor.Position + dxdy;
+Cursor.State = Cursor.State + dxdy;
 
 % Override cursor control
 if ~isempty(newpos),
-    Cursor.Position = newpos;
+    Cursor.State = newpos;
 end
 
 % bound cursor position to size of screen
-Cursor.Position(1) = max([Cursor.Position(1),Params.ScreenRectangle(1)]); % x-left
-Cursor.Position(1) = min([Cursor.Position(1),Params.ScreenRectangle(3)]); % x-right
-Cursor.Position(2) = max([Cursor.Position(2),Params.ScreenRectangle(2)]); % y-left
-Cursor.Position(2) = min([Cursor.Position(2),Params.ScreenRectangle(4)]); % y-right
+Cursor.State(1) = max([Cursor.State(1),Params.ScreenRectangle(1)]); % x-left
+Cursor.State(1) = min([Cursor.State(1),Params.ScreenRectangle(3)]); % x-right
+Cursor.State(2) = max([Cursor.State(2),Params.ScreenRectangle(2)]); % y-left
+Cursor.State(2) = min([Cursor.State(2),Params.ScreenRectangle(4)]); % y-right
 
 end % UpdateCursor
