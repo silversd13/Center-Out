@@ -3,6 +3,7 @@ function Cursor = PredictCursor(Params,Cursor,dt,newpos,targetvec)
 % Updates the state of the cursor using the method in Params.ControlMode
 %   1 - position control
 %   2 - velocity control
+%   3 - kalman filter  velocity
 % 
 % Cursor - structure with position parameters
 % dt - elapsed time
