@@ -7,18 +7,13 @@ function Neuro = CompNeuralFeatures(Neuro),
 % Neuro
 %   .DeltaBuf - buffer of delta band filtered neural data [ samps x chans ]
 %   .FilteredData - filtered data from last bin [ samps x chans x frqs ]
-%   .NeuralFeatures - matrix of features for decoding [ features x chans ]
+%   .NeuralFeatures - vector of features for decoding [ features*chans x 1 ]
 
 % allocate memory
 neural_features = zeros(Neuro.NumFeatures,Neuro.NumChannels);
 
-% update delta buffer
-[samps, ~, ~] = size(Neuro.FilteredData);
-Neuro.DeltaBuf = circshift(Neuro.DeltaBuf,-samps);
-Neuro.DeltaBuf((end-samps+1):end,:) = Neuro.FilteredData(:,:,1);
-
 % first compute phase for first frq band
-ang = angle(hilbert(Neuro.DeltaBuf));
+ang = angle(hilbert(Neuro.FilterDataBuf(:,:,1)));
 neural_features(1,:) = angle(sum(exp(1i*ang(end-samps+1:end,:))));
 
 % compute average pwr for all frq bands in last bin
@@ -35,7 +30,7 @@ end
 neural_features(:,Neuro.BadChannels) = 0;
 
 % put features in Neuro
-Neuro.NeuralFeatures = neural_features;
+Neuro.NeuralFeatures = neural_features(:);
 
 end % CompNeuralFeatures
 

@@ -16,7 +16,7 @@ if ~exist('ControlMode','var'), ControlMode = 1; end
 if ~exist('BLACKROCK','var'), BLACKROCK = 0; end
 if ~exist('DEBUG','var'), DEBUG = 0; end
 
-addpath(genpath('/Applications/Psychtoolbox'));
+% addpath(genpath('/Applications/Psychtoolbox'));
 AssertOpenGL;
 KbName('UnifyKeyNames');
 
@@ -44,9 +44,9 @@ Params.DEBUG = DEBUG;
 Params = GetParams(Params);
 
 %% Initialize Blackrock System
-addpath('C:\Program Files (x86)\Blackrock Microsystems\NeuroPort Windows Suite')
-cbmex('close'); % always close
 if BLACKROCK,
+    addpath('C:\Program Files (x86)\Blackrock Microsystems\NeuroPort Windows Suite')
+    cbmex('close'); % always close
     cbmex('open'); % open library
     cbmex('trialconfig', 1); % empty the buffer
 end
@@ -75,18 +75,62 @@ Neuro.ChStats.S      = zeros(1,Params.NumChannels); % aggregate deviation from e
 Neuro.ChStats.var    = zeros(1,Params.NumChannels); % estimate of variance for each channel
 
 % create delta buffer
-Neuro.DeltaBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels);
+Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,Neuro.NumFeatures);
+
+%% Cursor Object
+global Cursor
+Cursor.ControlMode = Params.ControlMode;
+Cursor.Assistance = Params.Assistance;
+Cursor.LastUpdateTime = GetSecs;
+Cursor.State = [0,0,0,0,1]';
+dt = 1/Params.ScreenRefreshRate;
+switch Cursor.ControlMode,
+    case 1,
+        Cursor.A = [...
+            1   0   dt  0   0;
+            0   1   0   dt  0;
+            0   0   1   0   0;
+            0   0   0   1   0;
+            0   0   0   0   1];
+    case 2,
+        Cursor.A = [...
+            1   0   dt  0   0;
+            0   1   0   dt  0;
+            0   0   1   0   0;
+            0   0   0   1   0;
+            0   0   0   0   1];
+    case 3,
+        Cursor.A = [...
+            1       0       dt      0       0;
+            0       1       0       dt      0;
+            0       0       .90     .01     0;
+            0       0       .01     .90     0;
+            0       0       0       0       1];
+        Cursor.W = [...
+            0       0       0       0       0;
+            0       0       0       0       0;
+            0       0       175     -1.2    0;
+            0       0       -1.2    175     0;
+            0       0       0       0       0];
+        Cursor.P = zeros(5);
+end
 
 %% Start
 try
     % Baseline 
-    Neuro = RunBaseline(Params,Neuro);
+    if Params.BaselineTime>0,
+        Neuro = RunBaseline(Params,Neuro);
+    end
     
     % Experiment Loop with Imagined Cursor Movements
-    Neuro = RunImaginedTask(Params,Neuro);
-        
+    if Params.NumImaginedBlocks>0,
+        Neuro = RunImaginedTask(Params,Neuro);
+    end
+    
     % Experiment Loop
-    Neuro = RunTask(Params,Neuro);
+    if Params.NumBlocks>0,
+        Neuro = RunTask(Params,Neuro);
+    end
     
     % Pause and Finish!
     ExperimentStop();

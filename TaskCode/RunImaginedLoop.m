@@ -1,6 +1,7 @@
 function Neuro = RunImaginedLoop(Params,Neuro)
 % Defines the structure of collected data on each trial
 % Loops through blocks and trials within blocks
+
 global Cursor
 
 %% Start Experiment

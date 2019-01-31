@@ -17,7 +17,7 @@ while ~done,
     if CheckPause, ExperimentPause(Params); end
     
     % Grab data every Xsecs
-    if (tim-tlast) > 1/Params.RefreshRate,
+    if (tim-tlast) > 1/Params.ScreenRefreshRate,
         % time
         tlast = tim;
         

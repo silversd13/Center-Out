@@ -15,8 +15,7 @@ end
 %% Control
 Params.Gain = 1;
 Params.CenterReset = false;
-Params.AssistMode = 2; % 0 - off, 1 - limit ortho vel, 2 - help move to target
-Params.Assistance = .5; % value btw 0 and 1, 1 full assist
+Params.Assistance = 0; % value btw 0 and 1, 1 full assist
 
 %% Current Date and Time
 % get today's date
@@ -32,7 +31,11 @@ if strcmpi(Params.Subject,'Test'),
     Params.HHMMSS = 'HHMMSS';
 end
 
-projectdir = fullfile('C:\Users\ganguly-lab2\Documents\MATLAB\Center-Out');
+if IsWin,
+    projectdir = 'C:\Users\ganguly-lab2\Documents\MATLAB\Center-Out';
+else,
+    projectdir = '/home/dsilver/Projects/Center-Out/';
+end
 datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMSS);
 
 % create folders for saving
@@ -42,16 +45,16 @@ if ~exist(Params.datadir,'dir'), mkdir(Params.datadir); end
 if ~exist(Params.imagined_datadir,'dir'), mkdir(Params.imagined_datadir); end
 
 %% Timing
-Params.RefreshRate = 60; % Hz
-Params.NeuralRefreshRate = 10; % Hz
-Params.BaselineTime = 1; % secs
+Params.ScreenRefreshRate = 60; % Hz
+Params.UpdateRate = 10; % Hz
+Params.BaselineTime = 0; % secs
 
 %% Targets
 Params.TargetSize = 30;
 Params.OutTargetColor = [0,255,0];
 Params.InTargetColor = [255,0,0];
 
-Params.StartTargetPosition  = Params.Center;
+Params.StartTargetPosition  = [0,0];
 Params.TargetRect = ...
     [-Params.TargetSize -Params.TargetSize +Params.TargetSize +Params.TargetSize];
 
@@ -69,18 +72,18 @@ Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
     +Params.CursorSize +Params.CursorSize];
 
 %% Trial and Block Types
-Params.NumBlocks = 1;
-Params.NumImaginedBlocks = 10;
+Params.NumBlocks = 5;
+Params.NumImaginedBlocks = 0;
 Params.NumTrialsPerBlock = length(Params.ReachTargetAngles);
 Params.NumTrials = Params.NumBlocks*Params.NumTrialsPerBlock;
 Params.NumImaginedTrials = Params.NumImaginedBlocks*Params.NumTrialsPerBlock;
 
 %% Hold Times
-Params.TargetHoldTime = .2;
+Params.TargetHoldTime = .3;
 Params.InterTrialInterval = 0;
-Params.InstructedDelayTime = .5;
-Params.MaxStartTime = 15;
-Params.MaxReachTime = 15;
+Params.InstructedDelayTime = 0;
+Params.MaxStartTime = 10;
+Params.MaxReachTime = 10;
 Params.InterBlockInterval = 1;
 
 %% Feedback
@@ -94,7 +97,7 @@ sound(0*Params.ErrorSound)
 %% BlackRock Params
 Params.Fs = 1000;
 Params.NumChannels = 128;
-Params.BufferTime = 4; % secs longer for better phase estimation of low frqs
+Params.BufferTime = 2; % secs longer for better phase estimation of low frqs
 Params.BufferSamps = Params.BufferTime * Params.Fs;
 Params.BadChannels = [];
 Params.ReferenceMode = 0; % 0-no ref, 1-common mean, 2-common median

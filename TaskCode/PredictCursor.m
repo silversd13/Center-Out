@@ -1,54 +1,61 @@
-function Cursor = PredictCursor(Params,Cursor,dt,newpos,targetvec)
-% Cursor = PredictCursor(Params,Cursor,dt,newpos,targetvec)
-% Updates the state of the cursor using the method in Params.ControlMode
+function PredictCursor(Params,targetpos)
+% PredictCursor(Params)
+% Updates the state of the cursor using the method in Cursor.ControlMode
 %   1 - position control
 %   2 - velocity control
 %   3 - kalman filter  velocity
 % 
 % Cursor - structure with position parameters
-% dt - elapsed time
-% newpos - newpos is given, cursor control is overridden
-% targetvec - used if assistance is on. tagetvec is axis optimal axis.
-%   assistance limits movement off that axis
 
-% deal with inputs
-if isempty(Cursor), % initialize cursor to random position on screen
-    x = randi([Params.ScreenRectangle(1),Params.ScreenRectangle(3)],1);
-    y = randi([Params.ScreenRectangle(2),Params.ScreenRectangle(4)],1);
-    Cursor.State = [x,y,0,0,1];
+% inputs
+global Cursor
+
+% Assistance
+if ~exist('targetpos','var'), evec = [0;0];
+else, evec = targetpos(:) - Cursor.State(1:2); % error vector
 end
-if ~exist('newpos','var'), newpos = []; end
-if ~exist('targetvec','var'), targetvec = []; end
-
-
-
-% update cursor
-if ~isempty(targetvec) && Params.AssistMode==1, % assistance
-    % define axis from cursor to target and orthogonal axis
-    target_uvec = targetvec / norm(targetvec);
-    ortho_uvec = target_uvec * [0 -1; 1 0];
-    ortho_uvec = ortho_uvec * (1 - Params.Assistance); % rescale to limit orthogonal cursor movement
-    % project dx and dy onto new basis
-    dxdy = ([dx,dy] * target_uvec') * target_uvec ...
-        + ([dx,dy] * ortho_uvec') * ortho_uvec;
-elseif ~isempty(targetvec) && Params.AssistMode==2, % assistance
-    Vopt = 10 * dt * targetvec / norm(targetvec); % optimal velocity is scaled targetvec
-    Vdec = [dx,dy]; % decoded velocity
-    dxdy = Params.Assistance*Vopt + (1-Params.Assistance)*Vdec; % output velocity
-else,
-    dxdy = [dx,dy];
+norm_evec = norm(evec);
+if norm_evec==0,
+    norm_evec = 1;
 end
-Cursor.State = Cursor.State + dxdy;
 
-% Override cursor control
-if ~isempty(newpos),
-    Cursor.State = newpos;
+State = Cursor.State;
+if Cursor.Assistance > 0,
+    dist = norm(evec);
+    
+    % current velocity
+    Vcur = State(3:4);
+    
+    % optimal velocity
+    if dist<=Params.TargetSize*.75, % in target
+        Vopt = 20 * evec(:) / norm_evec; % slow
+    else,
+        Vopt = 200 * evec(:) / norm_evec; % fast
+    end
+    
+    % assisted velocity
+    Vass = Cursor.Assistance * Vopt + (1-Cursor.Assistance)*Vcur;
+    
+    State(3:4) = Vass;
+    
+end
+
+% predict cursor based on previous state
+Cursor.State = Cursor.A*State;
+switch Cursor.ControlMode,
+    case 1,
+    case 2,
+    case 3, % kalman filter, update uncertainty
+        Cursor.P = Cursor.A*Cursor.P*Cursor.A' + Cursor.W;
 end
 
 % bound cursor position to size of screen
-Cursor.State(1) = max([Cursor.State(1),Params.ScreenRectangle(1)]); % x-left
-Cursor.State(1) = min([Cursor.State(1),Params.ScreenRectangle(3)]); % x-right
-Cursor.State(2) = max([Cursor.State(2),Params.ScreenRectangle(2)]); % y-left
-Cursor.State(2) = min([Cursor.State(2),Params.ScreenRectangle(4)]); % y-right
+pos = Cursor.State(1:2)' + Params.Center;
+pos(1) = max([pos(1),Params.ScreenRectangle(1)]); % x-left
+pos(1) = min([pos(1),Params.ScreenRectangle(3)]); % x-right
+pos(2) = max([pos(2),Params.ScreenRectangle(2)]); % y-left
+pos(2) = min([pos(2),Params.ScreenRectangle(4)]); % y-right
+Cursor.State(1) = pos(1) - Params.Center(1);
+Cursor.State(2) = pos(2) - Params.Center(2);
 
 end % UpdateCursor

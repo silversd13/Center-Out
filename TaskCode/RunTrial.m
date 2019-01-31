@@ -12,21 +12,18 @@ global Cursor
 %% Set up trial
 StartTargetPos = Params.StartTargetPosition;
 ReachTargetPos = Data.TargetPosition;
+tlast = GetSecs;
 
 % Output to Command Line
 fprintf('\nTrial: %i\n',Data.Trial)
 fprintf('Target: %i\n',Data.TargetAngle)
 
 %% Inter Trial Interval
-% define optimal axis
-optimal_axis = StartTargetPos - Cursor.State;
-if ~Data.ErrorID,
+if ~Data.ErrorID && Params.InterTrialInterval>0,
     tstart  = GetSecs;
-    Data.Events(1).Time = tstart;
-    Data.Events(1).Str  = 'Inter Trial Interval';
+    Data.Events(end+1).Time = tstart;
+    Data.Events(end).Str  = 'Inter Trial Interval';
 
-    tim  = GetSecs;
-    tlast = tim;
     done = 0;
     while ~done,
         % Update Time & Position
@@ -36,27 +33,30 @@ if ~Data.ErrorID,
         if CheckPause, ExperimentPause(Params); end
 
         % Update Screen Every Xsec
-        if (tim-tlast) > 1/Params.RefreshRate,
+        if (tim-tlast) > 1/Params.ScreenRefreshRate,
             % time
-            dt = tim - tlast;
             tlast = tim;
-            Data.Time(end+1,1) = tim;
+            Data.Time(1,end+1) = tim;
+            
+            % cursor
+            PredictCursor(Params);
             
             % grab and process neural data
-            if Params.BLACKROCK && ((tim-Neuro.LastUpdateTime)>1/Params.NeuralRefreshRate),
-                Neuro.LastUpdateTime = tim;
-                [Neuro,Data] = NeuroPipeline(Neuro,Data);
-                Data.NeuralTime(end+1,1) = tim;
+            if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
+                Cursor.LastUpdateTime = tim;
+                if Params.BLACKROCK,
+                    [Neuro,Data] = NeuroPipeline(Neuro,Data);
+                    Data.NeuralTime(1,end+1) = tim;
+                end
+                UpdateCursor(Params);
             end
             
             % cursor
-            if ~Params.CenterReset, Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
-            else, Cursor = UpdateCursor(Params,Cursor,dt,StartTargetPos);
-            end
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.State;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
+            Data.CursorState(:,end+1) = Cursor.State;
+            Data.CursorAssist(1,end+1) = Cursor.Assistance;
 
             % draw
             Screen('FillOval', Params.WPTR, Params.CursorColor, CursorRect);
@@ -73,18 +73,12 @@ if ~Data.ErrorID,
 end % only complete if no errors
 
 %% Go to Start Target
-% define optimal axis (used for assistance mode)
-optimal_axis = StartTargetPos - Cursor.State;
-if ~Data.ErrorID,
+if ~Data.ErrorID && ~Params.CenterReset,
     tstart  = GetSecs;
-    Data.Events(2).Time = tstart;
-    Data.Events(2).Str  = 'Start Target';
+    Data.Events(end+1).Time = tstart;
+    Data.Events(end).Str  = 'Start Target';
 
-    tim  = GetSecs;
-    tlast = tim;
-    if ~Params.CenterReset, done = 0;
-    else, done = 1; % skip reach to center
-    end
+    done = 0;
     totalTime = 0;
     while ~done,
         % Update Time & Position
@@ -94,34 +88,37 @@ if ~Data.ErrorID,
         if CheckPause, ExperimentPause(Params); end
 
         % Update Screen Every Xsec
-        if (tim-tlast) > 1/Params.RefreshRate,
+        if (tim-tlast) > 1/Params.ScreenRefreshRate,
             % time
             dt = tim - tlast;
             tlast = tim;
-            Data.Time(end+1,1) = tim;
+            Data.Time(1,end+1) = tim;
+            
+            % cursor
+            PredictCursor(Params,StartTargetPos);
             
             % grab and process neural data
-            if Params.BLACKROCK && ((tim-Neuro.LastUpdateTime)>1/Params.NeuralRefreshRate),
-                Neuro.LastUpdateTime = tim;
-                [Neuro,Data] = NeuroPipeline(Neuro,Data);
-                Data.NeuralTime(end+1,1) = tim;
+            if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
+                Cursor.LastUpdateTime = tim;
+                if Params.BLACKROCK,
+                    [Neuro,Data] = NeuroPipeline(Neuro,Data);
+                    Data.NeuralTime(1,end+1) = tim;
+                end
+                UpdateCursor(Params);
             end
             
             % cursor
-            if Params.AssistMode==2,
-                optimal_axis = StartTargetPos - Cursor.State;
-            end
-            Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.State;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
+            Data.CursorState(:,end+1) = Cursor.State;
+            Data.CursorAssist(1,end+1) = Cursor.Assistance;
 
             % start target
             StartRect = Params.TargetRect; % centered at (0,0)
-            StartRect([1,3]) = StartRect([1,3]) + StartTargetPos(1); % add x-pos
-            StartRect([2,4]) = StartRect([2,4]) + StartTargetPos(2); % add y-pos
-            inFlag = InTarget(Cursor,StartRect,Params.TargetSize);
+            StartRect([1,3]) = StartRect([1,3]) + StartTargetPos(1) + Params.Center(1); % add x-pos
+            StartRect([2,4]) = StartRect([2,4]) + StartTargetPos(2) + Params.Center(2); % add y-pos
+            inFlag = InTarget(Cursor,StartTargetPos,Params.TargetSize);
             if inFlag, StartCol = Params.InTargetColor;
             else, StartCol = Params.OutTargetColor;
             end
@@ -154,18 +151,16 @@ if ~Data.ErrorID,
             done = 1;
         end
     end % Start Target Loop
-end % only complete if no errors
+else % only complete if no errors and no automatic reset to center
+    Cursor.State = [0,0,0,0,1]';
+end
 
 %% Instructed Delay
-% define optimal axis
-optimal_axis = StartTargetPos - Cursor.State;
-if ~Data.ErrorID,
+if ~Data.ErrorID && Params.InstructedDelayTime>0,
     tstart  = GetSecs;
-    Data.Events(3).Time = tstart;
-    Data.Events(3).Str  = 'Instructed Delay';
+    Data.Events(end+1).Time = tstart;
+    Data.Events(end).Str  = 'Instructed Delay';
     
-    tim  = GetSecs;
-    tlast = tim;
     done = 0;
     totalTime = 0;
     while ~done,
@@ -176,42 +171,45 @@ if ~Data.ErrorID,
         if CheckPause, ExperimentPause(Params); end
         
         % Update Screen
-        if (tim-tlast) > 1/Params.RefreshRate,
+        if (tim-tlast) > 1/Params.ScreenRefreshRate,
             % time
             dt = tim - tlast;
             tlast = tim;
-            Data.Time(end+1,1) = tim;
+            Data.Time(1,end+1) = tim;
 
+            % cursor
+            PredictCursor(Params,StartTargetPos);
+            
             % grab and process neural data
-            if Params.BLACKROCK && ((tim-Neuro.LastUpdateTime)>1/Params.NeuralRefreshRate),
-                Neuro.LastUpdateTime = tim;
-                [Neuro,Data] = NeuroPipeline(Neuro,Data);
-                Data.NeuralTime(end+1,1) = tim;
+            if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
+                Cursor.LastUpdateTime = tim;
+                if Params.BLACKROCK,
+                    [Neuro,Data] = NeuroPipeline(Neuro,Data);
+                    Data.NeuralTime(1,end+1) = tim;
+                end
+                UpdateCursor(Params);
             end
             
             % cursor
-            if Params.AssistMode==2,
-                optimal_axis = StartTargetPos - Cursor.State;
-            end
-            Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.State;
-            
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
+            Data.CursorState(:,end+1) = Cursor.State;
+            Data.CursorAssist(1,end+1) = Cursor.Assistance;
+
             % start target
             StartRect = Params.TargetRect; % centered at (0,0)
-            StartRect([1,3]) = StartRect([1,3]) + StartTargetPos(1); % add x-pos
-            StartRect([2,4]) = StartRect([2,4]) + StartTargetPos(2); % add y-pos
-            inFlag = InTarget(Cursor,StartRect,Params.TargetSize);
+            StartRect([1,3]) = StartRect([1,3]) + StartTargetPos(1) + Params.Center(1); % add x-pos
+            StartRect([2,4]) = StartRect([2,4]) + StartTargetPos(2) + Params.Center(2); % add y-pos
+            inFlag = InTarget(Cursor,StartTargetPos,Params.TargetSize);
             if inFlag, StartCol = Params.InTargetColor;
             else, StartCol = Params.OutTargetColor;
             end
             
             % reach target
             ReachRect = Params.TargetRect; % centered at (0,0)
-            ReachRect([1,3]) = ReachRect([1,3]) + ReachTargetPos(1); % add x-pos
-            ReachRect([2,4]) = ReachRect([2,4]) + ReachTargetPos(2); % add y-pos
+            ReachRect([1,3]) = ReachRect([1,3]) + ReachTargetPos(1) + Params.Center(1); % add x-pos
+            ReachRect([2,4]) = ReachRect([2,4]) + ReachTargetPos(2) + Params.Center(2); % add y-pos
             ReachCol = Params.OutTargetColor;
                         
             % draw
@@ -240,15 +238,11 @@ if ~Data.ErrorID,
 end % only complete if no errors
 
 %% Go to reach target
-% define optimal axis
-optimal_axis = ReachTargetPos - StartTargetPos;
 if ~Data.ErrorID,
     tstart  = GetSecs;
-    Data.Events(4).Time = tstart;
-    Data.Events(4).Str  = 'Reach Target';
+    Data.Events(end+1).Time = tstart;
+    Data.Events(end).Str  = 'Reach Target';
 
-    tim  = GetSecs;
-    tlast = tim;
     done = 0;
     totalTime = 0;
     while ~done,
@@ -259,36 +253,39 @@ if ~Data.ErrorID,
         if CheckPause, ExperimentPause(Params); end
 
         % Update Screen
-        if (tim-tlast) > 1/Params.RefreshRate,
+        if (tim-tlast) > 1/Params.ScreenRefreshRate,
             % time
             dt = tim - tlast;
             tlast = tim;
-            Data.Time(end+1,1) = tim;
+            Data.Time(1,end+1) = tim;
 
+            % cursor
+            PredictCursor(Params,ReachTargetPos);
+            
             % grab and process neural data
-            if Params.BLACKROCK && ((tim-Neuro.LastUpdateTime)>1/Params.NeuralRefreshRate),
-                Neuro.LastUpdateTime = tim;
-                [Neuro,Data] = NeuroPipeline(Neuro,Data);
-                Data.NeuralTime(end+1,1) = tim;
+            if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
+                Cursor.LastUpdateTime = tim;
+                if Params.BLACKROCK,
+                    [Neuro,Data] = NeuroPipeline(Neuro,Data);
+                    Data.NeuralTime(1,end+1) = tim;
+                end
+                UpdateCursor(Params);
             end
             
             % cursor
-            if Params.AssistMode==2,
-                optimal_axis = ReachTargetPos - Cursor.State;
-            end
-            Cursor = UpdateCursor(Params,Cursor,dt,[],optimal_axis);
             CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2); % add y-pos
-            Data.CursorPosition(end+1,:) = Cursor.State;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
+            Data.CursorState(:,end+1) = Cursor.State;
+            Data.CursorAssist(1,end+1) = Cursor.Assistance;
 
             % reach target
             ReachRect = Params.TargetRect; % centered at (0,0)
-            ReachRect([1,3]) = ReachRect([1,3]) + ReachTargetPos(1); % add x-pos
-            ReachRect([2,4]) = ReachRect([2,4]) + ReachTargetPos(2); % add y-pos
+            ReachRect([1,3]) = ReachRect([1,3]) + ReachTargetPos(1) + Params.Center(1); % add x-pos
+            ReachRect([2,4]) = ReachRect([2,4]) + ReachTargetPos(2) + Params.Center(2); % add y-pos
 
             % draw
-            inFlag = InTarget(Cursor,ReachRect,Params.TargetSize);            
+            inFlag = InTarget(Cursor,ReachTargetPos,Params.TargetSize);            
             if inFlag, ReachCol = Params.InTargetColor;
             else, ReachCol = Params.OutTargetColor;
             end
