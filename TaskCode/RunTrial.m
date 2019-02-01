@@ -1,4 +1,4 @@
-function [Data, Neuro] = RunTrial(Data,Params,Neuro)
+function [Data, Neuro] = RunTrial(Data,Params,Neuro,TaskFlag)
 % Runs a trial, saves useful data along the way
 % Each trial contains the following pieces
 % 1) Inter-trial interval
@@ -24,6 +24,12 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Inter Trial Interval';
 
+    if TaskFlag==1,
+        OptimalCursorTraj = ...
+            GenerateCursorTraj(Cursor.State,Cursor.State,Params.InterTrialInterval,Params);
+        ct = 1;
+    end
+    
     done = 0;
     while ~done,
         % Update Time & Position
@@ -52,6 +58,10 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
             end
             
             % cursor
+            if TaskFlag==1, % imagined movements
+                Cursor.State(1:2) = OptimalCursorTraj(ct,:);
+                ct = ct + 1;
+            end
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
             CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
@@ -78,6 +88,13 @@ if ~Data.ErrorID && ~Params.CenterReset,
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Start Target';
 
+    if TaskFlag==1,
+        OptimalCursorTraj = [...
+            GenerateCursorTraj(Cursor.State,StartTargetPos,1,Params);
+            GenerateCursorTraj(StartTargetPos,StartTargetPos,Params.TargetHoldTime,Params)];
+        ct = 1;
+    end
+    
     done = 0;
     totalTime = 0;
     while ~done,
@@ -108,6 +125,10 @@ if ~Data.ErrorID && ~Params.CenterReset,
             end
             
             % cursor
+            if TaskFlag==1, % imagined movements
+                Cursor.State(1:2) = OptimalCursorTraj(ct,:);
+                ct = ct + 1;
+            end
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
             CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
@@ -161,6 +182,12 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Instructed Delay';
     
+    if TaskFlag==1,
+        OptimalCursorTraj = ...
+            GenerateCursorTraj(StartTargetPos,StartTargetPos,Params.InstructedDelayTime,Params);
+        ct = 1;
+    end
+    
     done = 0;
     totalTime = 0;
     while ~done,
@@ -191,6 +218,10 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
             end
             
             % cursor
+            if TaskFlag==1, % imagined movements
+                Cursor.State(1:2) = OptimalCursorTraj(ct,:);
+                ct = ct + 1;
+            end
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
             CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
@@ -243,6 +274,13 @@ if ~Data.ErrorID,
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Reach Target';
 
+    if TaskFlag==1,
+        OptimalCursorTraj = [...
+            GenerateCursorTraj(StartTargetPos,ReachTargetPos,1,Params);
+            GenerateCursorTraj(ReachTargetPos,ReachTargetPos,Params.TargetHoldTime,Params)];
+        ct = 1;
+    end
+    
     done = 0;
     totalTime = 0;
     while ~done,
@@ -273,6 +311,10 @@ if ~Data.ErrorID,
             end
             
             % cursor
+            if TaskFlag==1, % imagined movements
+                Cursor.State(1:2) = OptimalCursorTraj(ct,:);
+                ct = ct + 1;
+            end
             CursorRect = Params.CursorRect;
             CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
             CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos

@@ -80,7 +80,6 @@ Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,Neuro.NumFeature
 %% Cursor Object
 global Cursor
 Cursor.ControlMode = Params.ControlMode;
-Cursor.Assistance = Params.Assistance;
 Cursor.LastUpdateTime = GetSecs;
 Cursor.State = [0,0,0,0,1]';
 dt = 1/Params.ScreenRefreshRate;
@@ -122,14 +121,19 @@ try
         Neuro = RunBaseline(Params,Neuro);
     end
     
-    % Experiment Loop with Imagined Cursor Movements
+    % Imagined Cursor Movements Loop
     if Params.NumImaginedBlocks>0,
-        Neuro = RunImaginedTask(Params,Neuro);
+        Neuro = RunTask(Params,Neuro,1);
     end
     
-    % Experiment Loop
-    if Params.NumBlocks>0,
-        Neuro = RunTask(Params,Neuro);
+    % Adaptation Loop
+    if Params.NumAdaptBlocks>0,
+        Neuro = RunTask(Params,Neuro,2);
+    end
+    
+    % Fixed Decoder Loop
+    if Params.NumFixedBlocks>0,
+        Neuro = RunTask(Params,Neuro,3);
     end
     
     % Pause and Finish!

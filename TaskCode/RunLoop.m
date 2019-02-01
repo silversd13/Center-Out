@@ -1,4 +1,4 @@
-function Neuro = RunLoop(Params,Neuro)
+function Neuro = RunLoop(Params,Neuro,TaskFlag,datadir)
 % Defines the structure of collected data on each trial
 % Loops through blocks and trials within blocks
 
@@ -26,9 +26,15 @@ DataFields = struct(...
     'Events',[]...
     );
 
+switch TaskFlag,
+    case 1, NumBlocks = Params.NumImaginedBlocks;
+    case 2, NumBlocks = Params.NumAdaptBlocks;
+    case 3, NumBlocks = Params.NumFixedBlocks;
+end
+
 %%  Loop Through Blocks of Trials
 Trial = 0;
-for Block=1:Params.NumBlocks, % Block Loop
+for Block=1:NumBlocks, % Block Loop
 
     % random order of reach targets for each block
     TargetOrder = randperm(Params.NumTrialsPerBlock);
@@ -47,11 +53,11 @@ for Block=1:Params.NumBlocks, % Block Loop
         
         % Run Trial
         TrialData.TrialStartTime  = GetSecs;
-        [TrialData,Neuro] = RunTrial(TrialData,Params,Neuro);
+        [TrialData,Neuro] = RunTrial(TrialData,Params,Neuro,TaskFlag);
         TrialData.TrialEndTime    = GetSecs;
                 
         % Save Data from Single Trial
-        save(fullfile(Params.datadir,sprintf('Data%04i.mat',Trial)),'TrialData');
+        save(fullfile(datadir,sprintf('Data%04i.mat',Trial)),'TrialData');
         
     end % Trial Loop
     

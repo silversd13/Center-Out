@@ -15,7 +15,7 @@ end
 %% Control
 Params.Gain = 1;
 Params.CenterReset = false;
-Params.Assistance = 0; % value btw 0 and 1, 1 full assist
+Params.Assistance = .5; % value btw 0 and 1, 1 full assist
 
 %% Current Date and Time
 % get today's date
@@ -39,10 +39,8 @@ end
 datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMSS);
 
 % create folders for saving
-Params.datadir = datadir;
-Params.imagined_datadir = fullfile(datadir,'Imagined');
-if ~exist(Params.datadir,'dir'), mkdir(Params.datadir); end
-if ~exist(Params.imagined_datadir,'dir'), mkdir(Params.imagined_datadir); end
+Params.Datadir = datadir;
+if ~exist(Params.Datadir,'dir'), mkdir(Params.Datadir); end
 
 %% Timing
 Params.ScreenRefreshRate = 60; % Hz
@@ -72,11 +70,10 @@ Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
     +Params.CursorSize +Params.CursorSize];
 
 %% Trial and Block Types
-Params.NumBlocks = 5;
-Params.NumImaginedBlocks = 0;
-Params.NumTrialsPerBlock = length(Params.ReachTargetAngles);
-Params.NumTrials = Params.NumBlocks*Params.NumTrialsPerBlock;
-Params.NumImaginedTrials = Params.NumImaginedBlocks*Params.NumTrialsPerBlock;
+Params.NumImaginedBlocks    = 1;
+Params.NumAdaptBlocks       = 1;
+Params.NumFixedBlocks       = 1;
+Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 
 %% Hold Times
 Params.TargetHoldTime = .3;
@@ -149,7 +146,7 @@ end
 Params.NumFeatures = length(unique([Params.FilterBank.feature])) + 1;
 
 %% Save Parameters
-save(fullfile(Params.datadir,'Params.mat'),'Params');
+save(fullfile(Params.Datadir,'Params.mat'),'Params');
 
 end % GetParams
 
