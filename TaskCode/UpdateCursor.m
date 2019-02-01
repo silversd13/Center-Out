@@ -35,4 +35,10 @@ switch Cursor.ControlMode,
     case 4,
 end
 
+% decrease assistance during adaptation block
+if Cursor.Assistance>0,
+    Cursor.Assistance = Cursor.Assistance - Cursor.DeltaAssistance;
+    Cursor.Assistance = max([Cursor.Assistance,0]);
+end
+
 end % UpdateCursor

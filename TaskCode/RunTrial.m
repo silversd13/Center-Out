@@ -54,7 +54,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                     [Neuro,Data] = NeuroPipeline(Neuro,Data);
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params);
+                UpdateCursor(Params,Neuro);
             end
             
             % cursor
@@ -90,7 +90,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
 
     if TaskFlag==1,
         OptimalCursorTraj = [...
-            GenerateCursorTraj(Cursor.State,StartTargetPos,1,Params);
+            GenerateCursorTraj(Cursor.State,StartTargetPos,1.5,Params);
             GenerateCursorTraj(StartTargetPos,StartTargetPos,Params.TargetHoldTime,Params)];
         ct = 1;
     end
@@ -121,7 +121,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
                     [Neuro,Data] = NeuroPipeline(Neuro,Data);
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params);
+                UpdateCursor(Params,Neuro);
             end
             
             % cursor
@@ -214,7 +214,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                     [Neuro,Data] = NeuroPipeline(Neuro,Data);
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params);
+                UpdateCursor(Params,Neuro);
             end
             
             % cursor
@@ -276,7 +276,7 @@ if ~Data.ErrorID,
 
     if TaskFlag==1,
         OptimalCursorTraj = [...
-            GenerateCursorTraj(StartTargetPos,ReachTargetPos,1,Params);
+            GenerateCursorTraj(StartTargetPos,ReachTargetPos,1.5,Params);
             GenerateCursorTraj(ReachTargetPos,ReachTargetPos,Params.TargetHoldTime,Params)];
         ct = 1;
     end
@@ -307,7 +307,7 @@ if ~Data.ErrorID,
                     [Neuro,Data] = NeuroPipeline(Neuro,Data);
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params);
+                UpdateCursor(Params,Neuro);
             end
             
             % cursor

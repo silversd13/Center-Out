@@ -8,7 +8,9 @@ Neuro = ReadBR(Neuro);
 Neuro = RefNeuralData(Neuro);
 Neuro = ApplyFilterBank(Neuro);
 Neuro = UpdateNeuroBuf(Neuro);
+tic;
 Neuro = CompNeuralFeatures(Neuro);
+toc
 Neuro = UpdateChStats(Neuro);
 varargout{1} = Neuro;
 
@@ -16,7 +18,7 @@ varargout{1} = Neuro;
 if exist('Data','var') && ~isempty(Data),
     Data.NeuralTimeBR(1,end+1) = Neuro.TimeStamp;
     Data.NeuralSamps(1,end+1) = Neuro.NumSamps;
-    Data.NeuralFeatures(:,end+1) = Neuro.NeuralFeatures;
+    Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
     Data.ProcessedData{end+1} = Neuro.FilteredData;
     varargout{2} = Data;
 end

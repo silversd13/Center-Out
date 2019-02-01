@@ -10,18 +10,27 @@ function Neuro = CompNeuralFeatures(Neuro),
 %   .NeuralFeatures - vector of features for decoding [ features*chans x 1 ]
 
 % allocate memory
+samps = Neuro.NumSamps;
 neural_features = zeros(Neuro.NumFeatures,Neuro.NumChannels);
 
-% first compute phase for first frq band
-ang = angle(hilbert(Neuro.FilterDataBuf(:,:,1)));
+% first compute hilbert for first 3 freq bands
+H = hilbert(Neuro.FilterDataBuf);
+
+% compute phase for delta band using hilbert (only keep last bin)
+ang = angle(H(:,:,1));
 neural_features(1,:) = angle(sum(exp(1i*ang(end-samps+1:end,:))));
 
-% compute average pwr for all frq bands in last bin
-pwr = log10(mean(Neuro.FilteredData.^2, 1));
+% compute pwr in first 3 frq bands based on hilbert (only keep last bin)
+pwr = abs(H);
+neural_features(2:4,:) = log10(squeeze(mean(pwr(end-samps+1:end,:,:))))';
+
+% compute average pwr for all remaining frq bands in last bin
+pwr = log10(mean(Neuro.FilteredData(:,:,4:end).^2, 1));
 
 % combine feature vectors and remove singleton dimension
 feature_idx = [Neuro.FilterBank.feature];
-for i=1:Neuro.NumFeatures-1,
+feature_idx = feature_idx(4:end); % already computed for first 3 freq bands
+for i=4:Neuro.NumFeatures-1,
     idx = feature_idx == i;
     neural_features(i+1,:) = mean(pwr(:,:,idx),3);
 end

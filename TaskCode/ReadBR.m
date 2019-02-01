@@ -22,6 +22,7 @@ end
 num_samps = size(neural_data,1);
 if num_samps > Neuro.BufferSamps,
     neural_data = neural_data(1:Neuro.BufferSamps,:);
+    num_samps = Neuro.BufferSamps;
 end
 
 % put in Neuro structure

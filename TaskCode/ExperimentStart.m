@@ -75,7 +75,7 @@ Neuro.ChStats.S      = zeros(1,Params.NumChannels); % aggregate deviation from e
 Neuro.ChStats.var    = zeros(1,Params.NumChannels); % estimate of variance for each channel
 
 % create delta buffer
-Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,Neuro.NumFeatures);
+Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,3);
 
 %% Cursor Object
 global Cursor
@@ -118,6 +118,7 @@ end
 try
     % Baseline 
     if Params.BaselineTime>0,
+        Cursor.DeltaAssistance = 0;
         Neuro = RunBaseline(Params,Neuro);
     end
     

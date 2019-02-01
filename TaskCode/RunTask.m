@@ -15,7 +15,16 @@ switch TaskFlag,
         
         InstructionScreen(Params,Instructions);
         Cursor.Assistance = Params.Assistance;
+        Cursor.DeltaAssistance = 0;
         mkdir(fullfile(Params.Datadir,'Imagined'));
+        
+        % output to screen
+        fprintf('Imagined Movements:\n')
+        fprintf('  %i Blocks (%i Total Trials)\n',...
+            Params.NumImaginedBlocks,...
+            Params.NumImaginedBlocks*Params.NumTrialsPerBlock)
+        fprintf('  Saving data to %s\n\n',fullfile(Params.Datadir,'Imagined'))
+        
         Neuro = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'Imagined'));
         
     case 2, % Control Mode with Assist & CLDA
@@ -42,7 +51,24 @@ switch TaskFlag,
         
         InstructionScreen(Params,Instructions);
         Cursor.Assistance = Params.Assistance;
+        Cursor.DeltaAssistance = ... % linearly decrease assistance
+            Cursor.Assistance...
+            /(Params.NumAdaptBlocks...
+            *Params.NumTrialsPerBlock...
+            *Params.UpdateRate...
+            *4); % sec/trial
+        disp(Cursor.DeltaAssistance)
         mkdir(fullfile(Params.Datadir,'BCI_CLDA'));
+        
+        % output to screen
+        fprintf('Adaptive Control:\n')
+        fprintf('  %i Blocks (%i Total Trials)\n',...
+            Params.NumAdaptBlocks,...
+            Params.NumAdaptBlocks*Params.NumTrialsPerBlock)
+        fprintf('  Assistance: %.2f\n', Cursor.Assistance)
+        fprintf('  Change in Assistance: %.2f\n', Cursor.DeltaAssistance)
+        fprintf('  Saving data to %s\n\n',fullfile(Params.Datadir,'BCI_CLDA'))
+        
         Neuro = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'BCI_CLDA'));
         
     case 3, % Control Mode without Assist and fixed
@@ -67,7 +93,16 @@ switch TaskFlag,
         
         InstructionScreen(Params,Instructions);
         Cursor.Assistance = 0;
+        Cursor.DeltaAssistance = 0;
         mkdir(fullfile(Params.Datadir,'BCI_Fixed'));
+        
+        % output to screen
+        fprintf('Fixed Control:\n')
+        fprintf('  %i Blocks (%i Total Trials)\n',...
+            Params.NumFixedBlocks,...
+            Params.NumFixedBlocks*Params.NumTrialsPerBlock)
+        fprintf('  Saving data to %s\n\n',fullfile(Params.Datadir,'BCI_Fixed'))
+        
         Neuro = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'BCI_Fixed'));
         
 end
