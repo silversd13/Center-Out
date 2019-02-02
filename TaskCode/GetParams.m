@@ -41,9 +41,10 @@ elseif IsOSX,
 else,
     projectdir = '/home/dsilver/Projects/Center-Out/';
 end
-datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMSS);
+addpath(genpath(fullfile(projectdir,'TaskCode')));
 
 % create folders for saving
+datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMSS);
 Params.Datadir = datadir;
 if ~exist(Params.Datadir,'dir'), mkdir(Params.Datadir); end
 
