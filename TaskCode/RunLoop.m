@@ -38,7 +38,7 @@ Trial = 0;
 for Block=1:NumBlocks, % Block Loop
 
     % random order of reach targets for each block
-    TargetOrder = randperm(Params.NumTrialsPerBlock);
+    TargetOrder = Params.TargetFunc(Params.NumTrialsPerBlock);
 
     for TrialPerBlock=1:Params.NumTrialsPerBlock, % Trial Loop
         Trial = Trial + 1;

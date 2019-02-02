@@ -366,11 +366,11 @@ Screen('Flip', Params.WPTR);
 if Data.ErrorID==0,
     fprintf('SUCCESS\n')
     if Params.FeedbackSound,
-        sound(Params.RewardSound)
+        sound(Params.RewardSound,Params.RewardSoundFs)
     end
 else
     if Params.FeedbackSound,
-        sound(Params.ErrorSound)
+        sound(Params.ErrorSound,Params.ErrorSoundFs)
     end
     WaitSecs(Params.ErrorWaitTime);
 end

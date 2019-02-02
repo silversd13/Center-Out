@@ -78,7 +78,12 @@ Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
 Params.NumImaginedBlocks    = 1;
 Params.NumAdaptBlocks       = 1;
 Params.NumFixedBlocks       = 1;
+Params.TargetSelectionFlag  = 2; % 1-pseudorandom, 2-random
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
+switch Params.TargetSelectionFlag,
+    case 1, Params.TargetFunc = @randperm;
+    case 2, Params.TargetFunc = @(n) randi(n,1,n);
+end
 
 %% Hold Times
 Params.TargetHoldTime = .3;
@@ -89,12 +94,13 @@ Params.MaxReachTime = 10;
 Params.InterBlockInterval = 1;
 
 %% Feedback
-Params.FeedbackSound = 0;
+Params.FeedbackSound = true;
 Params.ErrorWaitTime = 2;
 Params.ErrorSound = 1000*audioread('buzz.wav');
-Params.RewardSound = 1000*audioread('smw_coin.wav');
+Params.ErrorSoundFs = 8192;
+[Params.RewardSound,Params.RewardSoundFs] = audioread('reward1.wav');
 % play sounds silently once so Matlab gets used to it
-sound(0*Params.ErrorSound)
+sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
 Params.SaveProcessed = false;
