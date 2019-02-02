@@ -33,6 +33,8 @@ end
 
 if IsWin,
     projectdir = 'C:\Users\ganguly-lab2\Documents\MATLAB\Center-Out';
+elseif IsOSX,
+    projectdir = '/Users/daniel/Projects/Center-Out/';
 else,
     projectdir = '/home/dsilver/Projects/Center-Out/';
 end
