@@ -1,7 +1,7 @@
 function ExperimentStart(Subject,ControlMode,BLACKROCK,DEBUG)
 % function ExperimentStart(Subject,ControlMode)
 % Subject - string for the subject id
-% ControlMode - [1,2,3,4] for mouse pos, mouse vel, refit, & open control
+% ControlMode - [1,2,3] for mouse pos, mouse vel, & kalman
 % BLACKROCK - [0,1] if 1, collects, processes, and saves neural data
 % DEBUG - [0,1] if 1, enters DEBUG mode in which screen is small and cursor
 %   remains unhidden
@@ -12,11 +12,10 @@ clc
 warning off
 
 if ~exist('Subject','var'), Subject = 'Test'; DEBUG = 1; end
-if ~exist('ControlMode','var'), ControlMode = 1; end
+if ~exist('ControlMode','var'), ControlMode = 2; end
 if ~exist('BLACKROCK','var'), BLACKROCK = 0; end
 if ~exist('DEBUG','var'), DEBUG = 0; end
 
-% addpath(genpath('/Applications/Psychtoolbox'));
 AssertOpenGL;
 KbName('UnifyKeyNames');
 
@@ -54,6 +53,8 @@ end
 %% Neural Signal Processing
 % create neuro structure for keeping track of all neuro updates/state
 % changes
+Neuro.CLDA          = Params.CLDA;
+Neuro.SaveProcessed = Params.SaveProcessed;
 Neuro.FilterBank    = Params.FilterBank;
 Neuro.NumChannels   = Params.NumChannels;
 Neuro.BufferSamps   = Params.BufferSamps;
@@ -82,6 +83,7 @@ global Cursor
 Cursor.ControlMode = Params.ControlMode;
 Cursor.LastUpdateTime = GetSecs;
 Cursor.State = [0,0,0,0,1]';
+Cursor.IntendedState = [0,0,0,0,1]';
 dt = 1/Params.ScreenRefreshRate;
 switch Cursor.ControlMode,
     case 1,

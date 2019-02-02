@@ -10,6 +10,7 @@ function UpdateCursor(Params,Neuro)
 %   assistance limits movement off that axis
 
 global Cursor
+KF = Neuro.KF;
 
 % find vx and vy using control scheme
 switch Cursor.ControlMode,
@@ -28,8 +29,8 @@ switch Cursor.ControlMode,
         Cursor.State(4) = vy;
         
     case 3, % Kalman Filter Velocity Input
-        K = (Cursor.P * Neuro.C')/(Neuro.C * Cursor.P*Neuro.C' + Neuro.Q);
-        Cursor.State = Cursor.State + K*(Neuro.NeuralFeatures - Neuro.C * Cursor.State);
+        K = (Cursor.P * KF.C')/(KF.C * Cursor.P*KF.C' + KF.Q);
+        Cursor.State = Cursor.State + K*(Neuro.NeuralFeatures - KF.C * Cursor.State);
         Cursor.P = Cursor.P - K*Cursor.C * Cursor.P;
         
     case 4,

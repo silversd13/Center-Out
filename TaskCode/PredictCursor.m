@@ -20,24 +20,24 @@ if norm_evec==0,
 end
 
 State = Cursor.State;
+dist = norm(evec);
+
+% current velocity
+Vcur = State(3:4);
+
+% optimal velocity
+if dist<=Params.TargetSize*.75, % in target
+    Vopt = 20 * evec(:) / norm_evec; % slow
+else,
+    Vopt = 200 * evec(:) / norm_evec; % fast
+end
+Cursor.IntendedState = State;
+Cursor.IntendedState(3:4) = Vopt;
+
+% assisted velocity
 if Cursor.Assistance > 0,
-    dist = norm(evec);
-    
-    % current velocity
-    Vcur = State(3:4);
-    
-    % optimal velocity
-    if dist<=Params.TargetSize*.75, % in target
-        Vopt = 20 * evec(:) / norm_evec; % slow
-    else,
-        Vopt = 200 * evec(:) / norm_evec; % fast
-    end
-    
-    % assisted velocity
     Vass = Cursor.Assistance * Vopt + (1-Cursor.Assistance)*Vcur;
-    
     State(3:4) = Vass;
-    
 end
 
 % predict cursor based on previous state
