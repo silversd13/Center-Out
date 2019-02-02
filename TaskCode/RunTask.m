@@ -45,8 +45,8 @@ switch TaskFlag,
                     '\nAt any time, you can press ''p'' to briefly pause the task.'...
                     '\n\nPress the ''Space Bar'' to begin!' ];
                 
-                % Initialize Kalman Filter
-                Neuro.KF = InitializeKF(fullfile(Params.Datadir,'Imagined'));
+                % Fit Kalman Filter based on imagined movements
+                Neuro.KF = FitKF(fullfile(Params.Datadir,'Imagined'),0);
         end
         
         InstructionScreen(Params,Instructions);
@@ -57,7 +57,7 @@ switch TaskFlag,
             *Params.NumTrialsPerBlock...
             *Params.UpdateRate...
             *4); % sec/trial
-        disp(Cursor.DeltaAssistance)
+        % Cursor.DeltaAssistance = 0; % no change in assistance
         mkdir(fullfile(Params.Datadir,'BCI_CLDA'));
         
         % output to screen
@@ -89,6 +89,11 @@ switch TaskFlag,
                     '\nAt any time, you can press ''p'' to briefly pause the task.'...
                     '\n\nPress the ''Space Bar'' to begin!' ];
                 
+                % reFit Kalman Filter based on intended kinematics during
+                % adaptive block
+                if Neuro.CLDA.Type==1,
+                    Neuro.KF = FitKF(fullfile(Params.Datadir,'BCI_CLDA'),1);
+                end
         end
         
         InstructionScreen(Params,Instructions);
@@ -106,7 +111,5 @@ switch TaskFlag,
         Neuro = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'BCI_Fixed'));
         
 end
-
-
 
 end % RunTask

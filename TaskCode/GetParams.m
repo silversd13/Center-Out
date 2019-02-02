@@ -16,6 +16,9 @@ end
 Params.Gain = 1;
 Params.CenterReset = false;
 Params.Assistance = .5; % value btw 0 and 1, 1 full assist
+Params.CLDA.Type = 1; % 1-refit, 2-smooth batch, 3-continuous
+Params.CLDA.Alpha = .5; % for smooth batch
+Params.CLDA.Lambda = .5; % for continuous
 
 %% Current Date and Time
 % get today's date
@@ -92,6 +95,7 @@ Params.RewardSound = 1000*audioread('smw_coin.wav');
 sound(0*Params.ErrorSound)
 
 %% BlackRock Params
+Params.SaveProcessed = false;
 Params.Fs = 1000;
 Params.NumChannels = 128;
 Params.BufferTime = 2; % secs longer for better phase estimation of low frqs
