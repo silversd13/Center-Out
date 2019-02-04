@@ -6,12 +6,17 @@ function varargout = NeuroPipeline(Neuro,Data),
 % process neural data
 Neuro = ReadBR(Neuro);
 Neuro = RefNeuralData(Neuro);
+if Neuro.ZscoreRawFlag,
+    Neuro = ZscoreChannels(Neuro);
+    Neuro = UpdateChStats(Neuro);
+end
 Neuro = ApplyFilterBank(Neuro);
 Neuro = UpdateNeuroBuf(Neuro);
-tic;
 Neuro = CompNeuralFeatures(Neuro);
-toc
-Neuro = UpdateChStats(Neuro);
+if Neuro.ZscoreFeaturesFlag,
+    Neuro = ZscoreFeatures(Neuro);
+    Neuro = UpdateFeatureStats(Neuro);
+end
 varargout{1} = Neuro;
 
 % if Data exists and is not empty, fill structure

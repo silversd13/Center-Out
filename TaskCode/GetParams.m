@@ -104,6 +104,8 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
+Params.ZscoreRawFlag = true;
+Params.ZscoreFeaturesFlag = false;
 Params.SaveProcessed = false;
 Params.Fs = 1000;
 Params.NumChannels = 128;

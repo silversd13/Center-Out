@@ -53,15 +53,17 @@ end
 %% Neural Signal Processing
 % create neuro structure for keeping track of all neuro updates/state
 % changes
-Neuro.CLDA          = Params.CLDA;
-Neuro.SaveProcessed = Params.SaveProcessed;
-Neuro.FilterBank    = Params.FilterBank;
-Neuro.NumChannels   = Params.NumChannels;
-Neuro.BufferSamps   = Params.BufferSamps;
-Neuro.BadChannels   = Params.BadChannels;
-Neuro.ReferenceMode = Params.ReferenceMode;
-Neuro.NumFeatures   = Params.NumFeatures;
-Neuro.LastUpdateTime= GetSecs;
+Neuro.ZscoreRawFlag     = Params.ZscoreRawFlag;
+Neuro.ZscoreFeaturesFlag= Params.ZscoreFeaturesFlag;
+Neuro.CLDA              = Params.CLDA;
+Neuro.SaveProcessed     = Params.SaveProcessed;
+Neuro.FilterBank        = Params.FilterBank;
+Neuro.NumChannels       = Params.NumChannels;
+Neuro.BufferSamps       = Params.BufferSamps;
+Neuro.BadChannels       = Params.BadChannels;
+Neuro.ReferenceMode     = Params.ReferenceMode;
+Neuro.NumFeatures       = Params.NumFeatures;
+Neuro.LastUpdateTime    = GetSecs;
 
 % initialize filter bank state
 for i=1:length(Params.FilterBank),
