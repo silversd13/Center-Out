@@ -13,12 +13,13 @@ switch Params.ControlMode,
 end
 
 %% Control
-Params.Gain = 1;
-Params.CenterReset = false;
-Params.Assistance = .5; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type = 1; % 1-refit, 2-smooth batch, 3-continuous
-Params.CLDA.Alpha = .5; % for smooth batch
-Params.CLDA.Lambda = .5; % for continuous
+Params.Gain             = 1;
+Params.CenterReset      = false;
+Params.Assistance       = .5; % value btw 0 and 1, 1 full assist
+Params.CLDA.Type        = 1; % 1-refit, 2-smooth batch, 3-RML
+Params.CLDA.Alpha       = .4; % for smooth batch (~log2(120/80))
+Params.CLDA.UpdateTime  = 80; % secs, for smooth batch
+Params.CLDA.Lambda      = .5; % for continuous
 
 %% Current Date and Time
 % get today's date

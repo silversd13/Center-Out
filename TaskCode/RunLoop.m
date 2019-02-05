@@ -35,14 +35,27 @@ end
 
 %%  Loop Through Blocks of Trials
 Trial = 0;
+TrialBatch = {};
+tlast = GetSecs;
 for Block=1:NumBlocks, % Block Loop
 
     % random order of reach targets for each block
     TargetOrder = Params.TargetFunc(Params.NumTrialsPerBlock);
 
     for TrialPerBlock=1:Params.NumTrialsPerBlock, % Trial Loop
+        % update trial
         Trial = Trial + 1;
         TrialIdx = TargetOrder(TrialPerBlock);
+        
+        % if smooth batch on & enough time has passed, update KF btw trials
+        if Neuro.CLDA.Type==2,
+            TrialBatch{end+1} = sprintf('Data%04i.mat', Trial);
+            if (GetSecs-tlast)>Neuro.CLDA.UpdateTime,
+                Neuro.KF = FitKF(fullfile(Params.Datadir,'BCI_CLDA'),2,...
+                    Neuro.KF,TrialBatch);
+                TrialBatch = {};
+            end
+        end
         
         % set up trial
         TrialData = DataFields;
