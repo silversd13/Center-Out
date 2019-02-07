@@ -4,9 +4,6 @@ function Params = GetParams(Params)
 % subject-to-subject, experiment-to-experiment)
 % The parameters are all saved in 'Params.mat' for each experiment
 
-%% Verbosity
-Params.Verbose = true;
-
 %% Experiment
 Params.Task = 'Center-Out';
 switch Params.ControlMode,
@@ -18,11 +15,11 @@ end
 %% Control
 Params.Gain             = 1;
 Params.CenterReset      = false;
-Params.Assistance       = .1; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type        = 3; % 1-refit, 2-smooth batch, 3-RML
-Params.CLDA.Alpha       = exp(log(.5) * 80/120); % for smooth batch
+Params.Assistance       = .2; % value btw 0 and 1, 1 full assist
+Params.CLDA.Type        = 1; % 1-refit, 2-smooth batch, 3-RML
+Params.CLDA.Alpha       = .4; % for smooth batch (~log2(120/80))
 Params.CLDA.UpdateTime  = 80; % secs, for smooth batch
-Params.CLDA.Lambda      = exp(log(.5) * (.1/30)); % for RML
+Params.CLDA.Lambda      = .5; % for continuous
 
 %% Current Date and Time
 % get today's date
@@ -60,19 +57,16 @@ if exist(Params.Datadir,'dir'),
             '\nThis directory will be overwritten if you continue. '],'s');
     else, str = 'Y';
     end
-%     if strcmpi(str,'Y'), % delete all files in directory
-%         recycle('on')
-%         delete(fullfile(datadir,'*'))
-%         delete(fullfile(datadir,'Imagined','*'))
-%         delete(fullfile(datadir,'BCI_CLDA','*'))
-%         delete(fullfile(datadir,'BCI_Fixed','*'))
-%     end
+    if strcmpi(str,'Y'), % delete all files in directory
+        recycle('on')
+        delete(genpath(datadir))
+    end
 end
 mkdir(datadir);
 
 
 %% Timing
-Params.ScreenRefreshRate = 10; % Hz
+Params.ScreenRefreshRate = 60; % Hz
 Params.UpdateRate = 10; % Hz
 Params.BaselineTime = 0; % secs
 
@@ -99,9 +93,9 @@ Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
     +Params.CursorSize +Params.CursorSize];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 0;
-Params.NumAdaptBlocks       = 8;
-Params.NumFixedBlocks       = 8;
+Params.NumImaginedBlocks    = 1;
+Params.NumAdaptBlocks       = 1;
+Params.NumFixedBlocks       = 1;
 Params.TargetSelectionFlag  = 2; % 1-pseudorandom, 2-random
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 switch Params.TargetSelectionFlag,
@@ -115,10 +109,10 @@ Params.InterTrialInterval = 0;
 Params.InstructedDelayTime = 0;
 Params.MaxStartTime = 10;
 Params.MaxReachTime = 10;
-Params.InterBlockInterval = 0;
+Params.InterBlockInterval = 1;
 
 %% Feedback
-Params.FeedbackSound = false;
+Params.FeedbackSound = true;
 Params.ErrorWaitTime = 2;
 Params.ErrorSound = 1000*audioread('buzz.wav');
 Params.ErrorSoundFs = 8192;

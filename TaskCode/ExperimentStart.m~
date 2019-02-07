@@ -144,13 +144,8 @@ try
 catch ME, % handle errors gracefully
     Screen('CloseAll')
     for i=length(ME):-1:1,
-        if i==1,
-            errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s\n\n', ...
-                ME.stack(1).name, ME.stack(1).line, ME.message);
-        else,
-            errorMessage = sprintf('Error in function %s() at line %d.\n\n', ...
-                ME.stack(i).name, ME.stack(1).line, ME.message);
-        end
+        errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+            ME.stack(1).name, ME.stack(1).line, ME.message);
         fprintf(1,'\n%s\n', errorMessage);
     end
     keyboard;

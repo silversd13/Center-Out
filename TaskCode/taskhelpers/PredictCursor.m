@@ -46,7 +46,7 @@ switch Cursor.ControlMode,
     case 1,
     case 2,
     case 3, % kalman filter, update uncertainty
-        Cursor.P = Cursor.A*Cursor.P*Cursor.A' + Cursor.W;
+        Cursor.P = Cursor.A * Cursor.P * Cursor.A' + Cursor.W;
 end
 
 % bound cursor position to size of screen

@@ -19,7 +19,7 @@ switch TaskFlag,
         mkdir(fullfile(Params.Datadir,'Imagined'));
         
         % output to screen
-        fprintf('Imagined Movements:\n')
+        fprintf('\n\nImagined Movements:\n')
         fprintf('  %i Blocks (%i Total Trials)\n',...
             Params.NumImaginedBlocks,...
             Params.NumImaginedBlocks*Params.NumTrialsPerBlock)
@@ -57,11 +57,11 @@ switch TaskFlag,
             *Params.NumTrialsPerBlock...
             *Params.UpdateRate...
             *4); % sec/trial
-        % Cursor.DeltaAssistance = 0; % no change in assistance
+%         Cursor.DeltaAssistance = 0; % no change in assistance
         mkdir(fullfile(Params.Datadir,'BCI_CLDA'));
         
         % output to screen
-        fprintf('Adaptive Control:\n')
+        fprintf('\n\nAdaptive Control:\n')
         fprintf('  %i Blocks (%i Total Trials)\n',...
             Params.NumAdaptBlocks,...
             Params.NumAdaptBlocks*Params.NumTrialsPerBlock)
@@ -102,7 +102,7 @@ switch TaskFlag,
         mkdir(fullfile(Params.Datadir,'BCI_Fixed'));
         
         % output to screen
-        fprintf('Fixed Control:\n')
+        fprintf('\n\nFixed Control:\n')
         fprintf('  %i Blocks (%i Total Trials)\n',...
             Params.NumFixedBlocks,...
             Params.NumFixedBlocks*Params.NumTrialsPerBlock)

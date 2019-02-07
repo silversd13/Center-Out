@@ -10,6 +10,21 @@ function KF = FitKF(datadir,fitFlag,KF,TrialBatch)
 % KF - kalman filter structure containing matrices: C,Q
 % TrialBatch - cell array of filenames w/ trials to use in smooth batch
 
+% ouput to screen
+fprintf('\n\nFitting Kalman Filter:\n')
+switch fitFlag,
+    case 0,
+        fprintf('  Initial Fit\n')
+        fprintf('  Data in %s\n', datadir)
+    case 1,
+        fprintf('  ReFit\n')
+        fprintf('  Data in %s\n', datadir)
+    case 2,
+        fprintf('  Smooth Batch\n')
+        fprintf('  Data in %s\n', datadir)
+        fprintf('  Trials: {%s-%s}\n', TrialBatch{1},TrialBatch{end})
+end
+
 % grab data trial data
 datafiles = dir(fullfile(datadir,'Data*.mat'));
 if fitFlag==2, % if smooth batch, only use files TrialBatch
@@ -51,10 +66,17 @@ Q = (1/D) * ((Y-C*X) * (Y-C*X)');
 % update kalman matrices
 switch fitFlag,
     case {0,1},
+        % fit sufficient stats
+        KF.R = X*X';
+        KF.S = Y*X';
+        KF.T = Y*Y';
+        KF.ESS = D;
+        KF.Tinv = inv(KF.T);
+        KF.Qinv = inv(Q);
         KF.C = C;
         KF.Q = Q;
     case 2,
-        alpha = Params.SmoothBatchAlpha;
+        alpha = KF.CLDA.Alpha;
         KF.C = alpha*KF.C + (1-alpha)*C;
         KF.Q = alpha*KF.Q + (1-alpha)*Q;
 end

@@ -2,7 +2,7 @@ function ExperimentPause(Params)
 % Display text then wait for subject to resume experiment
 
 % Pause Screen
-tex = 'Paused... Press ''p'' to continue or ''escape'' to quit';
+tex = 'Paused... Press ''p'' to continue, ''escape'' to quit, or ''d'' to debug';
 DrawFormattedText(Params.WPTR, tex,'center','center',255);
 Screen('Flip', Params.WPTR);
 
@@ -17,6 +17,9 @@ while 1, % pause until subject presses p again or quits
     end
     if keyCode(KbName('escape'))==1 || keyCode(KbName('q'))==1,
         ExperimentStop(1); % quit experiment
+    end
+    if keyCode(KbName('d'))==1,
+        keyboard; % quit experiment
     end
 end
 

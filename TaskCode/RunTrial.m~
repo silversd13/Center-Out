@@ -16,9 +16,6 @@ ReachTargetPos = Data.TargetPosition;
 % Output to Command Line
 fprintf('\nTrial: %i\n',Data.Trial)
 fprintf('Target: %i\n',Data.TargetAngle)
-if Params.Verbose,
-    fprintf('Cursor Assistance: %.2f\n',Cursor.Assistance)
-end
 
 % keep track of update times
 dt_vec = [];
@@ -408,14 +405,8 @@ end % only complete if no errors
 Screen('Flip', Params.WPTR);
 
 % output update times
-if Params.Verbose,
-    fprintf('Screen Update Frequency: Goal=%iHz, Actual=%.2fHz (+/-%.2fHz)\n',...
-        Params.ScreenRefreshRate,mean(1./dt_vec),std(1./dt_vec))
-    fprintf('System Update Frequency: Goal=%iHz, Actual=%.2fHz (+/-%.2fHz)\n',...
-        Params.UpdateRate,mean(1./dT_vec),std(1./dT_vec))
-end
 
-% output feedback
+% output 
 if Data.ErrorID==0,
     fprintf('SUCCESS\n')
     if Params.FeedbackSound,

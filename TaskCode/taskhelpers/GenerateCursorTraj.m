@@ -18,9 +18,9 @@ pos1d = normcdf(x1d,0,.2);
 xpos = startpos(1) + (endpos(1)-startpos(1)) * pos1d;
 ypos = startpos(2) + (endpos(2)-startpos(2)) * pos1d;
 
-% append start and end positions for smoothness
-xpos = [startpos(1) xpos endpos(1)];
-ypos = [startpos(2) ypos endpos(2)];
+% % append start and end positions for smoothness
+% xpos = [startpos(1) xpos endpos(1)];
+% ypos = [startpos(2) ypos endpos(2)];
 
 % final output
 traj = [xpos' ypos'];

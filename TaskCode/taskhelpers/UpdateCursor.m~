@@ -51,18 +51,16 @@ if TaskFlag>1, % do nothing during imagined movements
                 T  = Lambda*T  + Y*Y';
                 ESS= Lambda*ESS+ 1;
                 
+                % update kalman matrices (neural mapping matrices)
+                C = S/R;
+                
                 % update inverses
                 Tinv = Tinv/Lambda + (Tinv*(Y*Y')*Tinv)/(Lambda*(Lambda + Y'*Tinv*Y)); % ~35ms
                 Qinv = ESS * (Tinv - Tinv*S/(S'*Tinv*S - R)*S'*Tinv); % ~15ms
                 
                 % RML Kalman Gain eq (~8ms)
-%                 Pinv = inv(P);
-%                 K = P*C'*Qinv*(eye(size(Y,1)) - C/(Pinv+C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (edit by DBS)
+                %K = P*C'*Qinv*(eye(size(Y,1)) - C/(Pinv+C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (edit by DBS)
                 K = P*C'*Qinv*(eye(size(Y,1)) - C/(P + C'*Qinv*C)*(C'*Qinv)); 
-                
-                % update kalman matrices (neural mapping matrices)
-                C = S/R;
-                Q = (1/ESS) * (T - S/R*S');
                 
                 % store params
                 Neuro.KF.R = R;
@@ -71,14 +69,12 @@ if TaskFlag>1, % do nothing during imagined movements
                 Neuro.KF.Tinv = Tinv;
                 Neuro.KF.ESS = ESS;
                 Neuro.KF.Lambda = Lambda;
-                Neuro.KF.C = C;
-                Neuro.KF.Q = Q;
             else, % normal kalman filter (faster since not updating params)
+                X = Cursor.State; % *note using true cursor state
                 K = (P * C') / (C*P*C' + Q); % original Kalman Gain eq
             end
             
             % state update
-            X = Cursor.State; % *note using true cursor state
             Cursor.State = X + K*(Y - C*X);
             Cursor.P = P - K*C*P;
 
