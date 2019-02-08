@@ -39,8 +39,8 @@ TrialBatch = {};
 tlast = GetSecs;
 Cursor.LastPredictTime = tlast;
 Cursor.LastUpdateTime = tlast;
-Cursor.State = [Params.Center(1),Params.Center(2),0,0,1]';
-Cursor.IntendedState = [Params.Center(1),Params.Center(2),0,0,1]';
+Cursor.State = [0,0,0,0,1]';
+Cursor.IntendedState = [0,0,0,0,1]';
 for Block=1:NumBlocks, % Block Loop
 
     % random order of reach targets for each block
@@ -52,7 +52,7 @@ for Block=1:NumBlocks, % Block Loop
         TrialIdx = TargetOrder(TrialPerBlock);
         
         % if smooth batch on & enough time has passed, update KF btw trials
-        if Neuro.CLDA.Type==2,
+        if TaskFlag==2 && Neuro.CLDA.Type==2,
             TrialBatch{end+1} = sprintf('Data%04i.mat', Trial);
             if (GetSecs-tlast)>Neuro.CLDA.UpdateTime,
                 Neuro.KF.CLDA = Params.CLDA;

@@ -93,6 +93,8 @@ switch TaskFlag,
                 % adaptive block
                 if Neuro.CLDA.Type==1,
                     Neuro.KF = FitKF(fullfile(Params.Datadir,'BCI_CLDA'),1);
+                elseif Neuro.CLDA.Type==0,
+                    Neuro.KF = FitKF(fullfile(Params.Datadir,'Imagined'),0);
                 end
         end
         

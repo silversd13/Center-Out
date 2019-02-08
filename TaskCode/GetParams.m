@@ -18,8 +18,8 @@ end
 %% Control
 Params.Gain             = 1;
 Params.CenterReset      = false;
-Params.Assistance       = .1; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type        = 3; % 1-refit, 2-smooth batch, 3-RML
+Params.Assistance       = 0; % value btw 0 and 1, 1 full assist
+Params.CLDA.Type        = 2; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.Alpha       = exp(log(.5) * 80/120); % for smooth batch
 Params.CLDA.UpdateTime  = 80; % secs, for smooth batch
 Params.CLDA.Lambda      = exp(log(.5) * (.1/30)); % for RML
@@ -99,11 +99,11 @@ Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
     +Params.CursorSize +Params.CursorSize];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 0;
-Params.NumAdaptBlocks       = 8;
-Params.NumFixedBlocks       = 8;
-Params.TargetSelectionFlag  = 2; % 1-pseudorandom, 2-random
+Params.NumImaginedBlocks    = 10;
+Params.NumAdaptBlocks       = 10;
+Params.NumFixedBlocks       = 10;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
+Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
     case 1, Params.TargetFunc = @randperm;
     case 2, Params.TargetFunc = @(n) randi(n,1,n);

@@ -8,7 +8,7 @@ function Z = VelToNeuralFeatures(Params,noise,PLOT)
 % PLOT - 0-no plot, 1-plot (default=1)
 %
 % OUTPUT: 
-% Z - matrix with size of 128*7 refering as neural feature set
+% Z - neural features vector with size of 128*7 
 %
 % CREATED: G. Nootz  May 2012
 % 
@@ -19,7 +19,7 @@ function Z = VelToNeuralFeatures(Params,noise,PLOT)
 % ---------User Input---------------------
 
 % inputs
-if ~exist('noise','var'), noise=1; end
+if ~exist('noise','var'), noise=150; end
 if ~exist('PLOT','var'), PLOT = 0; end
 
 % compute velocities
