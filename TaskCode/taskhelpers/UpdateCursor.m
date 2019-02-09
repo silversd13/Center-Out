@@ -74,11 +74,11 @@ if TaskFlag>1, % do nothing during imagined movements
             P = Neuro.KF.P;
             Y = Neuro.NeuralFeatures;
             C = Neuro.KF.C;
-            Q = Neuro.KF.Q;
+            Q = Neuro.KF.Q; %#ok<NASGU>
+            Qinv = Neuro.KF.Qinv;
             
             % Kalman Update Step
             if Neuro.CLDA.Type==3, % RML
-                Qinv = Neuro.KF.Qinv;
                 
                 if TaskFlag==2, % Adaptation Block
                     % copy structs to vars for better legibility
@@ -122,7 +122,8 @@ if TaskFlag>1, % do nothing during imagined movements
                 K = P*C'*Qinv*(eye(size(Y,1)) - C/(P + C'*Qinv*C)*(C'*Qinv)); 
                                 
             else, % not RML/normal kalman filter (faster since not updating params)
-                K = (P*C') / (C*P*C' + Q); % original Kalman Gain eq
+                % K = (P*C') / (C*P*C' + Q); % original Kalman Gain eq
+                K = P*C'*Qinv*(eye(size(Y,1)) - C/(P + C'*Qinv*C)*(C'*Qinv)); % RML Method
             end
             
             % Kalman Update Step

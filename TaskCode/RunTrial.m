@@ -65,7 +65,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params,Neuro,TaskFlag);
+                UpdateCursor(Params,Neuro,TaskFlag,Cursor.State(1:2));
             end
             
             % cursor
