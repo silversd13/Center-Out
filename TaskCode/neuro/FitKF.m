@@ -59,7 +59,11 @@ for i=1:length(datafiles),
 end
 
 % interpolate to get cursor pos and vel at neural times
-X = interp1(Tfull',Xfull',T')';
+if size(Xfull,2)>size(Y,2)
+    X = interp1(Tfull',Xfull',T')';
+else,
+    X = Xfull;
+end
 
 % full cursor state at neural times
 D = size(X,2);
