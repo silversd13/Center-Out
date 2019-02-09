@@ -1,10 +1,14 @@
-function ExperimentPause(Params)
+function Data = ExperimentPause(Params,Data)
 % Display text then wait for subject to resume experiment
 
 % Pause Screen
 tex = 'Paused... Press ''p'' to continue, ''escape'' to quit, or ''d'' to debug';
 DrawFormattedText(Params.WPTR, tex,'center','center',255);
 Screen('Flip', Params.WPTR);
+
+% add event to data structure
+Data.Events(end+1).Time = GetSecs;
+Data.Events(end).Str  = 'Pause';
 
 KbCheck;
 WaitSecs(.1);

@@ -42,7 +42,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, ExperimentPause(Params); end
+        if CheckPause, Data = ExperimentPause(Params,Data); end
 
         % Update Screen Every Xsec
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
@@ -51,9 +51,6 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
             dt_vec(end+1) = dt;
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
-            
-            % cursor
-            PredictCursor(Params);
             
             % grab and process neural data
             if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
@@ -118,7 +115,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, ExperimentPause(Params); end
+        if CheckPause, Data = ExperimentPause(Params,Data); end
 
         % Update Screen Every Xsec
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
@@ -127,9 +124,6 @@ if ~Data.ErrorID && ~Params.CenterReset,
             dt_vec(end+1) = dt;
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
-            
-            % cursor
-            PredictCursor(Params,StartTargetPos);
             
             % grab and process neural data
             if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
@@ -144,7 +138,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params,Neuro,TaskFlag);
+                UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos);
             end
             
             % cursor
@@ -220,7 +214,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, ExperimentPause(Params); end
+        if CheckPause, Data = ExperimentPause(Params,Data); end
         
         % Update Screen
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
@@ -230,9 +224,6 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
 
-            % cursor
-            PredictCursor(Params,StartTargetPos);
-            
             % grab and process neural data
             if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
                 dT = tim-Cursor.LastUpdateTime;
@@ -246,7 +237,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params,Neuro,TaskFlag);
+                UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos);
             end
             
             % cursor
@@ -322,7 +313,7 @@ if ~Data.ErrorID,
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, ExperimentPause(Params); end
+        if CheckPause, Data = ExperimentPause(Params,Data); end
 
         % Update Screen
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
@@ -332,9 +323,6 @@ if ~Data.ErrorID,
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
 
-            % cursor
-            PredictCursor(Params,ReachTargetPos);
-            
             % grab and process neural data
             if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
                 dT = tim-Cursor.LastUpdateTime;
@@ -348,7 +336,7 @@ if ~Data.ErrorID,
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params,Neuro,TaskFlag);
+                UpdateCursor(Params,Neuro,TaskFlag,ReachTargetPos);
             end
             
             % cursor

@@ -3,6 +3,7 @@ function Neuro = RunTask(Params,Neuro,TaskFlag)
 % and quitting the experiment (w/o killing matlab or something)
 
 global Cursor 
+Cursor.ControlMode = Params.ControlMode;
 
 switch TaskFlag,
     case 1, % Imagined Movements
@@ -41,27 +42,21 @@ switch TaskFlag,
                     '\n\nPress the ''Space Bar'' to begin!' ];
             case 3, % Kalman Filter Velocity Decoder
                 Instructions = [...
-                    '\n\nKalman Brain Control\n\n'...
+                    '\n\nKalman Brain Control (Calibration Mode)\n\n'...
                     '\nAt any time, you can press ''p'' to briefly pause the task.'...
                     '\n\nPress the ''Space Bar'' to begin!' ];
                 
                 % Fit Kalman Filter based on imagined movements
-                Neuro.KF = FitKF(fullfile(Params.Datadir,'Imagined'),0);
+                Neuro.KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0);
         end
         
         InstructionScreen(Params,Instructions);
         Cursor.Assistance = Params.Assistance;
-        Cursor.DeltaAssistance = ... % linearly decrease assistance
-            Cursor.Assistance...
-            /(Params.NumAdaptBlocks...
-            *Params.NumTrialsPerBlock...
-            *Params.UpdateRate...
-            *4); % sec/trial
-%         Cursor.DeltaAssistance = 0; % no change in assistance
+        Cursor.DeltaAssistance = Params.CLDA.DeltaAssistance;
         mkdir(fullfile(Params.Datadir,'BCI_CLDA'));
         
         % output to screen
-        fprintf('\n\nAdaptive Control:\n')
+        fprintf('\n\nAdaptive Control: (%s)\n', Params.CLDA.TypeStr)
         fprintf('  %i Blocks (%i Total Trials)\n',...
             Params.NumAdaptBlocks,...
             Params.NumAdaptBlocks*Params.NumTrialsPerBlock)
@@ -92,9 +87,9 @@ switch TaskFlag,
                 % reFit Kalman Filter based on intended kinematics during
                 % adaptive block
                 if Neuro.CLDA.Type==1,
-                    Neuro.KF = FitKF(fullfile(Params.Datadir,'BCI_CLDA'),1);
+                    Neuro.KF = FitKF(Params,fullfile(Params.Datadir,'BCI_CLDA'),1);
                 elseif Neuro.CLDA.Type==0,
-                    Neuro.KF = FitKF(fullfile(Params.Datadir,'Imagined'),0);
+                    Neuro.KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0);
                 end
         end
         

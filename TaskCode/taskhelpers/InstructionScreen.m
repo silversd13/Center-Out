@@ -11,8 +11,9 @@ while (1) % pause until subject presses spacebar to continue
     [~, ~, keyCode, ~] = KbCheck;
     if keyCode(KbName('space'))==1,
         keyCode(KbName('space'))=0;
-        fprintf('\b') % remove input keys
         break;
+    elseif keyCode(KbName('escape'))==1,
+        ExperimentStop(1);
     end
 end
 

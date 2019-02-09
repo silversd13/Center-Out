@@ -1,7 +1,7 @@
-function KF = FitKF(datadir,fitFlag,KF,TrialBatch)
-% function KF = FitKF(datadir,fitFlag,KF,TrialBatch)
+function KF = FitKF(Params,datadir,fitFlag,KF,TrialBatch)
+% function KF = FitKF(Params,datadir,fitFlag,KF,TrialBatch)
 % Uses all trials in given data directory to initialize matrices for kalman
-% filter. Returns KF structure containing matrices: C,Q
+% filter. Returns KF structure containing matrices: A,W,P,C,Q
 % 
 % datadir - directory containing trials to fit data on
 % fitFlag - 0-fit on actual state,
@@ -23,6 +23,11 @@ switch fitFlag,
         fprintf('  Smooth Batch\n')
         fprintf('  Data in %s\n', datadir)
         fprintf('  Trials: {%s-%s}\n', TrialBatch{1},TrialBatch{end})
+end
+
+% Initialization of KF
+if ~exist('KF','var'),
+    KF = Params.KF;
 end
 
 % grab data trial data

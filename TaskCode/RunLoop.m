@@ -56,7 +56,7 @@ for Block=1:NumBlocks, % Block Loop
             TrialBatch{end+1} = sprintf('Data%04i.mat', Trial);
             if (GetSecs-tlast)>Neuro.CLDA.UpdateTime,
                 Neuro.KF.CLDA = Params.CLDA;
-                Neuro.KF = FitKF(fullfile(Params.Datadir,'BCI_CLDA'),2,...
+                Neuro.KF = FitKF(Params,fullfile(Params.Datadir,'BCI_CLDA'),2,...
                     Neuro.KF,TrialBatch);
                 tlast = GetSecs;
                 TrialBatch = {};

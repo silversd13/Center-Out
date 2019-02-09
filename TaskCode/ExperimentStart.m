@@ -80,46 +80,10 @@ Neuro.ChStats.var    = zeros(1,Params.NumChannels); % estimate of variance for e
 % create delta buffer
 Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,3);
 
-%% Cursor Object
-global Cursor
-Cursor.ControlMode = Params.ControlMode;
-dt = 1/Params.ScreenRefreshRate;
-switch Cursor.ControlMode,
-    case 1,
-        Cursor.A = [...
-            1   0   dt  0   0;
-            0   1   0   dt  0;
-            0   0   1   0   0;
-            0   0   0   1   0;
-            0   0   0   0   1];
-    case 2,
-        Cursor.A = [...
-            1   0   dt  0   0;
-            0   1   0   dt  0;
-            0   0   1   0   0;
-            0   0   0   1   0;
-            0   0   0   0   1];
-    case 3,
-        Cursor.A = [...
-            1       0       dt      0       0;
-            0       1       0       dt      0;
-            0       0       .95     -.005   0;
-            0       0       -.005   .95     0;
-            0       0       0       0       1];
-        Cursor.W = [...
-            0       0       0       0       0;
-            0       0       0       0       0;
-            0       0       875     16      0;
-            0       0       16      875     0;
-            0       0       0       0       0];
-        Cursor.P = zeros(5);
-end
-
 %% Start
 try
     % Baseline 
     if Params.BaselineTime>0,
-        Cursor.DeltaAssistance = 0;
         Neuro = RunBaseline(Params,Neuro);
     end
     
@@ -143,13 +107,13 @@ try
     
 catch ME, % handle errors gracefully
     Screen('CloseAll')
-    for i=length(ME):-1:1,
+    for i=length(ME.stack):-1:1,
         if i==1,
             errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s\n\n', ...
                 ME.stack(1).name, ME.stack(1).line, ME.message);
         else,
             errorMessage = sprintf('Error in function %s() at line %d.\n\n', ...
-                ME.stack(i).name, ME.stack(1).line, ME.message);
+                ME.stack(i).name, ME.stack(i).line);
         end
         fprintf(1,'\n%s\n', errorMessage);
     end
