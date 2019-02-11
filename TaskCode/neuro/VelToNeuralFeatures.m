@@ -4,7 +4,7 @@ function Z = VelToNeuralFeatures(Params,noise,PLOT)
 % neural features change depending input velocity
 %
 % INPUT:
-% noise - % noise in % of centroid peak value (default=10)
+% noise - % noise in % of centroid peak value (default=100)
 % PLOT - 0-no plot, 1-plot (default=1)
 %
 % OUTPUT: 
@@ -19,7 +19,7 @@ function Z = VelToNeuralFeatures(Params,noise,PLOT)
 % ---------User Input---------------------
 
 % inputs
-if ~exist('noise','var'), noise=150; end
+if ~exist('noise','var'), noise=100; end
 if ~exist('PLOT','var'), PLOT = 0; end
 
 % compute velocities

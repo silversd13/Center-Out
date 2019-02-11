@@ -75,6 +75,7 @@ Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,3);
 
 %% Kalman Filter
 KF = Params.KF;
+KF.CLDA = Params.CLDA;
 
 %% Check Important Params with User
 LogicalStr = {'false', 'true'};

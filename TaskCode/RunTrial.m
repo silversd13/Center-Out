@@ -51,7 +51,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
             % time
             dt = tim - Cursor.LastPredictTime;
-            dt_vec(end+1) = dt;
+            dt_vec(end+1) = dt; %#ok<*AGROW>
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
             

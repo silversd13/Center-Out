@@ -32,6 +32,10 @@ if TaskFlag>1, % do nothing during imagined movements
     else,
         Vopt = 200 * err_vec(:) / norm_evec; % fast
     end
+    % update intended state
+    Cursor.IntendedState = Cursor.State;
+    Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
+
     
     % find vx and vy using control scheme
     switch Cursor.ControlMode,
@@ -66,69 +70,38 @@ if TaskFlag>1, % do nothing during imagined movements
             Cursor.State(4) = Vass(2);
             
         case 3, % Kalman Filter Velocity Input
-            X0 = Cursor.State; % initial state, useful for assistance
+            X = Cursor.State;
+            X0 = X; % initial state, useful for assistance
             Y = Neuro.NeuralFeatures;
-            
-            % Kalman Predict Step
-            Cursor.State = KF.A*X0;
-            KF.P = KF.A*KF.P*KF.A' + KF.W;
-            
-            % copy structs to vars for better legibility
+            A = KF.A;
+            W = KF.W;
             P = KF.P;
             C = KF.C;
             Q = KF.Q; %#ok<NASGU>
-            Qinv = KF.Qinv;
             
-            % Kalman Update Step
-            if Neuro.CLDA.Type==3, % RML
-                
-                if TaskFlag==2, % Adaptation Block
-                    % copy structs to vars for better legibility
-                    X = Cursor.IntendedState;
-                    R = KF.R;
-                    S = KF.S;
-                    T = KF.T;
-                    Tinv = KF.Tinv;
-                    ESS = KF.ESS;
-                    Lambda = Neuro.CLDA.Lambda;
-                    
-                    % update sufficient stats & half life
-                    R  = Lambda*R  + X*X';
-                    S  = Lambda*S  + Y*X';
-                    T  = Lambda*T  + Y*Y';
-                    ESS= Lambda*ESS+ 1;
-                    Lambda = Lambda + Neuro.CLDA.DeltaLambda;
-                    
-                    % update inverses
-                    Tinv = Tinv/Lambda + (Tinv*(Y*Y')*Tinv)/(Lambda*(Lambda + Y'*Tinv*Y)); % ~35ms
-                    Qinv = ESS * (Tinv - Tinv*S/(S'*Tinv*S - R)*S'*Tinv); % ~15ms
-                    
-                    % update kalman matrices (neural mapping matrices)
-                    C = S/R;
-                    Q = (1/ESS) * (T - S/R*S');
-                    
-%                     % store params
-%                     KF.R = R;
-%                     KF.S = S;
-%                     KF.T = T;
-%                     KF.C = C;
-%                     KF.Q = Q;
-%                     KF.Tinv = Tinv;
-%                     KF.ESS = ESS;
-%                     KF.Lambda = Lambda;
-                end
+            % Update KF Params (RML & Adaptation Block)
+            if KF.CLDA.Type==3 && TaskFlag==2, 
+                KF = UpdateRmlKF(KF,Cursor.IntendedState,Y);
             end
             
+            % Kalman Predict Step
+            X = A*X;
+            P = A*P*A' + W;
+             
             % Kalman Update Step
-            X = Cursor.State; % *note using true cursor state
-            % K = (P*C') / (C*P*C' + Q); % original Kalman Gain eq
+            Qinv = KF.Qinv;
+            %K = P*C'/(C*P*C' + Q);
             K = P*C'*Qinv*(eye(size(Y,1)) - C/(P + C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (~8ms)
-            Cursor.State = X + K*(Y - C*X);
-            KF.P = P - K*C*P;
+            X = X + K*(Y - C*X);
+            P = P - K*C*P;
+            
+            % Store Params
+            Cursor.State = X;
+            KF.P = P;
             
             % assisted velocity
             if Cursor.Assistance > 0,
-                Vcur = (Cursor.State(1:2) - X0(1:2))*Params.UpdateRate;
+                Vcur = (X(1:2) - X0(1:2))*Params.UpdateRate;
                 Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcur;
             
                 % update cursor state
@@ -147,10 +120,6 @@ if TaskFlag>1, % do nothing during imagined movements
     end
     
 end % TaskFlag
-
-% update intended state
-Cursor.IntendedState = Cursor.State;
-Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
     
 % bound cursor position to size of screen
 pos = Cursor.State(1:2)' + Params.Center;

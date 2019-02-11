@@ -85,7 +85,7 @@ switch fitFlag,
         KF.C = C;
         KF.Q = Q;
     case 2, % smooth batch
-        alpha = KF.CLDA.Alpha;
+        alpha = Params.CLDA.Alpha;
         KF.C = alpha*KF.C + (1-alpha)*C;
         KF.Q = alpha*KF.Q + (1-alpha)*Q;
         KF.Qinv = inv(KF.Q);

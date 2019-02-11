@@ -108,8 +108,8 @@ if Params.ControlMode==3,
     Params.KF.W = [...
         0       0       0       0       0;
         0       0       0       0       0;
-        0       0       8e2     0       0;
-        0       0       0       8e2     0;
+        0       0       200     0       0;
+        0       0       0       200     0;
         0       0       0       0       0];
     Params.KF.P = zeros(5);
 end
@@ -132,7 +132,7 @@ Params.CLDA.TypeStr     = TypeStrs{Params.CLDA.Type+1};
 
 Params.CLDA.UpdateTime = 80; % secs, for smooth batch
 Params.CLDA.Alpha = exp(log(.5) / (120*Params.CLDA.UpdateTime)); % for smooth batch
-Params.CLDA.Lambda = exp(log(.5) / (30*Params.UpdateRate)); % for RML
+Params.CLDA.Lambda = exp(log(.5) / (120*Params.UpdateRate)); % for RML
 
 switch Params.CLDA.AdaptType,
     case 'none',

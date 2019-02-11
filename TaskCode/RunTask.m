@@ -26,7 +26,7 @@ switch TaskFlag,
             Params.NumImaginedBlocks*Params.NumTrialsPerBlock)
         fprintf('  Saving data to %s\n\n',fullfile(Params.Datadir,'Imagined'))
         
-        [Neuro,KF] = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'Imagined'),[]);
+        [Neuro,~] = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'Imagined'),[]);
         
     case 2, % Control Mode with Assist & CLDA
         switch Params.ControlMode,
@@ -47,7 +47,7 @@ switch TaskFlag,
                     '\n\nPress the ''Space Bar'' to begin!' ];
                 
                 % Fit Kalman Filter based on imagined movements
-                KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0);
+                KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0,KF);
         end
         
         InstructionScreen(Params,Instructions);
