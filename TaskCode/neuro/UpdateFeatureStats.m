@@ -3,7 +3,7 @@ function Neuro = UpdateFeatureStats(Neuro)
 % update estimate of mean and variance for each channel using Welford Alg
 % Neuro 
 % 	.NeuralFeatures - [ features x 1 ]
-%   .FeautreStats - structure, which is updated
+%   .FeatureStats - structure, which is updated
 
 X = Neuro.NeuralFeatures';
 

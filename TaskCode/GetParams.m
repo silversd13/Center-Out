@@ -19,8 +19,8 @@ end
 Params.Gain             = 1;
 Params.CenterReset      = false;
 Params.Assistance       = 0; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type        = 2; % 0-none, 1-refit, 2-smooth batch, 3-RML
-Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lambda for rml
+Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
+Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
 
 %% Current Date and Time
 % get today's date
@@ -102,8 +102,8 @@ if Params.ControlMode==3,
     Params.KF.A = [...
         1       0       dt      0       0;
         0       1       0       dt      0;
-        0       0       .9      0       0;
-        0       0       0       .9      0;
+        0       0       .8      0       0;
+        0       0       0       .8      0;
         0       0       0       0       1];
     Params.KF.W = [...
         0       0       0       0       0;
@@ -146,7 +146,7 @@ switch Params.CLDA.AdaptType,
             *Params.UpdateRate...
             *5); % sec/trial;
         Params.CLDA.DeltaLambda = DeltaLambda; % for RML
-        Params.DeltaAssistance = ... % linearly decrease assistance
+        Params.CLDA.DeltaAssistance = ... % linearly decrease assistance
             Params.Assistance...
             /(Params.NumAdaptBlocks...
             *Params.NumTrialsPerBlock...
@@ -181,7 +181,9 @@ Params.NumChannels = 128;
 Params.BufferTime = 2; % secs longer for better phase estimation of low frqs
 Params.BufferSamps = Params.BufferTime * Params.Fs;
 Params.BadChannels = [];
+RefModeStr = {'none','common_mean','common_median'};
 Params.ReferenceMode = 0; % 0-no ref, 1-common mean, 2-common median
+Params.ReferenceModeStr = RefModeStr{Params.ReferenceMode+1};
 
 % filter bank - each element is a filter bank
 % fpass - bandpass cutoff freqs

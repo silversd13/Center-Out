@@ -21,20 +21,6 @@ KbName('UnifyKeyNames');
 
 if strcmpi(Subject,'Test'), Subject = 'Test'; end
 
-%% Initialize Window
-% Screen('Preference', 'SkipSyncTests', 0);
-if DEBUG
-    [Params.WPTR, Params.ScreenRectangle] = Screen('OpenWindow', 0, 0, [50 50 1000 1000]);
-else
-    [Params.WPTR, Params.ScreenRectangle] = Screen('OpenWindow', 0, 0, [10 30 1900 1000]);
-end
-Params.Center = [mean(Params.ScreenRectangle([1,3])),mean(Params.ScreenRectangle([2,4]))];
-if ~DEBUG, HideCursor; end
-
-%% Font
-Screen('TextFont',Params.WPTR, 'Arial');
-Screen('TextSize',Params.WPTR, 28);
-
 %% Retrieve Parameters from Params File
 Params.Subject = Subject;
 Params.ControlMode = ControlMode;
@@ -77,8 +63,68 @@ Neuro.ChStats.mean   = zeros(1,Params.NumChannels); % estimate of mean for each 
 Neuro.ChStats.S      = zeros(1,Params.NumChannels); % aggregate deviation from estimated mean for each channel
 Neuro.ChStats.var    = zeros(1,Params.NumChannels); % estimate of variance for each channel
 
-% create delta buffer
+% initialize stats for each feature for z-scoring
+Neuro.FeatureStats.wSum1  = 0; % count
+Neuro.FeatureStats.wSum2  = 0; % squared count
+Neuro.FeatureStats.mean   = zeros(1,Params.NumChannels); % estimate of mean for each channel
+Neuro.FeatureStats.S      = zeros(1,Params.NumChannels); % aggregate deviation from estimated mean for each channel
+Neuro.FeatureStats.var    = zeros(1,Params.NumChannels); % estimate of variance for each channel
+
+% create low freq buffers
 Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,3);
+
+%% Check Important Params with User
+LogicalStr = {'false', 'true'};
+Params.Subject = Subject;
+Params.ControlMode = ControlMode;
+Params.BLACKROCK = BLACKROCK;
+Params.DEBUG = DEBUG;
+
+fprintf('\n\nImportant Experimental Parameters:')
+fprintf('\n\n  Task Parameters:')
+fprintf('\n    - task: %s', Params.Task)
+fprintf('\n    - subject: %s', Params.Subject)
+fprintf('\n    - control mode: %s', Params.ControlModeStr)
+fprintf('\n    - blackrock mode: %s', LogicalStr{Params.BLACKROCK+1})
+fprintf('\n    - debug mode: %s', LogicalStr{Params.DEBUG+1})
+
+fprintf('\n\n  Neuro Processing Pipeline:')
+if Params.GenNeuralFeaturesFlag,
+    fprintf('\n    - generating neural features:')
+else,
+    fprintf('\n    - reference mode: %s', Params.ReferenceModeStr)
+    fprintf('\n    - zscore raw: %s', LogicalStr{Params.ZscoreRawFlag+1})
+    fprintf('\n    - zscore features: %s', LogicalStr{Params.ZscoreFeaturesFlag+1})
+    fprintf('\n    - save filtered data: %s', LogicalStr{Params.ZscoreRawFlag+1})
+end
+
+fprintf('\n\n  BCI Parameters:')
+fprintf('\n    - Imagined Movements: %s', LogicalStr{double(Params.NumImaginedBlocks>0) +1})
+fprintf('\n    - Adaptation Decoding: %s', LogicalStr{double(Params.NumAdaptBlocks>0) +1})
+fprintf('\n      - adapt type: %s', Params.CLDA.TypeStr)
+fprintf('\n      - adapt change type: %s', Params.CLDA.AdaptType)
+fprintf('\n    - Fixed Decoding: %s', LogicalStr{double(Params.NumFixedBlocks>0) +1})
+
+
+str = input('\n\nContinue? (''n'' to quit, otherwise continue)\n' ,'s');
+if strcmpi(str,'n'),
+    fprintf('\n\nExperiment Ended\n\n')
+    return
+end
+
+%% Initialize Window
+% Screen('Preference', 'SkipSyncTests', 0);
+if DEBUG
+    [Params.WPTR, Params.ScreenRectangle] = Screen('OpenWindow', 0, 0, [50 50 1000 1000]);
+else
+    [Params.WPTR, Params.ScreenRectangle] = Screen('OpenWindow', 0, 0, [10 30 1900 1000]);
+end
+Params.Center = [mean(Params.ScreenRectangle([1,3])),mean(Params.ScreenRectangle([2,4]))];
+if ~DEBUG, HideCursor; end
+
+% Font
+Screen('TextFont',Params.WPTR, 'Arial');
+Screen('TextSize',Params.WPTR, 28);
 
 %% Start
 try
