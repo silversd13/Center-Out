@@ -131,15 +131,15 @@ TypeStrs                = {'none','refit','smooth_batch','rml'};
 Params.CLDA.TypeStr     = TypeStrs{Params.CLDA.Type+1};
 
 Params.CLDA.UpdateTime = 80; % secs, for smooth batch
-Params.CLDA.Alpha = exp(log(.5) * Params.CLDA.UpdateTime/120); % for smooth batch
-Params.CLDA.Lambda = exp(log(.5) * (1/(30*Params.UpdateRate))); % for RML
+Params.CLDA.Alpha = exp(log(.5) / (120*Params.CLDA.UpdateTime)); % for smooth batch
+Params.CLDA.Lambda = exp(log(.5) / (30*Params.UpdateRate)); % for RML
 
 switch Params.CLDA.AdaptType,
     case 'none',
         Params.CLDA.DeltaLambda = 0;
         Params.CLDA.DeltaAssistance = 0;
     case 'linear',
-        FinalLambda = exp(log(.5) * (1/(300*Params.UpdateRate)));
+        FinalLambda = exp(log(.5) / (300*Params.UpdateRate));
         DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
             / (Params.NumAdaptBlocks...
             *Params.NumTrialsPerBlock...

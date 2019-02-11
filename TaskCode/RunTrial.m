@@ -1,4 +1,4 @@
-function [Data, Neuro] = RunTrial(Data,Params,Neuro,TaskFlag)
+function [Data, Neuro, KF] = RunTrial(Data,Params,Neuro,TaskFlag,KF)
 % Runs a trial, saves useful data along the way
 % Each trial contains the following pieces
 % 1) Inter-trial interval
@@ -17,7 +17,10 @@ ReachTargetPos = Data.TargetPosition;
 fprintf('\nTrial: %i\n',Data.Trial)
 fprintf('Target: %i\n',Data.TargetAngle)
 if Params.Verbose,
-    fprintf('Cursor Assistance: %.2f\n',Cursor.Assistance)
+    fprintf('  Cursor Assistance: %.2f\n',Cursor.Assistance)
+    if Params.CLDA.Type==3,
+        fprintf('  Lambda: %.2f\n',Neuro.CLDA.Lambda)
+    end
 end
 
 % keep track of update times
@@ -65,7 +68,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params,Neuro,TaskFlag,Cursor.State(1:2));
+                KF = UpdateCursor(Params,Neuro,TaskFlag,Cursor.State(1:2),KF);
             end
             
             % cursor
@@ -138,7 +141,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos);
+                KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
             end
             
             % cursor
@@ -237,7 +240,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos);
+                KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
             end
             
             % cursor
@@ -336,7 +339,7 @@ if ~Data.ErrorID,
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                UpdateCursor(Params,Neuro,TaskFlag,ReachTargetPos);
+                KF = UpdateCursor(Params,Neuro,TaskFlag,ReachTargetPos,KF);
             end
             
             % cursor

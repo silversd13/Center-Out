@@ -1,4 +1,4 @@
-function Neuro = RunTask(Params,Neuro,TaskFlag)
+function [Neuro,KF] = RunTask(Params,Neuro,TaskFlag,KF)
 % Explains the task to the subject, and serves as a reminder for pausing
 % and quitting the experiment (w/o killing matlab or something)
 
@@ -26,7 +26,7 @@ switch TaskFlag,
             Params.NumImaginedBlocks*Params.NumTrialsPerBlock)
         fprintf('  Saving data to %s\n\n',fullfile(Params.Datadir,'Imagined'))
         
-        Neuro = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'Imagined'));
+        [Neuro,KF] = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'Imagined'),[]);
         
     case 2, % Control Mode with Assist & CLDA
         switch Params.ControlMode,
@@ -47,7 +47,7 @@ switch TaskFlag,
                     '\n\nPress the ''Space Bar'' to begin!' ];
                 
                 % Fit Kalman Filter based on imagined movements
-                Neuro.KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0);
+                KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0);
         end
         
         InstructionScreen(Params,Instructions);
@@ -64,7 +64,7 @@ switch TaskFlag,
         fprintf('  Change in Assistance: %.2f\n', Cursor.DeltaAssistance)
         fprintf('  Saving data to %s\n\n',fullfile(Params.Datadir,'BCI_CLDA'))
         
-        Neuro = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'BCI_CLDA'));
+        [Neuro,KF] = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'BCI_CLDA'),KF);
         
     case 3, % Control Mode without Assist and fixed
         switch Params.ControlMode,
@@ -87,9 +87,9 @@ switch TaskFlag,
                 % reFit Kalman Filter based on intended kinematics during
                 % adaptive block
                 if Neuro.CLDA.Type==1,
-                    Neuro.KF = FitKF(Params,fullfile(Params.Datadir,'BCI_CLDA'),1);
+                    KF = FitKF(Params,fullfile(Params.Datadir,'BCI_CLDA'),1);
                 elseif Neuro.CLDA.Type==0,
-                    Neuro.KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0);
+                    KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0);
                 end
         end
         
@@ -105,7 +105,7 @@ switch TaskFlag,
             Params.NumFixedBlocks*Params.NumTrialsPerBlock)
         fprintf('  Saving data to %s\n\n',fullfile(Params.Datadir,'BCI_Fixed'))
         
-        Neuro = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'BCI_Fixed'));
+        [Neuro,KF] = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'BCI_Fixed'),KF);
         
 end
 

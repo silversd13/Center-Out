@@ -1,4 +1,4 @@
-function Neuro = RunLoop(Params,Neuro,TaskFlag,datadir)
+function [Neuro,KF] = RunLoop(Params,Neuro,TaskFlag,DataDir,KF)
 % Defines the structure of collected data on each trial
 % Loops through blocks and trials within blocks
 
@@ -56,8 +56,8 @@ for Block=1:NumBlocks, % Block Loop
             TrialBatch{end+1} = sprintf('Data%04i.mat', Trial);
             if (GetSecs-tlast)>Neuro.CLDA.UpdateTime,
                 Neuro.KF.CLDA = Params.CLDA;
-                Neuro.KF = FitKF(Params,fullfile(Params.Datadir,'BCI_CLDA'),2,...
-                    Neuro.KF,TrialBatch);
+                KF = FitKF(Params,fullfile(Params.Datadir,'BCI_CLDA'),2,...
+                    KF,TrialBatch);
                 tlast = GetSecs;
                 TrialBatch = {};
             end
@@ -73,12 +73,12 @@ for Block=1:NumBlocks, % Block Loop
         
         % Run Trial
         TrialData.TrialStartTime  = GetSecs;
-        [TrialData,Neuro] = RunTrial(TrialData,Params,Neuro,TaskFlag);
+        [TrialData,Neuro,KF] = RunTrial(TrialData,Params,Neuro,TaskFlag,KF);
         TrialData.TrialEndTime    = GetSecs;
                 
         % Save Data from Single Trial
         save(...
-            fullfile(datadir,sprintf('Data%04i.mat',Trial)),...
+            fullfile(DataDir,sprintf('Data%04i.mat',Trial)),...
             'TrialData',...
             '-v7.3','-nocompression');
         

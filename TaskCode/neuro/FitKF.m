@@ -7,7 +7,7 @@ function KF = FitKF(Params,datadir,fitFlag,KF,TrialBatch)
 % fitFlag - 0-fit on actual state,
 %           1-fit on intended kinematics (refit algorithm)
 %           2-fit on intended kinematics (smoothbatch algorithm)
-% KF - kalman filter structure containing matrices: C,Q
+% KF - kalman filter structure containing matrices: A,W,P,C,Q
 % TrialBatch - cell array of filenames w/ trials to use in smooth batch
 
 % ouput to screen

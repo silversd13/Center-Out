@@ -1,4 +1,4 @@
-function UpdateCursor(Params,Neuro,TaskFlag,TargetPos)
+function KF = UpdateCursor(Params,Neuro,TaskFlag,TargetPos,KF)
 % UpdateCursor(Params,Neuro)
 % Updates the state of the cursor using the method in Params.ControlMode
 %   1 - position control
@@ -9,6 +9,7 @@ function UpdateCursor(Params,Neuro,TaskFlag,TargetPos)
 % TaskFlag - 0-imagined mvmts, 1-clda, 2-fixed decoder
 % TargetPos - x- and y- coordinates of target position. used to assist
 %   cursor to target
+% KF - kalman filter struct containing matrices A,W,P,C,Q
 
 global Cursor
 
@@ -65,17 +66,18 @@ if TaskFlag>1, % do nothing during imagined movements
             Cursor.State(4) = Vass(2);
             
         case 3, % Kalman Filter Velocity Input
-            % Kalman Predict Step
             X0 = Cursor.State; % initial state, useful for assistance
-            Cursor.State = Neuro.KF.A*X0;
-            Neuro.KF.P = Neuro.KF.A*Neuro.KF.P*Neuro.KF.A' + Neuro.KF.W;
+            Y = Neuro.NeuralFeatures;
+            
+            % Kalman Predict Step
+            Cursor.State = KF.A*X0;
+            KF.P = KF.A*KF.P*KF.A' + KF.W;
             
             % copy structs to vars for better legibility
-            P = Neuro.KF.P;
-            Y = Neuro.NeuralFeatures;
-            C = Neuro.KF.C;
-            Q = Neuro.KF.Q; %#ok<NASGU>
-            Qinv = Neuro.KF.Qinv;
+            P = KF.P;
+            C = KF.C;
+            Q = KF.Q; %#ok<NASGU>
+            Qinv = KF.Qinv;
             
             % Kalman Update Step
             if Neuro.CLDA.Type==3, % RML
@@ -83,11 +85,11 @@ if TaskFlag>1, % do nothing during imagined movements
                 if TaskFlag==2, % Adaptation Block
                     % copy structs to vars for better legibility
                     X = Cursor.IntendedState;
-                    R = Neuro.KF.R;
-                    S = Neuro.KF.S;
-                    T = Neuro.KF.T;
-                    Tinv = Neuro.KF.Tinv;
-                    ESS = Neuro.KF.ESS;
+                    R = KF.R;
+                    S = KF.S;
+                    T = KF.T;
+                    Tinv = KF.Tinv;
+                    ESS = KF.ESS;
                     Lambda = Neuro.CLDA.Lambda;
                     
                     % update sufficient stats & half life
@@ -105,31 +107,24 @@ if TaskFlag>1, % do nothing during imagined movements
                     C = S/R;
                     Q = (1/ESS) * (T - S/R*S');
                     
-                    % store params
-                    Neuro.KF.R = R;
-                    Neuro.KF.S = S;
-                    Neuro.KF.T = T;
-                    Neuro.KF.C = C;
-                    Neuro.KF.Q = Q;
-                    Neuro.KF.Tinv = Tinv;
-                    Neuro.KF.ESS = ESS;
-                    Neuro.KF.Lambda = Lambda;
+%                     % store params
+%                     KF.R = R;
+%                     KF.S = S;
+%                     KF.T = T;
+%                     KF.C = C;
+%                     KF.Q = Q;
+%                     KF.Tinv = Tinv;
+%                     KF.ESS = ESS;
+%                     KF.Lambda = Lambda;
                 end
-                
-                % RML Kalman Gain eq (~8ms)
-%                 Pinv = inv(P);
-%                 K = P*C'*Qinv*(eye(size(Y,1)) - C/(Pinv+C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (edit by DBS)
-                K = P*C'*Qinv*(eye(size(Y,1)) - C/(P + C'*Qinv*C)*(C'*Qinv)); 
-                                
-            else, % not RML/normal kalman filter (faster since not updating params)
-                % K = (P*C') / (C*P*C' + Q); % original Kalman Gain eq
-                K = P*C'*Qinv*(eye(size(Y,1)) - C/(P + C'*Qinv*C)*(C'*Qinv)); % RML Method
             end
             
             % Kalman Update Step
             X = Cursor.State; % *note using true cursor state
+            % K = (P*C') / (C*P*C' + Q); % original Kalman Gain eq
+            K = P*C'*Qinv*(eye(size(Y,1)) - C/(P + C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (~8ms)
             Cursor.State = X + K*(Y - C*X);
-            Neuro.KF.P = P - K*C*P;
+            KF.P = P - K*C*P;
             
             % assisted velocity
             if Cursor.Assistance > 0,

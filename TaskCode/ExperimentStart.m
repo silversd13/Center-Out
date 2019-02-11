@@ -73,6 +73,9 @@ Neuro.FeatureStats.var    = zeros(1,Params.NumChannels); % estimate of variance 
 % create low freq buffers
 Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,3);
 
+%% Kalman Filter
+KF = Params.KF;
+
 %% Check Important Params with User
 LogicalStr = {'false', 'true'};
 Params.Subject = Subject;
@@ -90,7 +93,7 @@ fprintf('\n    - debug mode: %s', LogicalStr{Params.DEBUG+1})
 
 fprintf('\n\n  Neuro Processing Pipeline:')
 if Params.GenNeuralFeaturesFlag,
-    fprintf('\n    - generating neural features:')
+    fprintf('\n    - generating neural features!')
 else,
     fprintf('\n    - reference mode: %s', Params.ReferenceModeStr)
     fprintf('\n    - zscore raw: %s', LogicalStr{Params.ZscoreRawFlag+1})
@@ -135,17 +138,17 @@ try
     
     % Imagined Cursor Movements Loop
     if Params.NumImaginedBlocks>0,
-        Neuro = RunTask(Params,Neuro,1);
+        [Neuro,KF] = RunTask(Params,Neuro,1,KF);
     end
     
     % Adaptation Loop
     if Params.NumAdaptBlocks>0,
-        Neuro = RunTask(Params,Neuro,2);
+        [Neuro,KF] = RunTask(Params,Neuro,2,KF);
     end
     
     % Fixed Decoder Loop
     if Params.NumFixedBlocks>0,
-        Neuro = RunTask(Params,Neuro,3);
+        [Neuro,KF] = RunTask(Params,Neuro,3,KF);
     end
     
     % Pause and Finish!
