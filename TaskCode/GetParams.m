@@ -18,9 +18,10 @@ end
 %% Control
 Params.Gain             = 1;
 Params.CenterReset      = false;
-Params.Assistance       = 0; % value btw 0 and 1, 1 full assist
+Params.Assistance       = .2; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
+Params.InitializationMode = 2; % 1-imagined mvmts, 2-shuffled imagined mvmts
 
 %% Current Date and Time
 % get today's date
@@ -96,7 +97,7 @@ Params.CursorSize = 5;
 Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
     +Params.CursorSize +Params.CursorSize];
 
-%% Cursor Object
+%% Kalman Filter Properties
 dt = 1/Params.UpdateRate;
 if Params.ControlMode==3,
     Params.KF.A = [...
@@ -108,15 +109,16 @@ if Params.ControlMode==3,
     Params.KF.W = [...
         0       0       0       0       0;
         0       0       0       0       0;
-        0       0       200     0       0;
-        0       0       0       200     0;
+        0       0       500     0       0;
+        0       0       0       500     0;
         0       0       0       0       0];
     Params.KF.P = zeros(5);
+    Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
 end
 
 %% Trial and Block Types
 Params.NumImaginedBlocks    = 0;
-Params.NumAdaptBlocks       = 2;
+Params.NumAdaptBlocks       = 6;
 Params.NumFixedBlocks       = 10;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
@@ -126,12 +128,11 @@ switch Params.TargetSelectionFlag,
 end
 
 %% CLDA Parameters
-
 TypeStrs                = {'none','refit','smooth_batch','rml'};
 Params.CLDA.TypeStr     = TypeStrs{Params.CLDA.Type+1};
 
 Params.CLDA.UpdateTime = 80; % secs, for smooth batch
-Params.CLDA.Alpha = exp(log(.5) / (120*Params.CLDA.UpdateTime)); % for smooth batch
+Params.CLDA.Alpha = exp(log(.5) / (120/Params.CLDA.UpdateTime)); % for smooth batch
 Params.CLDA.Lambda = exp(log(.5) / (120*Params.UpdateRate)); % for RML
 
 switch Params.CLDA.AdaptType,
@@ -148,10 +149,7 @@ switch Params.CLDA.AdaptType,
         Params.CLDA.DeltaLambda = DeltaLambda; % for RML
         Params.CLDA.DeltaAssistance = ... % linearly decrease assistance
             Params.Assistance...
-            /(Params.NumAdaptBlocks...
-            *Params.NumTrialsPerBlock...
-            *Params.UpdateRate...
-            *5); % sec/trial
+            /(Params.NumAdaptBlocks*Params.NumTrialsPerBlock*5/Params.CLDA.UpdateTime);
 end
 
 %% Hold Times

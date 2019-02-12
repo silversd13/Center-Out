@@ -91,4 +91,11 @@ switch fitFlag,
         KF.Qinv = inv(KF.Q);
 end
 
+if fitFlag==0 && KF.InitializationMode==2, % return shuffled weights
+    for i=1:size(KF.C,1),
+        idx = randperm(size(KF.C,2)-1);
+        KF.C(i,1:size(KF.C,2)-1) = KF.C(i,idx);
+    end
+end
+
 end % FitKF

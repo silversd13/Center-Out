@@ -19,7 +19,7 @@ fprintf('Target: %i\n',Data.TargetAngle)
 if Params.Verbose,
     fprintf('  Cursor Assistance: %.2f\n',Cursor.Assistance)
     if Params.CLDA.Type==3,
-        fprintf('  Lambda: %.2f\n',Neuro.CLDA.Lambda)
+        fprintf('  Lambda: %.3g\n',Neuro.CLDA.Lambda)
     end
 end
 
