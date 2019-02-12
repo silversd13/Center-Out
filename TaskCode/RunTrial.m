@@ -40,17 +40,19 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
     end
     
     done = 0;
+    TotalTime = 0;
     while ~done,
         % Update Time & Position
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, Data = ExperimentPause(Params,Data); end
+        if CheckPause, [Neuro,Data] = ExperimentPause(Params,Neuro,Data); end
 
         % Update Screen Every Xsec
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
             % time
             dt = tim - Cursor.LastPredictTime;
+            TotalTime = TotalTime + dt;
             dt_vec(end+1) = dt; %#ok<*AGROW>
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
@@ -91,7 +93,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
         end
 
         % end if takes too long
-        if (tim - tstart) > Params.InterTrialInterval,
+        if TotalTime > Params.InterTrialInterval,
             done = 1;
         end
 
@@ -112,18 +114,20 @@ if ~Data.ErrorID && ~Params.CenterReset,
     end
     
     done = 0;
-    totalTime = 0;
+    TotalTime = 0;
+    InTargetTotalTime = 0;
     while ~done,
         % Update Time & Position
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, Data = ExperimentPause(Params,Data); end
+        if CheckPause, [Neuro,Data] = ExperimentPause(Params,Neuro,Data); end
 
         % Update Screen Every Xsec
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
             % time
             dt = tim - Cursor.LastPredictTime;
+            TotalTime = TotalTime + dt;
             dt_vec(end+1) = dt;
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
@@ -175,22 +179,22 @@ if ~Data.ErrorID && ~Params.CenterReset,
             
             % start counting time if cursor is in target
             if inFlag,
-                totalTime = totalTime + dt;
+                InTargetTotalTime = InTargetTotalTime + dt;
             else
-                totalTime = 0;
+                InTargetTotalTime = 0;
             end
         end
 
         % end if takes too long
-        if (tim - tstart) > Params.MaxStartTime,
+        if TotalTime > Params.MaxStartTime,
             done = 1;
             Data.ErrorID = 1;
             Data.ErrorStr = 'StartTarget';
-            fprintf('ERROR: %s\n',Data.ErrorStr)
+            fprintf('\nERROR: %s\n',Data.ErrorStr)
         end
 
         % end if in start target for hold time
-        if totalTime > Params.TargetHoldTime,
+        if InTargetTotalTime > Params.TargetHoldTime,
             done = 1;
         end
     end % Start Target Loop
@@ -211,18 +215,20 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
     end
     
     done = 0;
-    totalTime = 0;
+    TotalTime = 0;
+    InTargetTotalTime = 0;
     while ~done,
         % Update Time & Position
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, Data = ExperimentPause(Params,Data); end
+        if CheckPause, [Neuro,Data] = ExperimentPause(Params,Neuro,Data); end
         
         % Update Screen
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
             % time
             dt = tim - Cursor.LastPredictTime;
+            TotalTime = TotalTime + dt;
             dt_vec(end+1) = dt;
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
@@ -280,17 +286,17 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
             
             % start counting time if cursor is in target
             if inFlag,
-                totalTime = totalTime + dt;
+                InTargetTotalTime = InTargetTotalTime + dt;
             else, % error if they left too early
                 done = 1;
                 Data.ErrorID = 2;
                 Data.ErrorStr = 'InstructedDelayHold';
-                fprintf('ERROR: %s\n',Data.ErrorStr)
+                fprintf('\nERROR: %s\n',Data.ErrorStr)
             end
         end
         
         % end if in start target for hold time
-        if totalTime > Params.InstructedDelayTime,
+        if InTargetTotalTime > Params.InstructedDelayTime,
             done = 1;
         end
     end % Instructed Delay Loop
@@ -310,18 +316,20 @@ if ~Data.ErrorID,
     end
     
     done = 0;
-    totalTime = 0;
+    TotalTime = 0;
+    InTargetTotalTime = 0;
     while ~done,
         % Update Time & Position
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, Data = ExperimentPause(Params,Data); end
+        if CheckPause, [Neuro,Data] = ExperimentPause(Params,Neuro,Data); end
 
         % Update Screen
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
             % time
             dt = tim - Cursor.LastPredictTime;
+            TotalTime = TotalTime + dt;
             dt_vec(end+1) = dt;
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
@@ -373,22 +381,22 @@ if ~Data.ErrorID,
             
             % start counting time if cursor is in target
             if inFlag,
-                totalTime = totalTime + dt;
+                InTargetTotalTime = InTargetTotalTime + dt;
             else
-                totalTime = 0;
+                InTargetTotalTime = 0;
             end
         end
 
         % end if takes too long
-        if (tim - tstart) > Params.MaxReachTime,
+        if TotalTime > Params.MaxReachTime,
             done = 1;
             Data.ErrorID = 3;
             Data.ErrorStr = 'ReachTarget';
-            fprintf('ERROR: %s\n',Data.ErrorStr)
+            fprintf('\nERROR: %s\n',Data.ErrorStr)
         end
 
         % end if in start target for hold time
-        if totalTime > Params.TargetHoldTime,
+        if InTargetTotalTime > Params.TargetHoldTime,
             done = 1;
         end
     end % Reach Target Loop
@@ -408,7 +416,7 @@ end
 
 % output feedback
 if Data.ErrorID==0,
-    fprintf('SUCCESS\n')
+    fprintf('\nSUCCESS\n')
     if Params.FeedbackSound,
         sound(Params.RewardSound,Params.RewardSoundFs)
     end
