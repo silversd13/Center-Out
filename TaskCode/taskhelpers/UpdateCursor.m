@@ -33,6 +33,10 @@ switch Cursor.ControlMode,
         Cursor.State(3) = vx;
         Cursor.State(4) = vy;
         
+        % Update Intended Cursor State
+        Cursor.IntendedState = Cursor.State; % current true position
+        Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
+        
     case 2, % Use Mouse Position as a Velocity Input (Center-Joystick)
         [x,y] = GetMouse();
         vx = Params.Gain * (x - Params.Center(1));
@@ -52,29 +56,31 @@ switch Cursor.ControlMode,
         Cursor.State(3) = Vass(1);
         Cursor.State(4) = Vass(2);
         
+        % Update Intended Cursor State
+        Cursor.IntendedState = Cursor.State; % current true position
+        Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
+        
     case 3, % Kalman Filter Velocity Input
-        X = Cursor.State;
-        X0 = X; % initial state, useful for assistance
+        X0 = Cursor.State; % initial state, useful for assistance
+        
+        % Kalman Predict Step
+        X = X0;
         Y = Neuro.NeuralFeatures;
         A = KF.A;
         W = KF.W;
         P = KF.P;
-        C = KF.C;
-        Q = KF.Q; %#ok<NASGU>
-        
-        % Update KF Params (RML & Adaptation Block)
-        if KF.CLDA.Type==3 && TaskFlag==2,
-            KF = UpdateRmlKF(KF,Cursor.IntendedState,Y);
-        end
-        
-        % Kalman Predict Step
         X = A*X;
         P = A*P*A' + W;
         
         % Kalman Update Step
-        Qinv = KF.Qinv;
-        K = P*C'/(C*P*C' + Q);
-        %K = P*C'*Qinv*(eye(size(Y,1)) - C/(P + C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (~8ms)
+        C = KF.C;
+        if KF.CLDA.Type==3 && TaskFlag==2,
+            Q = KF.Q; % faster since avoids updating Qinv online
+            K = P*C'/(C*P*C' + Q);
+        else, % faster once Qinv is computed (fixed decoder or refit/batch)
+            Qinv = KF.Qinv;
+            K = P*C'*Qinv*(eye(size(Y,1)) - C/(inv(P) + C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (~8ms)
+        end
         X = X + K*(Y - C*X);
         P = P - K*C*P;
         
@@ -86,6 +92,9 @@ switch Cursor.ControlMode,
         if Cursor.Assistance > 0,
             Vcom = (X(1:2) - X0(1:2))*Params.UpdateRate; % effective velocity command
             Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
+            if norm(Vass)>200, % fast
+                Vass = 200 * Vass / norm(Vass);
+            end
             
             % update cursor state
             Cursor.State(1) = X0(1) + Vass(1)/Params.UpdateRate;
@@ -93,11 +102,17 @@ switch Cursor.ControlMode,
             Cursor.State(3) = Vass(1);
             Cursor.State(4) = Vass(2);
         end
+        
+        % Update KF Params (RML & Adaptation Block)
+        if KF.CLDA.Type==3 && TaskFlag==2,
+            % use intended state for param update
+            Cursor.IntendedState = Cursor.State; % current true position
+            Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
+            KF = UpdateRmlKF(KF,Cursor.IntendedState,Y);
+        end
+        
 end
 
-% update intended state
-Cursor.IntendedState = Cursor.State; % current true position
-Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
 
 % bound cursor position to size of screen
 pos = Cursor.State(1:2)' + Params.Center;

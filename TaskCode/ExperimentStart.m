@@ -74,11 +74,16 @@ Neuro.FeatureStats.var    = zeros(1,Params.NumChannels); % estimate of variance 
 Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,3);
 
 %% Kalman Filter
-KF = Params.KF;
-KF.CLDA = Params.CLDA;
+if Params.ControlMode==3,
+    KF = Params.KF;
+    KF.CLDA = Params.CLDA;
+else,
+    KF = [];
+end
 
 %% Check Important Params with User
 LogicalStr = {'false', 'true'};
+IMStr = {'imagined mvmts', 'shuffled imagined mvmts'};
 Params.Subject = Subject;
 Params.ControlMode = ControlMode;
 Params.BLACKROCK = BLACKROCK;
@@ -104,6 +109,7 @@ end
 
 fprintf('\n\n  BCI Parameters:')
 fprintf('\n    - Imagined Movements: %s', LogicalStr{double(Params.NumImaginedBlocks>0) +1})
+fprintf('\n      - initialization mode: %s', IMStr{Params.InitializationMode})
 fprintf('\n    - Adaptation Decoding: %s', LogicalStr{double(Params.NumAdaptBlocks>0) +1})
 fprintf('\n      - adapt type: %s', Params.CLDA.TypeStr)
 fprintf('\n      - adapt change type: %s', Params.CLDA.AdaptType)

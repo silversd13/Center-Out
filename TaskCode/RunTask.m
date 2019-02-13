@@ -87,9 +87,11 @@ switch TaskFlag,
                 % reFit Kalman Filter based on intended kinematics during
                 % adaptive block
                 if Neuro.CLDA.Type==1,
-                    KF = FitKF(Params,fullfile(Params.Datadir,'BCI_CLDA'),1);
-                elseif Neuro.CLDA.Type==0,
-                    KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0);
+                    KF = FitKF(Params,fullfile(Params.Datadir,'BCI_CLDA'),1,KF);
+                elseif Params.NumAdaptBlocks==0,
+                    KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0,KF);
+                elseif Neuro.CLDA.Type==3, % update Qinv
+                    KF.Qinv = inv(KF.Q);
                 end
         end
         

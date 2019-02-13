@@ -12,7 +12,6 @@ function KF = UpdateRmlKF(KF,X,Y)
 R       = KF.R;
 S       = KF.S;
 T       = KF.T;
-Tinv    = KF.Tinv;
 ESS     = KF.ESS;
 Lambda  = KF.CLDA.Lambda;
 
@@ -22,13 +21,9 @@ S  = Lambda*S  + Y*X';
 T  = Lambda*T  + Y*Y';
 ESS= Lambda*ESS+ 1;
 
-% update inverses
-Tinv = Tinv/Lambda + (Tinv*(Y*Y')*Tinv)/(Lambda*(Lambda + Y'*Tinv*Y)); % ~35ms
-Qinv = ESS * (Tinv - Tinv*S/(S'*Tinv*S - R)*S'*Tinv); % ~15ms
-
 % update kalman matrices (neural mapping matrices)
 C = S/R;
-Q = (1/ESS) * (T - C*S');
+Q = (1/ESS) * (T - C*S'); % ignore Q since updating inv(Q) directly
 
 % store params
 KF.R    = R;
@@ -36,9 +31,14 @@ KF.S    = S;
 KF.T    = T;
 KF.C    = C;
 KF.Q    = Q;
-KF.Tinv = Tinv;
-KF.Qinv = Qinv;
 KF.ESS  = ESS;
 KF.Lambda = Lambda + KF.CLDA.DeltaLambda;
+
+% update inverses % this actually seems slower, not implementing
+% Tinv    = KF.Tinv;
+% Tinv = Tinv/Lambda - (Tinv*(Y*Y')*Tinv)/(Lambda*(Lambda + Y'*Tinv*Y));
+% Qinv = ESS * (Tinv - Tinv*S/(S'*Tinv*S - R)*S'*Tinv);
+% KF.Tinv = Tinv;
+% KF.Qinv = Qinv;
 
 end % UpdateRmlKF

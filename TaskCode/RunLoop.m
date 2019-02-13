@@ -66,6 +66,12 @@ for Block=1:NumBlocks, % Block Loop
                     Cursor.Assistance = max([Cursor.Assistance,0]);
                 end
             end
+        elseif TaskFlag==2 && Neuro.CLDA.Type==3,
+            % decrease assistance after batch update
+            if Cursor.Assistance>0,
+                Cursor.Assistance = Cursor.Assistance - Cursor.DeltaAssistance;
+                Cursor.Assistance = max([Cursor.Assistance,0]);
+            end
         end
         
         % set up trial

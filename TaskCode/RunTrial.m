@@ -19,7 +19,7 @@ fprintf('Target: %i\n',Data.TargetAngle)
 if Params.Verbose,
     fprintf('  Cursor Assistance: %.2f\n',Cursor.Assistance)
     if Params.CLDA.Type==3,
-        fprintf('  Lambda: %.3g\n',Neuro.CLDA.Lambda)
+        fprintf('  Lambda: %.5g\n',Neuro.CLDA.Lambda)
     end
 end
 
@@ -125,6 +125,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
 
         % Update Screen Every Xsec
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
+            tic;
             % time
             dt = tim - Cursor.LastPredictTime;
             TotalTime = TotalTime + dt;
@@ -145,7 +146,9 @@ if ~Data.ErrorID && ~Params.CenterReset,
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
+                tic;
                 KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
+                toc
             end
             
             % cursor

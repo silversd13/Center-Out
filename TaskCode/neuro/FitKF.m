@@ -68,6 +68,12 @@ end
 % full cursor state at neural times
 D = size(X,2);
 
+% if initialization mode returns shuffled weights
+if fitFlag==0 && KF.InitializationMode==2, % return shuffled weights
+    idx = randperm(size(Y,2));
+    Y = Y(:,idx);
+end
+
 % fit kalman matrices
 C = (Y*X') / (X*X');
 Q = (1/D) * ((Y-C*X) * (Y-C*X)');
@@ -80,22 +86,15 @@ switch fitFlag,
         KF.S = Y*X';
         KF.T = Y*Y';
         KF.ESS = D;
-        KF.Tinv = inv(KF.T);
-        KF.Qinv = inv(Q);
         KF.C = C;
         KF.Q = Q;
+        KF.Tinv = inv(KF.T);
+        KF.Qinv = inv(Q);
     case 2, % smooth batch
         alpha = Params.CLDA.Alpha;
         KF.C = alpha*KF.C + (1-alpha)*C;
         KF.Q = alpha*KF.Q + (1-alpha)*Q;
         KF.Qinv = inv(KF.Q);
-end
-
-if fitFlag==0 && KF.InitializationMode==2, % return shuffled weights
-    for i=1:size(KF.C,1),
-        idx = randperm(size(KF.C,2)-1);
-        KF.C(i,1:size(KF.C,2)-1) = KF.C(i,idx);
-    end
 end
 
 end % FitKF
