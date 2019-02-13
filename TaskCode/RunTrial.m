@@ -67,6 +67,10 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                     Data.NeuralTime(1,end+1) = tim;
                 elseif Params.GenNeuralFeaturesFlag,
                     Neuro.NeuralFeatures = VelToNeuralFeatures(Params);
+                    if Neuro.DimRed.Flag,
+                        Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
+                        Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
+                    end
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
@@ -143,12 +147,14 @@ if ~Data.ErrorID && ~Params.CenterReset,
                     Data.NeuralTime(1,end+1) = tim;
                 elseif Params.GenNeuralFeaturesFlag,
                     Neuro.NeuralFeatures = VelToNeuralFeatures(Params);
+                    if Neuro.DimRed.Flag,
+                        Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
+                        Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
+                    end
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
-                tic;
                 KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
-                toc
             end
             
             % cursor
@@ -246,6 +252,10 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                     Data.NeuralTime(1,end+1) = tim;
                 elseif Params.GenNeuralFeaturesFlag,
                     Neuro.NeuralFeatures = VelToNeuralFeatures(Params);
+                    if Neuro.DimRed.Flag,
+                        Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
+                        Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
+                    end
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end
@@ -347,6 +357,10 @@ if ~Data.ErrorID,
                     Data.NeuralTime(1,end+1) = tim;
                 elseif Params.GenNeuralFeaturesFlag,
                     Neuro.NeuralFeatures = VelToNeuralFeatures(Params);
+                    if Neuro.DimRed.Flag,
+                        Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
+                        Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
+                    end
                     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                     Data.NeuralTime(1,end+1) = tim;
                 end

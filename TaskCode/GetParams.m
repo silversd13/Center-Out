@@ -183,6 +183,12 @@ Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
 Params.ZscoreFeaturesFlag = false;
 Params.SaveProcessed = false;
+
+Params.DimRed.Flag = true;
+Params.DimRed.Method = 1; % 1-pca, 2-fa
+Params.DimRed.AvgTrialsFlag = false; % 0-cat imagined mvmts, 1-avg imagined mvmts
+Params.DimRed.NumDims = 592;
+
 Params.Fs = 1000;
 Params.NumChannels = 128;
 Params.BufferTime = 2; % secs longer for better phase estimation of low frqs

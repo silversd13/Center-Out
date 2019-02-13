@@ -26,6 +26,7 @@ switch TaskFlag,
             Params.NumImaginedBlocks*Params.NumTrialsPerBlock)
         fprintf('  Saving data to %s\n\n',fullfile(Params.Datadir,'Imagined'))
         
+        Neuro.DimRed.Flag = false; % set to false for imagined mvmts
         [Neuro,~] = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'Imagined'),[]);
         
     case 2, % Control Mode with Assist & CLDA
@@ -46,8 +47,20 @@ switch TaskFlag,
                     '\nAt any time, you can press ''p'' to briefly pause the task.'...
                     '\n\nPress the ''Space Bar'' to begin!' ];
                 
-                % Fit Kalman Filter based on imagined movements
-                KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0,KF);
+                % Fit Dimensionality Reduction Params & Kalman Filter 
+                % based on imagined mvmts
+                Neuro.DimRed.Flag = Params.DimRed.Flag; % reset for task
+                if Params.DimRed.Flag,
+                    Neuro.DimRed.F = FitDimRed(...
+                        fullfile(Params.Datadir,'Imagined'),Neuro.DimRed);
+                    KF = FitKF(Params,...
+                        fullfile(Params.Datadir,'Imagined'),0,KF,[],Neuro.DimRed.F);
+                else, % no dim reduction
+                    KF = FitKF(Params,...
+                        fullfile(Params.Datadir,'Imagined'),0,KF);
+                end
+                
+                
         end
         
         InstructionScreen(Params,Instructions);
@@ -86,10 +99,25 @@ switch TaskFlag,
                 
                 % reFit Kalman Filter based on intended kinematics during
                 % adaptive block
+                Neuro.DimRed.Flag = Params.DimRed.Flag; % reset for task
                 if Neuro.CLDA.Type==1,
-                    KF = FitKF(Params,fullfile(Params.Datadir,'BCI_CLDA'),1,KF);
+                    if Params.DimRed.Flag,
+                        KF = FitKF(Params,...
+                            fullfile(Params.Datadir,'BCI_CLDA'),1,KF,[],Neuro.DimRed.F);
+                    else,
+                        KF = FitKF(Params,...
+                            fullfile(Params.Datadir,'BCI_CLDA'),1,KF);
+                    end
                 elseif Params.NumAdaptBlocks==0,
-                    KF = FitKF(Params,fullfile(Params.Datadir,'Imagined'),0,KF);
+                    if Params.DimRed.Flag,
+                        Neuro.DimRed.F = FitDimRed(...
+                            fullfile(Params.Datadir,'Imagined'),Neuro.DimRed);
+                        KF = FitKF(Params,...
+                            fullfile(Params.Datadir,'Imagined'),0,KF,[],Neuro.DimRed.F);
+                    else,
+                        KF = FitKF(Params,...
+                            fullfile(Params.Datadir,'Imagined'),0,KF);
+                    end
                 elseif Neuro.CLDA.Type==3, % update Qinv
                     KF.Qinv = inv(KF.Q);
                 end

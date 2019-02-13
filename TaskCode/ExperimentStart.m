@@ -41,6 +41,7 @@ end
 % changes
 Neuro.ZscoreRawFlag     = Params.ZscoreRawFlag;
 Neuro.ZscoreFeaturesFlag= Params.ZscoreFeaturesFlag;
+Neuro.DimRed            = Params.DimRed;
 Neuro.CLDA              = Params.CLDA;
 Neuro.SaveProcessed     = Params.SaveProcessed;
 Neuro.FilterBank        = Params.FilterBank;
@@ -84,6 +85,7 @@ end
 %% Check Important Params with User
 LogicalStr = {'false', 'true'};
 IMStr = {'imagined mvmts', 'shuffled imagined mvmts'};
+DimRedStr = {'PCA', 'FA'};
 Params.Subject = Subject;
 Params.ControlMode = ControlMode;
 Params.BLACKROCK = BLACKROCK;
@@ -106,6 +108,8 @@ else,
     fprintf('\n    - zscore features: %s', LogicalStr{Params.ZscoreFeaturesFlag+1})
     fprintf('\n    - save filtered data: %s', LogicalStr{Params.ZscoreRawFlag+1})
 end
+fprintf('\n    - dimensionality reduction: %s', LogicalStr{Params.DimRed.Flag+1})
+fprintf('\n      - method: %s', DimRedStr{Params.DimRed.Method})
 
 fprintf('\n\n  BCI Parameters:')
 fprintf('\n    - Imagined Movements: %s', LogicalStr{double(Params.NumImaginedBlocks>0) +1})

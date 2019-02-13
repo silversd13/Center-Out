@@ -1,4 +1,4 @@
-function KF = FitKF(Params,datadir,fitFlag,KF,TrialBatch)
+function KF = FitKF(Params,datadir,fitFlag,KF,TrialBatch,dimRedFunc)
 % function KF = FitKF(Params,datadir,fitFlag,KF,TrialBatch)
 % Uses all trials in given data directory to initialize matrices for kalman
 % filter. Returns KF structure containing matrices: A,W,P,C,Q
@@ -9,6 +9,7 @@ function KF = FitKF(Params,datadir,fitFlag,KF,TrialBatch)
 %           2-fit on intended kinematics (smoothbatch algorithm)
 % KF - kalman filter structure containing matrices: A,W,P,C,Q
 % TrialBatch - cell array of filenames w/ trials to use in smooth batch
+% dimRedFunc - function handle for dimensionality red. redX = dimRedFunc(X)
 
 % ouput to screen
 fprintf('\n\nFitting Kalman Filter:\n')
@@ -63,6 +64,11 @@ if size(Xfull,2)>size(Y,2)
     X = interp1(Tfull',Xfull',T')';
 else,
     X = Xfull;
+end
+
+% if DimRed is on, reduce dimensionality of neural features
+if exist('dimRedFunc','var'),
+    Y = dimRedFunc(Y);
 end
 
 % full cursor state at neural times

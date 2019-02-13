@@ -65,7 +65,11 @@ switch Cursor.ControlMode,
         
         % Kalman Predict Step
         X = X0;
-        Y = Neuro.NeuralFeatures;
+        if Neuro.DimRed.Flag,
+            Y = Neuro.NeuralFactors;
+        else,
+            Y = Neuro.NeuralFeatures;
+        end
         A = KF.A;
         W = KF.W;
         P = KF.P;
