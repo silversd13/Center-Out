@@ -90,6 +90,7 @@ Params.ReachTargetPositions = ...
     Params.StartTargetPosition ...
     + Params.ReachTargetRadius ...
     * [cosd(Params.ReachTargetAngles) sind(Params.ReachTargetAngles)];
+Params.NumReachTargets = length(Params.ReachTargetAngles);
 
 %% Cursor
 Params.CursorColor = [0,0,255];
@@ -120,11 +121,11 @@ end
 Params.NumImaginedBlocks    = 0;
 Params.NumAdaptBlocks       = 1;
 Params.NumFixedBlocks       = 1;
-Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
+Params.NumTrialsPerBlock    = 10;%length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
-    case 1, Params.TargetFunc = @randperm;
-    case 2, Params.TargetFunc = @(n) randi(n,1,n);
+    case 1, Params.TargetFunc = @(n) mod(randperm(n),Params.NumReachTargets)+1;
+    case 2, Params.TargetFunc = @(n) mod(randi(n,1,n),Params.NumReachTargets)+1;
 end
 
 %% CLDA Parameters
