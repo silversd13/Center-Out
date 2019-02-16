@@ -73,7 +73,7 @@ mkdir(datadir);
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
 Params.UpdateRate = 10; % Hz
-Params.BaselineTime = 0; % secs
+Params.BaselineTime = 10; % secs
 
 %% Targets
 Params.TargetSize = 30;
@@ -121,7 +121,7 @@ end
 Params.NumImaginedBlocks    = 0;
 Params.NumAdaptBlocks       = 1;
 Params.NumFixedBlocks       = 1;
-Params.NumTrialsPerBlock    = 10;%length(Params.ReachTargetAngles);
+Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
     case 1, Params.TargetFunc = @(n) mod(randperm(n),Params.NumReachTargets)+1;
