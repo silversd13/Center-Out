@@ -73,9 +73,9 @@ Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
     +Params.CursorSize +Params.CursorSize];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 10;
-Params.NumAdaptBlocks       = 0;
-Params.NumFixedBlocks       = 0;
+Params.NumImaginedBlocks    = 1;
+Params.NumAdaptBlocks       = 1;
+Params.NumFixedBlocks       = 1;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 
 %% Hold Times
