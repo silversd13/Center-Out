@@ -82,6 +82,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
             if TaskFlag==1, % imagined movements
                 Cursor.State(3:4) = (OptimalCursorTraj(ct,:)'-Cursor.State(1:2))/dt;
                 Cursor.State(1:2) = OptimalCursorTraj(ct,:);
+                Cursor.Vcommand = Cursor.State(3:4);
                 ct = ct + 1;
             end
             CursorRect = Params.CursorRect;
@@ -93,6 +94,17 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
 
             % draw
             Screen('FillOval', Params.WPTR, Params.CursorColor, CursorRect);
+            if Params.DrawVelCommand.Flag,
+                VelRect = Params.DrawVelCommand.Rect;
+                VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
+                VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
+                x0 = mean(VelRect([1,3]));
+                y0 = mean(VelRect([2,4]));
+                xf = x0 + 0.1*Cursor.Vcommand(1);
+                yf = y0 + 0.1*Cursor.Vcommand(2);
+                Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
+                Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
+            end
             Screen('DrawingFinished', Params.WPTR);
             Screen('Flip', Params.WPTR);
         end
@@ -163,6 +175,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
             if TaskFlag==1, % imagined movements
                 Cursor.State(3:4) = (OptimalCursorTraj(ct,:)'-Cursor.State(1:2))/dt;
                 Cursor.State(1:2) = OptimalCursorTraj(ct,:);
+                Cursor.Vcommand = Cursor.State(3:4);
                 ct = ct + 1;
             end
             CursorRect = Params.CursorRect;
@@ -185,6 +198,17 @@ if ~Data.ErrorID && ~Params.CenterReset,
             Screen('FillOval', Params.WPTR, ...
                 cat(1,StartCol,Params.CursorColor)', ...
                 cat(1,StartRect,CursorRect)')
+            if Params.DrawVelCommand.Flag,
+                VelRect = Params.DrawVelCommand.Rect;
+                VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
+                VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
+                x0 = mean(VelRect([1,3]));
+                y0 = mean(VelRect([2,4]));
+                xf = x0 + 0.1*Cursor.Vcommand(1);
+                yf = y0 + 0.1*Cursor.Vcommand(2);
+                Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
+                Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
+            end
             Screen('DrawingFinished', Params.WPTR);
             Screen('Flip', Params.WPTR);
             
@@ -269,6 +293,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
             if TaskFlag==1, % imagined movements
                 Cursor.State(3:4) = (OptimalCursorTraj(ct,:)'-Cursor.State(1:2))/dt;
                 Cursor.State(1:2) = OptimalCursorTraj(ct,:);
+                Cursor.Vcommand = Cursor.State(3:4);
                 ct = ct + 1;
             end
             CursorRect = Params.CursorRect;
@@ -297,6 +322,17 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
             Screen('FillOval', Params.WPTR, ...
                 cat(1,StartCol,ReachCol,Params.CursorColor)', ...
                 cat(1,StartRect,ReachRect,CursorRect)')
+            if Params.DrawVelCommand.Flag,
+                VelRect = Params.DrawVelCommand.Rect;
+                VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
+                VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
+                x0 = mean(VelRect([1,3]));
+                y0 = mean(VelRect([2,4]));
+                xf = x0 + 0.1*Cursor.Vcommand(1);
+                yf = y0 + 0.1*Cursor.Vcommand(2);
+                Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
+                Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
+            end
             Screen('DrawingFinished', Params.WPTR);
             Screen('Flip', Params.WPTR);
             
@@ -375,6 +411,7 @@ if ~Data.ErrorID,
             if TaskFlag==1, % imagined movements
                 Cursor.State(3:4) = (OptimalCursorTraj(ct,:)'-Cursor.State(1:2))/dt;
                 Cursor.State(1:2) = OptimalCursorTraj(ct,:);
+                Cursor.Vcommand = Cursor.State(3:4);
                 ct = ct + 1;
             end
             CursorRect = Params.CursorRect;
@@ -397,6 +434,17 @@ if ~Data.ErrorID,
             Screen('FillOval', Params.WPTR, ...
                 cat(1,ReachCol,Params.CursorColor)', ...
                 cat(1,ReachRect,CursorRect)')
+            if Params.DrawVelCommand.Flag,
+                VelRect = Params.DrawVelCommand.Rect;
+                VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
+                VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
+                x0 = mean(VelRect([1,3]));
+                y0 = mean(VelRect([2,4]));
+                xf = x0 + 0.1*Cursor.Vcommand(1);
+                yf = y0 + 0.1*Cursor.Vcommand(2);
+                Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
+                Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
+            end
             Screen('DrawingFinished', Params.WPTR);
             Screen('Flip', Params.WPTR);
             

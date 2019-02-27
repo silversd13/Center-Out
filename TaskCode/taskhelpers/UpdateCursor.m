@@ -23,6 +23,7 @@ end
 % find vx and vy using control scheme
 switch Cursor.ControlMode,
     case 1, % Move to Mouse
+        X0 = Cursor.State;
         [x,y] = GetMouse();
         vx = ((x-Params.Center(1)) - Cursor.State(1))*Params.UpdateRate;
         vy = ((y-Params.Center(2)) - Cursor.State(2))*Params.UpdateRate;
@@ -34,10 +35,12 @@ switch Cursor.ControlMode,
         Cursor.State(4) = vy;
         
         % Update Intended Cursor State
+        Vcom = (X(1:2) - X0(1:2))*Params.UpdateRate; % effective velocity command
         Cursor.IntendedState = Cursor.State; % current true position
         Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
         
     case 2, % Use Mouse Position as a Velocity Input (Center-Joystick)
+        X0 = Cursor.State;
         [x,y] = GetMouse();
         vx = Params.Gain * (x - Params.Center(1));
         vy = Params.Gain * (y - Params.Center(2));
@@ -57,6 +60,7 @@ switch Cursor.ControlMode,
         Cursor.State(4) = Vass(2);
         
         % Update Intended Cursor State
+        Vcom = (X(1:2) - X0(1:2))*Params.UpdateRate; % effective velocity command
         Cursor.IntendedState = Cursor.State; % current true position
         Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
         
@@ -117,6 +121,8 @@ switch Cursor.ControlMode,
         
 end
 
+% update effective velocity command for screen output
+Cursor.Vcommand = Vcom;
 
 % bound cursor position to size of screen
 pos = Cursor.State(1:2)' + Params.Center;

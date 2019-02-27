@@ -77,8 +77,8 @@ Params.BaselineTime = 10; % secs
 
 %% Targets
 Params.TargetSize = 50;
-Params.OutTargetColor = [0,255,0];
-Params.InTargetColor = [255,0,0];
+Params.OutTargetColor = [55,255,0];
+Params.InTargetColor = [255,55,0];
 
 Params.StartTargetPosition  = [0,0];
 Params.TargetRect = ...
@@ -93,7 +93,7 @@ Params.ReachTargetPositions = ...
 Params.NumReachTargets = length(Params.ReachTargetAngles);
 
 %% Cursor
-Params.CursorColor = [0,0,255];
+Params.CursorColor = [0,102,255];
 Params.CursorSize = 10;
 Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
     +Params.CursorSize +Params.CursorSize];
@@ -116,6 +116,10 @@ if Params.ControlMode==3,
     Params.KF.P = eye(5);
     Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
 end
+
+%% Velocity Command Online Feedback
+Params.DrawVelCommand.Flag = true;
+Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
 Params.NumImaginedBlocks    = 0;
