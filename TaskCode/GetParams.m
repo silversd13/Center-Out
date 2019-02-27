@@ -4,6 +4,9 @@ function Params = GetParams(Params)
 % subject-to-subject, experiment-to-experiment)
 % The parameters are all saved in 'Params.mat' for each experiment
 
+%% Verbosity
+Params.Verbose = true;
+
 %% Experiment
 Params.Task = 'Center-Out';
 switch Params.ControlMode,
@@ -13,12 +16,12 @@ switch Params.ControlMode,
 end
 
 %% Control
-Params.Gain = 1;
-Params.CenterReset = false;
-Params.Assistance = .5; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type = 1; % 1-refit, 2-smooth batch, 3-continuous
-Params.CLDA.Alpha = .5; % for smooth batch
-Params.CLDA.Lambda = .5; % for continuous
+Params.Gain             = 1;
+Params.CenterReset      = false;
+Params.Assistance       = .1; % value btw 0 and 1, 1 full assist
+Params.CLDA.Type        = 0; % 0-none, 1-refit, 2-smooth batch, 3-RML
+Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
+Params.InitializationMode = 1; % 1-imagined mvmts, 2-shuffled imagined mvmts
 
 %% Current Date and Time
 % get today's date
@@ -36,19 +39,41 @@ end
 
 if IsWin,
     projectdir = 'C:\Users\ganguly-lab2\Documents\MATLAB\Center-Out';
+elseif IsOSX,
+    projectdir = '/Users/daniel/Projects/Center-Out/';
 else,
     projectdir = '/home/dsilver/Projects/Center-Out/';
 end
-datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMSS);
+addpath(genpath(fullfile(projectdir,'TaskCode')));
 
 % create folders for saving
+datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMSS);
 Params.Datadir = datadir;
-if ~exist(Params.Datadir,'dir'), mkdir(Params.Datadir); end
+% if folders already exist, warn user before continuing (unless,
+% subject='Test')
+if exist(Params.Datadir,'dir'),
+    if ~strcmpi(Params.Subject,'Test'),
+        str = input([...
+            '\n\nData directory already exists.',...
+            '\nAre you sure you want to continue? Y/N ',...
+            '\nThis directory will be overwritten if you continue. '],'s');
+    else, str = 'Y';
+    end
+%     if strcmpi(str,'Y'), % delete all files in directory
+%         recycle('on')
+%         delete(fullfile(datadir,'*'))
+%         delete(fullfile(datadir,'Imagined','*'))
+%         delete(fullfile(datadir,'BCI_CLDA','*'))
+%         delete(fullfile(datadir,'BCI_Fixed','*'))
+%     end
+end
+mkdir(datadir);
+
 
 %% Timing
-Params.ScreenRefreshRate = 60; % Hz
+Params.ScreenRefreshRate = 10; % Hz
 Params.UpdateRate = 10; % Hz
-Params.BaselineTime = 0; % secs
+Params.BaselineTime = 10; % secs
 
 %% Targets
 Params.TargetSize = 30;
@@ -65,6 +90,7 @@ Params.ReachTargetPositions = ...
     Params.StartTargetPosition ...
     + Params.ReachTargetRadius ...
     * [cosd(Params.ReachTargetAngles) sind(Params.ReachTargetAngles)];
+Params.NumReachTargets = length(Params.ReachTargetAngles);
 
 %% Cursor
 Params.CursorColor = [0,0,255];
@@ -72,11 +98,69 @@ Params.CursorSize = 5;
 Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
     +Params.CursorSize +Params.CursorSize];
 
+%% Kalman Filter Properties
+dt = 1/Params.UpdateRate;
+if Params.ControlMode==3,
+    Params.KF.A = [...
+        1       0       dt      0       0;
+        0       1       0       dt      0;
+        0       0       .8      0       0;
+        0       0       0       .8      0;
+        0       0       0       0       1];
+    Params.KF.W = [...
+        0       0       0       0       0;
+        0       0       0       0       0;
+        0       0       500     0       0;
+        0       0       0       500     0;
+        0       0       0       0       0];
+    Params.KF.P = eye(5);
+    Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
+end
+
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 1;
+Params.NumImaginedBlocks    = 0;
 Params.NumAdaptBlocks       = 1;
 Params.NumFixedBlocks       = 1;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
+Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
+switch Params.TargetSelectionFlag,
+    case 1, Params.TargetFunc = @(n) mod(randperm(n),Params.NumReachTargets)+1;
+    case 2, Params.TargetFunc = @(n) mod(randi(n,1,n),Params.NumReachTargets)+1;
+end
+
+%% CLDA Parameters
+TypeStrs                = {'none','refit','smooth_batch','rml'};
+Params.CLDA.TypeStr     = TypeStrs{Params.CLDA.Type+1};
+
+Params.CLDA.UpdateTime = 80; % secs, for smooth batch
+Params.CLDA.Alpha = exp(log(.5) / (120/Params.CLDA.UpdateTime)); % for smooth batch
+Params.CLDA.Lambda = exp(log(.5) / (30*Params.UpdateRate)); % for RML
+
+switch Params.CLDA.AdaptType,
+    case 'none',
+        Params.CLDA.DeltaLambda = 0;
+        Params.CLDA.DeltaAssistance = 0;
+    case 'linear',
+        FinalLambda = exp(log(.5) / (500*Params.UpdateRate));
+        DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
+            / (Params.NumAdaptBlocks...
+            *Params.NumTrialsPerBlock...
+            *Params.UpdateRate...
+            *5); % sec/trial;
+        Params.CLDA.DeltaLambda = DeltaLambda; % for RML
+        switch Params.CLDA.Type,
+            case 2, % smooth batch
+                Params.CLDA.DeltaAssistance = ... % linearly decrease assistance
+                Params.Assistance...
+                /(Params.NumAdaptBlocks*Params.NumTrialsPerBlock*5/Params.CLDA.UpdateTime);
+            case 3, % RML
+            Params.CLDA.DeltaAssistance = ... % linearly decrease assistance
+                Params.Assistance...
+                /(Params.NumAdaptBlocks*Params.NumTrialsPerBlock);
+            otherwise, % none or refit
+            Params.CLDA.DeltaAssistance = 0;
+        end
+end
 
 %% Hold Times
 Params.TargetHoldTime = .3;
@@ -84,24 +168,36 @@ Params.InterTrialInterval = 0;
 Params.InstructedDelayTime = 0;
 Params.MaxStartTime = 10;
 Params.MaxReachTime = 10;
-Params.InterBlockInterval = 1;
+Params.InterBlockInterval = 0;
 
 %% Feedback
-Params.FeedbackSound = 0;
+Params.FeedbackSound = false;
 Params.ErrorWaitTime = 2;
 Params.ErrorSound = 1000*audioread('buzz.wav');
-Params.RewardSound = 1000*audioread('smw_coin.wav');
+Params.ErrorSoundFs = 8192;
+[Params.RewardSound,Params.RewardSoundFs] = audioread('reward1.wav');
 % play sounds silently once so Matlab gets used to it
-sound(0*Params.ErrorSound)
+sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
+Params.GenNeuralFeaturesFlag = true;
+Params.ZscoreRawFlag = true;
+Params.ZscoreFeaturesFlag = false;
 Params.SaveProcessed = false;
+
+Params.DimRed.Flag = true;
+Params.DimRed.Method = 1; % 1-pca, 2-fa
+Params.DimRed.AvgTrialsFlag = false; % 0-cat imagined mvmts, 1-avg imagined mvmts
+Params.DimRed.NumDims = 592;
+
 Params.Fs = 1000;
 Params.NumChannels = 128;
 Params.BufferTime = 2; % secs longer for better phase estimation of low frqs
 Params.BufferSamps = Params.BufferTime * Params.Fs;
 Params.BadChannels = [];
+RefModeStr = {'none','common_mean','common_median'};
 Params.ReferenceMode = 0; % 0-no ref, 1-common mean, 2-common median
+Params.ReferenceModeStr = RefModeStr{Params.ReferenceMode+1};
 
 % filter bank - each element is a filter bank
 % fpass - bandpass cutoff freqs
