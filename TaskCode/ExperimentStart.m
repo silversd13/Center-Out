@@ -30,7 +30,7 @@ Params = GetParams(Params);
 
 %% Initialize Blackrock System
 if BLACKROCK,
-    addpath('C:\Program Files (x86)\Blackrock Microsystems\NeuroPort Windows Suite')
+    addpath('C:\Program Files (x86)\Blackrock Microsystems\Cerebus Windows Suite')
     cbmex('close'); % always close
     cbmex('open'); % open library
     cbmex('trialconfig', 1); % empty the buffer

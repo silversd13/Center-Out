@@ -19,7 +19,7 @@ end
 Params.Gain             = 1;
 Params.CenterReset      = false;
 Params.Assistance       = .4; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type        = 2; % 0-none, 1-refit, 2-smooth batch, 3-RML
+Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 1; % 1-imagined mvmts, 2-shuffled imagined mvmts
 
