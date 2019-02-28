@@ -32,18 +32,9 @@ if ~exist('KF','var'),
 end
 
 % If Initialization Mode = 3, manually choose datadir & fit KF
-if KF.InitializationMode==3,
-    datadir = uigetdir(datadir);
-end
 
 % If Initialization Mode = 4, manually choose trial and load kf params, do
 % not fit
-if KF.InitializationMode==4,
-    [datafile,datadir] = uigetfile(datadir);
-    load(fullfile(datadir,datafile));
-    KF = TrialData.KalmanFilter;
-    return
-end
 
 % grab data trial data
 datafiles = dir(fullfile(datadir,'Data*.mat'));

@@ -17,11 +17,11 @@ end
 
 %% Control
 Params.Gain             = 1;
-Params.CenterReset      = false;
+Params.CenterReset      = true;
 Params.Assistance       = .4; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
-Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
-Params.InitializationMode = 1; % 1-imagined mvmts, 2-shuffled imagined mvmts
+Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lambda for rml
+Params.InitializationMode = 4; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir
 
 %% Current Date and Time
 % get today's date
@@ -84,8 +84,8 @@ Params.StartTargetPosition  = [0,0];
 Params.TargetRect = ...
     [-Params.TargetSize -Params.TargetSize +Params.TargetSize +Params.TargetSize];
 
-Params.ReachTargetAngles = (0:45:315)';
-Params.ReachTargetRadius = 400;
+Params.ReachTargetAngles = (0:90:315)';
+Params.ReachTargetRadius = 250;
 Params.ReachTargetPositions = ...
     Params.StartTargetPosition ...
     + Params.ReachTargetRadius ...
@@ -123,8 +123,8 @@ Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
 Params.NumImaginedBlocks    = 0;
-Params.NumAdaptBlocks       = 12;
-Params.NumFixedBlocks       = 12;
+Params.NumAdaptBlocks       = 1;
+Params.NumFixedBlocks       = 1;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -168,7 +168,7 @@ end
 
 %% Hold Times
 Params.TargetHoldTime = .3;
-Params.InterTrialInterval = 0;
+Params.InterTrialInterval = 1;
 Params.InstructedDelayTime = 0;
 Params.MaxStartTime = 10;
 Params.MaxReachTime = 10;
@@ -188,6 +188,7 @@ Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
 Params.ZscoreFeaturesFlag = false;
 Params.SaveProcessed = false;
+Params.SaveRaw = true;
 
 Params.DimRed.Flag = false;
 Params.DimRed.Method = 1; % 1-pca, 2-fa
@@ -200,7 +201,7 @@ Params.BufferTime = 2; % secs longer for better phase estimation of low frqs
 Params.BufferSamps = Params.BufferTime * Params.Fs;
 Params.BadChannels = [];
 RefModeStr = {'none','common_mean','common_median'};
-Params.ReferenceMode = 0; % 0-no ref, 1-common mean, 2-common median
+Params.ReferenceMode = 2; % 0-no ref, 1-common mean, 2-common median
 Params.ReferenceModeStr = RefModeStr{Params.ReferenceMode+1};
 
 % filter bank - each element is a filter bank

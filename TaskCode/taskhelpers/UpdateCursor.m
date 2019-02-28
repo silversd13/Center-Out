@@ -35,6 +35,7 @@ switch Cursor.ControlMode,
         Cursor.State(4) = vy;
         
         % Update Intended Cursor State
+        X = Cursor.State;
         Vcom = (X(1:2) - X0(1:2))*Params.UpdateRate; % effective velocity command
         Cursor.IntendedState = Cursor.State; % current true position
         Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
@@ -60,6 +61,7 @@ switch Cursor.ControlMode,
         Cursor.State(4) = Vass(2);
         
         % Update Intended Cursor State
+        X = Cursor.State;
         Vcom = (X(1:2) - X0(1:2))*Params.UpdateRate; % effective velocity command
         Cursor.IntendedState = Cursor.State; % current true position
         Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
@@ -122,7 +124,11 @@ switch Cursor.ControlMode,
 end
 
 % update effective velocity command for screen output
-Cursor.Vcommand = Vcom;
+try,
+    Cursor.Vcommand = Vcom;
+catch,
+    Cursor.Vcommand = [0,0];
+end
 
 % bound cursor position to size of screen
 pos = Cursor.State(1:2)' + Params.Center;

@@ -1,4 +1,4 @@
-function [Data, Neuro, KF] = RunTrial(Data,Params,Neuro,TaskFlag,KF)
+function [Data, Neuro, KF, Params] = RunTrial(Data,Params,Neuro,TaskFlag,KF)
 % Runs a trial, saves useful data along the way
 % Each trial contains the following pieces
 % 1) Inter-trial interval
@@ -46,7 +46,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, [Neuro,Data] = ExperimentPause(Params,Neuro,Data); end
+        if CheckPause, [Neuro,Data,Params] = ExperimentPause(Params,Neuro,Data); end
 
         % Update Screen Every Xsec
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
@@ -92,20 +92,20 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
             Data.IntendedCursorState(:,end+1) = Cursor.IntendedState;
             Data.CursorAssist(1,end+1) = Cursor.Assistance;
 
-            % draw
-            Screen('FillOval', Params.WPTR, Params.CursorColor, CursorRect);
-            if Params.DrawVelCommand.Flag,
-                VelRect = Params.DrawVelCommand.Rect;
-                VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
-                VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
-                x0 = mean(VelRect([1,3]));
-                y0 = mean(VelRect([2,4]));
-                xf = x0 + 0.1*Cursor.Vcommand(1);
-                yf = y0 + 0.1*Cursor.Vcommand(2);
-                Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
-                Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
-            end
-            Screen('DrawingFinished', Params.WPTR);
+%             % draw
+%             Screen('FillOval', Params.WPTR, Params.CursorColor, CursorRect);
+%             if Params.DrawVelCommand.Flag && TaskFlag>1,
+%                 VelRect = Params.DrawVelCommand.Rect;
+%                 VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
+%                 VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
+%                 x0 = mean(VelRect([1,3]));
+%                 y0 = mean(VelRect([2,4]));
+%                 xf = x0 + 0.1*Cursor.Vcommand(1);
+%                 yf = y0 + 0.1*Cursor.Vcommand(2);
+%                 Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
+%                 Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
+%             end
+%             Screen('DrawingFinished', Params.WPTR);
             Screen('Flip', Params.WPTR);
         end
 
@@ -125,7 +125,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
 
     if TaskFlag==1,
         OptimalCursorTraj = [...
-            GenerateCursorTraj(Cursor.State,StartTargetPos,1.5,Params);
+            GenerateCursorTraj(Cursor.State,StartTargetPos,2,Params);
             GenerateCursorTraj(StartTargetPos,StartTargetPos,Params.TargetHoldTime,Params)];
         ct = 1;
     end
@@ -138,7 +138,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, [Neuro,Data] = ExperimentPause(Params,Neuro,Data); end
+        if CheckPause, [Neuro,Data,Params] = ExperimentPause(Params,Neuro,Data); end
 
         % Update Screen Every Xsec
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
@@ -198,7 +198,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
             Screen('FillOval', Params.WPTR, ...
                 cat(1,StartCol,Params.CursorColor)', ...
                 cat(1,StartRect,CursorRect)')
-            if Params.DrawVelCommand.Flag,
+            if Params.DrawVelCommand.Flag && TaskFlag>1,
                 VelRect = Params.DrawVelCommand.Rect;
                 VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
                 VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
@@ -257,7 +257,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, [Neuro,Data] = ExperimentPause(Params,Neuro,Data); end
+        if CheckPause, [Neuro,Data,Params] = ExperimentPause(Params,Neuro,Data); end
         
         % Update Screen
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
@@ -322,7 +322,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
             Screen('FillOval', Params.WPTR, ...
                 cat(1,StartCol,ReachCol,Params.CursorColor)', ...
                 cat(1,StartRect,ReachRect,CursorRect)')
-            if Params.DrawVelCommand.Flag,
+            if Params.DrawVelCommand.Flag && TaskFlag>1,
                 VelRect = Params.DrawVelCommand.Rect;
                 VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
                 VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
@@ -362,7 +362,7 @@ if ~Data.ErrorID,
 
     if TaskFlag==1,
         OptimalCursorTraj = [...
-            GenerateCursorTraj(StartTargetPos,ReachTargetPos,1.5,Params);
+            GenerateCursorTraj(StartTargetPos,ReachTargetPos,2,Params);
             GenerateCursorTraj(ReachTargetPos,ReachTargetPos,Params.TargetHoldTime,Params)];
         ct = 1;
     end
@@ -375,7 +375,7 @@ if ~Data.ErrorID,
         tim = GetSecs;
 
         % for pausing and quitting expt
-        if CheckPause, [Neuro,Data] = ExperimentPause(Params,Neuro,Data); end
+        if CheckPause, [Neuro,Data,Params] = ExperimentPause(Params,Neuro,Data); end
 
         % Update Screen
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
@@ -434,7 +434,7 @@ if ~Data.ErrorID,
             Screen('FillOval', Params.WPTR, ...
                 cat(1,ReachCol,Params.CursorColor)', ...
                 cat(1,ReachRect,CursorRect)')
-            if Params.DrawVelCommand.Flag,
+            if Params.DrawVelCommand.Flag && TaskFlag>1,
                 VelRect = Params.DrawVelCommand.Rect;
                 VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
                 VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
