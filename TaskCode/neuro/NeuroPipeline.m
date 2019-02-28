@@ -39,4 +39,4 @@ if exist('Data','var') && ~isempty(Data),
     varargout{2} = Data;
 end
 
-end % ProcessNeuro
+end % NeuroPipeline

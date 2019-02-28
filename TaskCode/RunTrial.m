@@ -73,8 +73,6 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
-                Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
-                Data.NeuralTime(1,end+1) = tim;
                 KF = UpdateCursor(Params,Neuro,TaskFlag,Cursor.State(1:2),KF);
             end
             
@@ -166,8 +164,6 @@ if ~Data.ErrorID && ~Params.CenterReset,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
-                Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
-                Data.NeuralTime(1,end+1) = tim;
                 KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
             end
             
@@ -284,8 +280,6 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
-                Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
-                Data.NeuralTime(1,end+1) = tim;
                 KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
             end
             
@@ -402,8 +396,6 @@ if ~Data.ErrorID,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
-                Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
-                Data.NeuralTime(1,end+1) = tim;
                 KF = UpdateCursor(Params,Neuro,TaskFlag,ReachTargetPos,KF);
             end
             
