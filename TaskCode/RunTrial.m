@@ -69,6 +69,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                 end
                 if Params.GenNeuralFeaturesFlag,
                     Neuro.NeuralFeatures = VelToNeuralFeatures(Params);
+                    Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                 end
                 if Neuro.DimRed.Flag,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
@@ -161,6 +162,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
                 end
                 if Params.GenNeuralFeaturesFlag,
                     Neuro.NeuralFeatures = VelToNeuralFeatures(Params);
+                    Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                 end
                 if Neuro.DimRed.Flag,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
@@ -278,6 +280,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                 end
                 if Params.GenNeuralFeaturesFlag,
                     Neuro.NeuralFeatures = VelToNeuralFeatures(Params);
+                    Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                 end
                 if Neuro.DimRed.Flag,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
@@ -395,6 +398,7 @@ if ~Data.ErrorID,
                 end
                 if Params.GenNeuralFeaturesFlag,
                     Neuro.NeuralFeatures = VelToNeuralFeatures(Params);
+                    Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
                 end
                 if Neuro.DimRed.Flag,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
