@@ -42,7 +42,7 @@ if IsWin,
 elseif IsOSX,
     projectdir = '/Users/daniel/Projects/Center-Out/';
 else,
-    projectdir = '/home/dsilver/Projects/Center-Out/';
+    projectdir = '~/Projects/Center-Out/';
 end
 addpath(genpath(fullfile(projectdir,'TaskCode')));
 
