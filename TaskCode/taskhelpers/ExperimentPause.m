@@ -11,6 +11,7 @@ Screen('Flip', Params.WPTR);
 % add event to data structure
 Data.Events(end+1).Time = GetSecs;
 Data.Events(end).Str  = 'Pause';
+if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'P0'); end
 
 KbCheck;
 WaitSecs(.1);
@@ -48,6 +49,7 @@ end
 % add event to data structure
 Data.Events(end+1).Time = GetSecs;
 Data.Events(end).Str  = 'EndPause';
+if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'PF'); end
 
 Screen('Flip', Params.WPTR);
 WaitSecs(.1);
