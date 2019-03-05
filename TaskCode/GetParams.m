@@ -18,10 +18,10 @@ end
 %% Control
 Params.Gain             = 1;
 Params.CenterReset      = true;
-Params.Assistance       = .4; % value btw 0 and 1, 1 full assist
+Params.Assistance       = .8; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lambda for rml
-Params.InitializationMode = 4; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir
+Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir
 
 %% Current Date and Time
 % get today's date
@@ -122,9 +122,9 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 0;
-Params.NumAdaptBlocks       = 1;
-Params.NumFixedBlocks       = 1;
+Params.NumImaginedBlocks    = 10;
+Params.NumAdaptBlocks       = 0;
+Params.NumFixedBlocks       = 0;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -184,7 +184,7 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.GenNeuralFeaturesFlag = true;
+Params.GenNeuralFeaturesFlag = false;
 Params.ZscoreRawFlag = true;
 Params.ZscoreFeaturesFlag = false;
 Params.SaveProcessed = false;

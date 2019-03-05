@@ -125,7 +125,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
 
     if TaskFlag==1,
         OptimalCursorTraj = [...
-            GenerateCursorTraj(Cursor.State,StartTargetPos,2,Params);
+            GenerateCursorTraj(Cursor.State,StartTargetPos,4,Params);
             GenerateCursorTraj(StartTargetPos,StartTargetPos,Params.TargetHoldTime,Params)];
         ct = 1;
     end
@@ -362,7 +362,7 @@ if ~Data.ErrorID,
 
     if TaskFlag==1,
         OptimalCursorTraj = [...
-            GenerateCursorTraj(StartTargetPos,ReachTargetPos,2,Params);
+            GenerateCursorTraj(StartTargetPos,ReachTargetPos,4,Params);
             GenerateCursorTraj(ReachTargetPos,ReachTargetPos,Params.TargetHoldTime,Params)];
         ct = 1;
     end
