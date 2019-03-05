@@ -36,6 +36,12 @@ if BLACKROCK,
     cbmex('trialconfig', 1); % empty the buffer
 end
 
+%% Initialize Sync to Blackrock
+if Params.SerialSync,
+    Params.SerialPtr = serial(Params.SyncDev, 'BaudRate', Params.BaudRate);
+    fopen(Params.SerialPtr);
+end
+
 %% Neural Signal Processing
 % create neuro structure for keeping track of all neuro updates/state
 % changes
@@ -99,6 +105,7 @@ fprintf('\n    - subject: %s', Params.Subject)
 fprintf('\n    - control mode: %s', Params.ControlModeStr)
 fprintf('\n    - blackrock mode: %s', LogicalStr{Params.BLACKROCK+1})
 fprintf('\n    - debug mode: %s', LogicalStr{Params.DEBUG+1})
+fprintf('\n    - serial sync: %s', LogicalStr{Params.SerialSync+1})
 
 fprintf('\n\n  Neuro Processing Pipeline:')
 if Params.GenNeuralFeaturesFlag,

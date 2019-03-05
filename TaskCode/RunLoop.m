@@ -94,7 +94,9 @@ for Block=1:NumBlocks, % Block Loop
 
         % Run Trial
         TrialData.TrialStartTime  = GetSecs;
+        if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'TST'); end
         [TrialData,Neuro,KF,Params] = RunTrial(TrialData,Params,Neuro,TaskFlag,KF);
+        if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'TET'); end
         TrialData.TrialEndTime    = GetSecs;
                 
         % Save Data from Single Trial

@@ -32,6 +32,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
     tstart  = GetSecs;
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Inter Trial Interval';
+    if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'ITI'); end
 
     if TaskFlag==1,
         OptimalCursorTraj = ...
@@ -120,6 +121,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
     tstart  = GetSecs;
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Start Target';
+    if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'ST'); end
 
     if TaskFlag==1,
         OptimalCursorTraj = [...
@@ -238,6 +240,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
     tstart  = GetSecs;
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Instructed Delay';
+    if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'ID'); end
     
     if TaskFlag==1,
         OptimalCursorTraj = ...
@@ -353,6 +356,7 @@ if ~Data.ErrorID,
     tstart  = GetSecs;
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Reach Target';
+    if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'RT'); end
 
     if TaskFlag==1,
         OptimalCursorTraj = [...
