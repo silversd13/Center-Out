@@ -1,5 +1,5 @@
-function Z = VelToNeuralFeatures(Params,noise,PLOT)
-% function Z = VelToNeuralFeatures(Params,noise,PLOT)
+function varargout = VelToNeuralFeatures(Params,Data,noise,PLOT)
+% function [Z,Data] = VelToNeuralFeatures(Params,noise,PLOT)
 % Use a 2D gaussian function to generate neural features vector
 % neural features change depending input velocity
 %
@@ -8,8 +8,9 @@ function Z = VelToNeuralFeatures(Params,noise,PLOT)
 % PLOT - 0-no plot, 1-plot (default=1)
 %
 % OUTPUT: 
-% Z - neural features vector with size of 128*7 
-%
+% Z - neural features vector with size of 128 x num_features 
+% Data - Data structure updated with neural features
+% 
 % CREATED: G. Nootz  May 2012
 % 
 %  Modifications:
@@ -57,6 +58,18 @@ end
 
 % vectorize output
 Z = Z(:);
+
+% update data structure if given
+if exist('Data','var')
+    Data.NeuralFeatures{end+1} = Z;
+    Data.NeuralTime(1,end+1) = GetSecs;
+end
+
+% outputs
+varargout{1} = Z;
+if nargout==2,
+    varargout{2} = Data;
+end
 
 end % VelToNeuralFeatures
 
