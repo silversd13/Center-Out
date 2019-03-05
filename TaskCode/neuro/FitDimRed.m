@@ -38,7 +38,7 @@ for i=1:length(datafiles),
             econstr = 'on';
         case true, % going to avg trials, cat in 3rd dim for now
             Xtrial = cat(2,TrialData.NeuralFeatures{:});
-            if size(Xtrial,2)==30, % ignore trials w/ weird sizes
+            if size(Xtrial,2)==80, % ignore trials w/ weird sizes
                 X = cat(3,X,Xtrial);
                 econstr = 'off';
             end
