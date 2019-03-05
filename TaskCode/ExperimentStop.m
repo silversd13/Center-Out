@@ -5,9 +5,7 @@ if ~exist('fromPause', 'var'), fromPause = 0; end
 Screen('CloseAll');
 
 % Close Serial Port
-if Params.SerialSync,
-    fclose(Params.SerialPtr);
-end
+fclose('all');
 
 % quit
 if fromPause, keyboard; end

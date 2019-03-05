@@ -43,6 +43,7 @@ elseif IsOSX,
     projectdir = '/Users/daniel/Projects/Center-Out/';
 else,
     projectdir = '~/Projects/Center-Out/';
+    butter(1,[.1,.5]);
 end
 addpath(genpath(fullfile(projectdir,'TaskCode')));
 
@@ -127,8 +128,8 @@ Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
 Params.NumImaginedBlocks    = 10;
-Params.NumAdaptBlocks       = 0;
-Params.NumFixedBlocks       = 0;
+Params.NumAdaptBlocks       = 10;
+Params.NumFixedBlocks       = 10;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
