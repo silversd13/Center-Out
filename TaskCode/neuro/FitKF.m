@@ -61,16 +61,23 @@ Xfull = [];
 Y = [];
 T = [];
 for i=1:length(datafiles),
-    % load data, grab cursor pos and time
+    % load data
     load(fullfile(datadir,datafiles(i).name)) %#ok<LOAD>
-    Tfull = cat(2,Tfull,TrialData.Time);
-    if fitFlag==0, % fit on true kinematics
-        Xfull = cat(2,Xfull,TrialData.CursorState);
-    else, % refit on intended kinematics
-        Xfull = cat(2,Xfull,TrialData.IntendedCursorState);
+    % ignore inter-trial interval data
+    if strcmp(TrialData.Events(1).Str, 'Inter Trial Interval'),
+        tidx = TrialData.Time >= TrialData.Events(2).Time;
+    else,
+        tidx = TrialData.Time >= TrialData.Events(1).Time;
     end
-    T = cat(2,T,TrialData.NeuralTime);
-    Y = cat(2,Y,TrialData.NeuralFeatures{:});
+    % grab cursor pos and time
+    Tfull = cat(2,Tfull,TrialData.Time(tidx));
+    if fitFlag==0, % fit on true kinematics
+        Xfull = cat(2,Xfull,TrialData.CursorState(:,tidx));
+    else, % refit on intended kinematics
+        Xfull = cat(2,Xfull,TrialData.IntendedCursorState(:,tidx));
+    end
+    T = cat(2,T,TrialData.NeuralTime(tidx));
+    Y = cat(2,Y,TrialData.NeuralFeatures{tidx});
 end
 
 % interpolate to get cursor pos and vel at neural times

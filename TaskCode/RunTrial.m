@@ -73,7 +73,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
-                KF = UpdateCursor(Params,Neuro,TaskFlag,Cursor.State(1:2),KF);
+%                 KF = UpdateCursor(Params,Neuro,TaskFlag,Cursor.State(1:2),KF);
             end
             
             % cursor
@@ -123,7 +123,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
 
     if TaskFlag==1,
         OptimalCursorTraj = [...
-            GenerateCursorTraj(Cursor.State,StartTargetPos,4,Params);
+            GenerateCursorTraj(Cursor.State,StartTargetPos,Params.ImaginedMvmtTime,Params);
             GenerateCursorTraj(StartTargetPos,StartTargetPos,Params.TargetHoldTime,Params)];
         ct = 1;
     end
@@ -356,7 +356,7 @@ if ~Data.ErrorID,
 
     if TaskFlag==1,
         OptimalCursorTraj = [...
-            GenerateCursorTraj(StartTargetPos,ReachTargetPos,4,Params);
+            GenerateCursorTraj(StartTargetPos,ReachTargetPos,Params.ImaginedMvmtTime,Params);
             GenerateCursorTraj(ReachTargetPos,ReachTargetPos,Params.TargetHoldTime,Params)];
         ct = 1;
     end

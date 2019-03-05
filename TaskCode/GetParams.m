@@ -172,7 +172,8 @@ Params.InterTrialInterval = 1;
 Params.InstructedDelayTime = 0;
 Params.MaxStartTime = 10;
 Params.MaxReachTime = 10;
-Params.InterBlockInterval = 0;
+Params.InterBlockInterval = 10; % 0-10s, if set to 10 use instruction screen
+Params.ImaginedMvmtTime = 4;
 
 %% Feedback
 Params.FeedbackSound = false;
