@@ -7,7 +7,8 @@ function ExperimentStart(Subject,ControlMode,BLACKROCK,DEBUG)
 %   remains unhidden
 
 %% Clear All and Close All
-clearvars -global -except Subject ControlMode BLACKROCK DEBUG
+clearvars -except Subject ControlMode BLACKROCK DEBUG
+clearvars -global
 clc
 warning off
 
@@ -44,6 +45,13 @@ end
 if Params.SerialSync,
     Params.SerialPtr = serial(Params.SyncDev, 'BaudRate', Params.BaudRate);
     fopen(Params.SerialPtr);
+    fprintf(Params.SerialPtr, '%s\n', 'START');
+end
+if Params.ArduinoSync,
+    Params.ArduinoPtr = arduino;
+    Params.ArduinoPin = 'D13';
+    writeDigitalPin(Params.ArduinoPtr, Params.ArduinoPin, 0); % make sure the pin is at 0
+    PulseArduino(Params.ArduinoPtr,Params.ArduinoPin,20);
 end
 
 %% Neural Signal Processing

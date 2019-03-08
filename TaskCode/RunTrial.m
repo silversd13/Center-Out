@@ -33,7 +33,8 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Inter Trial Interval';
     if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'ITI'); end
-
+    if Params.ArduinoSync, PulseArduino(Params.ArduinoPtr,Params.ArduinoPin,length(Data.Events)); end
+    
     if TaskFlag==1,
         OptimalCursorTraj = ...
             GenerateCursorTraj(Cursor.State,Cursor.State,Params.InterTrialInterval,Params);
@@ -129,7 +130,8 @@ if ~Data.ErrorID && ~Params.CenterReset,
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Start Target';
     if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'ST'); end
-
+    if Params.ArduinoSync, PulseArduino(Params.ArduinoPtr,Params.ArduinoPin,length(Data.Events)); end
+    
     if TaskFlag==1,
         OptimalCursorTraj = [...
             GenerateCursorTraj(Cursor.State,StartTargetPos,Params.ImaginedMvmtTime,Params);
@@ -255,6 +257,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Instructed Delay';
     if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'ID'); end
+    if Params.ArduinoSync, PulseArduino(Params.ArduinoPtr,Params.ArduinoPin,length(Data.Events)); end
     
     if TaskFlag==1,
         OptimalCursorTraj = ...
@@ -378,7 +381,8 @@ if ~Data.ErrorID,
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Reach Target';
     if Params.SerialSync, fprintf(Params.SerialPtr, '%s\n', 'RT'); end
-
+    if Params.ArduinoSync, PulseArduino(Params.ArduinoPtr,Params.ArduinoPin,length(Data.Events)); end
+    
     if TaskFlag==1,
         OptimalCursorTraj = [...
             GenerateCursorTraj(StartTargetPos,ReachTargetPos,Params.ImaginedMvmtTime,Params);
