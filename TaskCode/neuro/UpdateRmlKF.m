@@ -16,6 +16,9 @@ ESS     = KF.ESS;
 Lambda  = KF.CLDA.Lambda;
 
 % update sufficient stats & half life
+if KF.VelKF,
+    X(1:2) = zeros(2,1);
+end
 R  = Lambda*R  + X*X';
 S  = Lambda*S  + Y*X';
 T  = Lambda*T  + Y*Y';

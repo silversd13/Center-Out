@@ -102,6 +102,9 @@ if fitFlag==0 && KF.InitializationMode==2, % return shuffled weights
 end
 
 % fit kalman matrices
+if KF.VelKF,
+    X(:,1:2) = zeros(size(X,1),2);
+end
 C = (Y*X') / (X*X');
 Q = (1/D) * ((Y-C*X) * (Y-C*X)');
 

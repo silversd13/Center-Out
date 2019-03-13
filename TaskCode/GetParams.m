@@ -18,9 +18,9 @@ end
 %% Control
 Params.Gain             = 1;
 Params.CenterReset      = true;
-Params.Assistance       = .8; % value btw 0 and 1, 1 full assist
+Params.Assistance       = .2; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
-Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lambda for rml
+Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir
 
 %% Current Date and Time
@@ -75,7 +75,7 @@ Params.SerialSync = false;
 Params.SyncDev = '/dev/ttyS1';
 Params.BaudRate = 115200;
 
-Params.ArduinoSync = false;
+Params.ArduinoSync = true;
 
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
@@ -101,7 +101,7 @@ Params.NumReachTargets = length(Params.ReachTargetAngles);
 
 %% Cursor
 Params.CursorColor = [0,102,255];
-Params.CursorSize = 10;
+Params.CursorSize = 15;
 Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
     +Params.CursorSize +Params.CursorSize];
 
@@ -122,6 +122,7 @@ if Params.ControlMode==3,
         0       0       0       0       0];
     Params.KF.P = eye(5);
     Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
+    Params.KF.VelKF = true;
 end
 
 %% Velocity Command Online Feedback
@@ -131,7 +132,7 @@ Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 %% Trial and Block Types
 Params.NumImaginedBlocks    = 10;
 Params.NumAdaptBlocks       = 10;
-Params.NumFixedBlocks       = 10;
+Params.NumFixedBlocks       = 2;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -174,8 +175,8 @@ switch Params.CLDA.AdaptType,
 end
 
 %% Hold Times
-Params.TargetHoldTime = .3;
-Params.InterTrialInterval = 1;
+Params.TargetHoldTime = .1;
+Params.InterTrialInterval = 5;
 Params.InstructedDelayTime = 0;
 Params.MaxStartTime = 10;
 Params.MaxReachTime = 10;
@@ -192,7 +193,7 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.GenNeuralFeaturesFlag = true;
+Params.GenNeuralFeaturesFlag = false;
 Params.ZscoreRawFlag = true;
 Params.ZscoreFeaturesFlag = false;
 Params.SaveProcessed = false;
@@ -219,14 +220,14 @@ Params.ReferenceModeStr = RefModeStr{Params.ReferenceMode+1};
 Params.FilterBank = [];
 Params.FilterBank(end+1).fpass = [.5,4];    % delta
 Params.FilterBank(end).feature = 1;
-% Params.FilterBank(end+1).fpass = [4,8];     % theta
+Params.FilterBank(end+1).fpass = [4,8];     % theta
+Params.FilterBank(end).feature = 1;
+Params.FilterBank(end+1).fpass = [8,13];    % alpha
+Params.FilterBank(end).feature = 1;
+% Params.FilterBank(end+1).fpass = [13,19];   % beta1
 % Params.FilterBank(end).feature = 2;
-% Params.FilterBank(end+1).fpass = [8,13];    % alpha
-% Params.FilterBank(end).feature = 3;
-Params.FilterBank(end+1).fpass = [13,19];   % beta1
-Params.FilterBank(end).feature = 2;
-Params.FilterBank(end+1).fpass = [19,30];   % beta2
-Params.FilterBank(end).feature = 2;
+% Params.FilterBank(end+1).fpass = [19,30];   % beta2
+% Params.FilterBank(end).feature = 2;
 % Params.FilterBank(end+1).fpass = [30,36];   % low gamma1 
 % Params.FilterBank(end).feature = 5;
 % Params.FilterBank(end+1).fpass = [36,42];   % low gamma2 
@@ -234,21 +235,21 @@ Params.FilterBank(end).feature = 2;
 % Params.FilterBank(end+1).fpass = [42,50];   % low gamma3
 % Params.FilterBank(end).feature = 5;
 Params.FilterBank(end+1).fpass = [70,77];   % high gamma1
-Params.FilterBank(end).feature = 3;
+Params.FilterBank(end).feature = 2;
 Params.FilterBank(end+1).fpass = [77,85];   % high gamma2
-Params.FilterBank(end).feature = 3;
+Params.FilterBank(end).feature = 2;
 Params.FilterBank(end+1).fpass = [85,93];   % high gamma3
-Params.FilterBank(end).feature = 3;
+Params.FilterBank(end).feature = 2;
 Params.FilterBank(end+1).fpass = [93,102];  % high gamma4
-Params.FilterBank(end).feature = 3;
+Params.FilterBank(end).feature = 2;
 Params.FilterBank(end+1).fpass = [102,113]; % high gamma5
-Params.FilterBank(end).feature = 3;
+Params.FilterBank(end).feature = 2;
 Params.FilterBank(end+1).fpass = [113,124]; % high gamma6
-Params.FilterBank(end).feature = 3;
+Params.FilterBank(end).feature = 2;
 Params.FilterBank(end+1).fpass = [124,136]; % high gamma7
-Params.FilterBank(end).feature = 3;
+Params.FilterBank(end).feature = 2;
 Params.FilterBank(end+1).fpass = [136,150]; % high gamma8
-Params.FilterBank(end).feature = 3;
+Params.FilterBank(end).feature = 2;
 % compute filter coefficients
 for i=1:length(Params.FilterBank),
     [b,a] = butter(3,Params.FilterBank(i).fpass/(Params.Fs/2));
@@ -256,7 +257,8 @@ for i=1:length(Params.FilterBank),
     Params.FilterBank(i).a = a;
 end
 
-Params.NumFeatures = length(unique([Params.FilterBank.feature])) + 1;
+% Params.NumFeatures = length(unique([Params.FilterBank.feature])) + 1;
+Params.NumFeatures = length(unique([Params.FilterBank.feature])); % no phase calc
 
 %% Save Parameters
 save(fullfile(Params.Datadir,'Params.mat'),'Params');
