@@ -32,13 +32,13 @@ if ~exist('KF','var'),
 end
 
 % If Initialization Mode = 3, manually choose datadir & fit KF
-if KF.InitializationMode==3,
+if KF.InitializationMode==3 && fitFlag==0,
     datadir = uigetdir(datadir);
 end
 
 % If Initialization Mode = 4, manually choose trial and load kf params, do
 % not fit
-if KF.InitializationMode==4,
+if KF.InitializationMode==4 && fitFlag==0,
     [datafile,datadir] = uigetfile(datadir);
     load(fullfile(datadir,datafile));
     KF = TrialData.KalmanFilter;
@@ -102,16 +102,21 @@ if fitFlag==0 && KF.InitializationMode==2, % return shuffled weights
 end
 
 % fit kalman matrices
-if KF.VelKF,
-    X(:,1:2) = zeros(size(X,1),2);
+if KF.VelKF, % only use vel to fit C, set pos terms to 0
+    C = (Y*X(3:end,:)') / (X(3:end,:)*X(3:end,:)');
+    C = [zeros(size(C,1),2),C];
+else,
+    C = (Y*X') / (X*X');
 end
-C = (Y*X') / (X*X');
 Q = (1/D) * ((Y-C*X) * (Y-C*X)');
 
 % update kalman matrices
 switch fitFlag,
     case {0,1},
         % fit sufficient stats
+        if KF.VelKF, % only use vel to fit C, set pos terms to 0
+            X = X(3:end,:);
+        end
         KF.R = X*X';
         KF.S = Y*X';
         KF.T = Y*Y';

@@ -66,7 +66,7 @@ switch Cursor.ControlMode,
         Cursor.IntendedState = Cursor.State; % current true position
         Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
         
-    case 3, % Kalman Filter Velocity Input
+    case {3,4}, % Kalman Filter Input
         X0 = Cursor.State; % initial state, useful for assistance
         
         % Kalman Predict Step
@@ -99,11 +99,11 @@ switch Cursor.ControlMode,
         KF.P = P;
         
         % assisted velocity
+        Vcom = (X(1:2) - X0(1:2))*Params.UpdateRate; % effective velocity command
         if Cursor.Assistance > 0,
-            Vcom = (X(1:2) - X0(1:2))*Params.UpdateRate; % effective velocity command
             Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
-            if norm(Vass)>200, % fast
-                Vass = 200 * Vass / norm(Vass);
+            if norm(Vass)>100, % fast
+                Vass = 100 * Vass / norm(Vass);
             end
             
             % update cursor state
@@ -113,11 +113,12 @@ switch Cursor.ControlMode,
             Cursor.State(4) = Vass(2);
         end
         
+        % Update Intended Cursor State
+        Cursor.IntendedState = Cursor.State; % current true position
+        Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
+        
         % Update KF Params (RML & Adaptation Block)
         if KF.CLDA.Type==3 && TaskFlag==2,
-            % use intended state for param update
-            Cursor.IntendedState = Cursor.State; % current true position
-            Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
             KF = UpdateRmlKF(KF,Cursor.IntendedState,Y);
         end
         

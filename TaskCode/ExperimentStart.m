@@ -1,7 +1,8 @@
 function ExperimentStart(Subject,ControlMode,BLACKROCK,DEBUG)
 % function ExperimentStart(Subject,ControlMode)
 % Subject - string for the subject id
-% ControlMode - [1,2,3] for mouse pos, mouse vel, & kalman
+% ControlMode - [1,2,3,4] for mouse pos, mouse vel, pos/vel kalman, vel
+%   kalman
 % BLACKROCK - [0,1] if 1, collects, processes, and saves neural data
 % DEBUG - [0,1] if 1, enters DEBUG mode in which screen is small and cursor
 %   remains unhidden
@@ -94,7 +95,7 @@ Neuro.FeatureStats.var    = zeros(1,Params.NumChannels); % estimate of variance 
 Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,3);
 
 %% Kalman Filter
-if Params.ControlMode==3,
+if Params.ControlMode>=3,
     KF = Params.KF;
     KF.CLDA = Params.CLDA;
 else,
@@ -105,10 +106,6 @@ end
 LogicalStr = {'off', 'on'};
 IMStr = {'imagined mvmts', 'shuffled imagined mvmts', 'prev mvmts', 'prev adapted'};
 DimRedStr = {'PCA', 'FA'};
-Params.Subject = Subject;
-Params.ControlMode = ControlMode;
-Params.BLACKROCK = BLACKROCK;
-Params.DEBUG = DEBUG;
 
 fprintf('\n\nImportant Experimental Parameters:')
 fprintf('\n\n  Task Parameters:')
@@ -118,6 +115,7 @@ fprintf('\n    - control mode: %s', Params.ControlModeStr)
 fprintf('\n    - blackrock mode: %s', LogicalStr{Params.BLACKROCK+1})
 fprintf('\n    - debug mode: %s', LogicalStr{Params.DEBUG+1})
 fprintf('\n    - serial sync: %s', LogicalStr{Params.SerialSync+1})
+fprintf('\n    - arduino sync: %s', LogicalStr{Params.ArduinoSync+1})
 
 fprintf('\n\n  Neuro Processing Pipeline:')
 if Params.GenNeuralFeaturesFlag,
@@ -129,14 +127,18 @@ else,
     fprintf('\n    - save filtered data: %s', LogicalStr{Params.ZscoreRawFlag+1})
 end
 fprintf('\n    - dimensionality reduction: %s', LogicalStr{Params.DimRed.Flag+1})
-fprintf('\n      - method: %s', DimRedStr{Params.DimRed.Method})
+if Params.DimRed.Flag,
+    fprintf('\n      - method: %s', DimRedStr{Params.DimRed.Method})
+end
 
 fprintf('\n\n  BCI Parameters:')
 fprintf('\n    - Imagined Movements: %s', LogicalStr{double(Params.NumImaginedBlocks>0) +1})
 fprintf('\n      - initialization mode: %s', IMStr{Params.InitializationMode})
 fprintf('\n    - Adaptation Decoding: %s', LogicalStr{double(Params.NumAdaptBlocks>0) +1})
-fprintf('\n      - adapt type: %s', Params.CLDA.TypeStr)
-fprintf('\n      - adapt change type: %s', Params.CLDA.AdaptType)
+if Params.NumAdaptBlocks>0,
+    fprintf('\n      - adapt type: %s', Params.CLDA.TypeStr)
+    fprintf('\n      - adapt change type: %s', Params.CLDA.AdaptType)
+end
 fprintf('\n    - Fixed Decoding: %s', LogicalStr{double(Params.NumFixedBlocks>0) +1})
 
 

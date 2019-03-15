@@ -24,8 +24,7 @@ while 1, % pause until subject presses p again or quits
         break;
     end
     if keyCode(KbName('escape'))==1 || keyCode(KbName('q'))==1,
-        ExperimentS
-        top(1); % quit experiment
+        ExperimentStop(1); % quit experiment
     end
     if keyCode(KbName('d'))==1,
         keyboard; % quit experiment

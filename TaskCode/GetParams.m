@@ -12,15 +12,16 @@ Params.Task = 'Center-Out';
 switch Params.ControlMode,
     case 1, Params.ControlModeStr = 'MousePosition';
     case 2, Params.ControlModeStr = 'MouseVelocity';
-    case 3, Params.ControlModeStr = 'KalmanVelocity';
+    case 3, Params.ControlModeStr = 'KalmanPosVel';
+    case 4, Params.ControlModeStr = 'KalmanVelocity';
 end
 
 %% Control
 Params.Gain             = 1;
 Params.CenterReset      = true;
-Params.Assistance       = .2; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
-Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
+Params.Assistance       = 0; % value btw 0 and 1, 1 full assist
+Params.CLDA.Type        = 2; % 0-none, 1-refit, 2-smooth batch, 3-RML
+Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir
 
 %% Current Date and Time
@@ -75,12 +76,12 @@ Params.SerialSync = false;
 Params.SyncDev = '/dev/ttyS1';
 Params.BaudRate = 115200;
 
-Params.ArduinoSync = true;
+Params.ArduinoSync = false;
 
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
 Params.UpdateRate = 10; % Hz
-Params.BaselineTime = 10; % secs
+Params.BaselineTime = 1; % secs
 
 %% Targets
 Params.TargetSize = 50;
@@ -107,7 +108,7 @@ Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
 
 %% Kalman Filter Properties
 dt = 1/Params.UpdateRate;
-if Params.ControlMode==3,
+if Params.ControlMode>=3,
     Params.KF.A = [...
         1       0       dt      0       0;
         0       1       0       dt      0;
@@ -122,7 +123,11 @@ if Params.ControlMode==3,
         0       0       0       0       0];
     Params.KF.P = eye(5);
     Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
-    Params.KF.VelKF = true;
+    if Params.ControlMode==4, % set velocity kalman filter flag
+        Params.KF.VelKF = true;
+    else,
+        Params.KF.VelKF = false;
+    end
 end
 
 %% Velocity Command Online Feedback
@@ -130,8 +135,8 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 10;
-Params.NumAdaptBlocks       = 10;
+Params.NumImaginedBlocks    = 0;
+Params.NumAdaptBlocks       = 6;
 Params.NumFixedBlocks       = 2;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
@@ -176,7 +181,7 @@ end
 
 %% Hold Times
 Params.TargetHoldTime = .1;
-Params.InterTrialInterval = 5;
+Params.InterTrialInterval = 1;
 Params.InstructedDelayTime = 0;
 Params.MaxStartTime = 10;
 Params.MaxReachTime = 10;
@@ -193,7 +198,7 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.GenNeuralFeaturesFlag = false;
+Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
 Params.ZscoreFeaturesFlag = false;
 Params.SaveProcessed = false;

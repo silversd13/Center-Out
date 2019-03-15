@@ -51,10 +51,6 @@ for Block=1:NumBlocks, % Block Loop
     TargetOrder = Params.TargetFunc(Params.NumTrialsPerBlock);
 
     for TrialPerBlock=1:Params.NumTrialsPerBlock, % Trial Loop
-        % update trial
-        Trial = Trial + 1;
-        TrialIdx = TargetOrder(TrialPerBlock);
-        
         % if smooth batch on & enough time has passed, update KF btw trials
         if TaskFlag==2 && Neuro.CLDA.Type==2,
             TrialBatch{end+1} = sprintf('Data%04i.mat', Trial);
@@ -82,6 +78,10 @@ for Block=1:NumBlocks, % Block Loop
                 Cursor.Assistance = max([Cursor.Assistance,0]);
             end
         end
+        
+        % update trial
+        Trial = Trial + 1;
+        TrialIdx = TargetOrder(TrialPerBlock);
         
         % set up trial
         TrialData = DataFields;

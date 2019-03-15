@@ -47,6 +47,7 @@ Z = D2GaussFunction(x,xdata);
 
 % add noise
 noise = noise/100 * x(1);
+% Z = noise*(rand(size(X,1),size(Y,2))-0.5);
 Z = Z + noise*(rand(size(X,1),size(Y,2))-0.5);
 
 % feature plot

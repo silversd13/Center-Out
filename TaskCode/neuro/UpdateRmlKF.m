@@ -15,10 +15,11 @@ T       = KF.T;
 ESS     = KF.ESS;
 Lambda  = KF.CLDA.Lambda;
 
-% update sufficient stats & half life
 if KF.VelKF,
-    X(1:2) = zeros(2,1);
+    X = X(3:end);
 end
+
+% update sufficient stats & half life
 R  = Lambda*R  + X*X';
 S  = Lambda*S  + Y*X';
 T  = Lambda*T  + Y*Y';
@@ -27,6 +28,9 @@ ESS= Lambda*ESS+ 1;
 % update kalman matrices (neural mapping matrices)
 C = S/R;
 Q = (1/ESS) * (T - C*S'); % ignore Q since updating inv(Q) directly
+if KF.VelKF,
+    C = [zeros(size(C,1),2),C];
+end
 
 % store params
 KF.R    = R;

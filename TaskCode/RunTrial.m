@@ -15,11 +15,11 @@ ReachTargetPos = Data.TargetPosition;
 
 % Output to Command Line
 fprintf('\nTrial: %i\n',Data.Trial)
-fprintf('Target: %i\n',Data.TargetAngle)
+fprintf('  Target: %i\n',Data.TargetAngle)
 if Params.Verbose,
-    fprintf('  Cursor Assistance: %.2f\n',Cursor.Assistance)
-    if Params.CLDA.Type==3,
-        fprintf('  Lambda: %.5g\n',Neuro.CLDA.Lambda)
+    fprintf('    Cursor Assistance: %.2f\n',Cursor.Assistance)
+    if Params.CLDA.Type==3 && TaskFlag==2,
+        fprintf('    Lambda: %.5g\n',Neuro.CLDA.Lambda)
     end
 end
 
@@ -239,7 +239,7 @@ if ~Data.ErrorID && ~Params.CenterReset,
             done = 1;
             Data.ErrorID = 1;
             Data.ErrorStr = 'StartTarget';
-            fprintf('\nERROR: %s\n',Data.ErrorStr)
+            fprintf('ERROR: %s\n',Data.ErrorStr)
         end
 
         % end if in start target for hold time
@@ -364,7 +364,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                 done = 1;
                 Data.ErrorID = 2;
                 Data.ErrorStr = 'InstructedDelayHold';
-                fprintf('\nERROR: %s\n',Data.ErrorStr)
+                fprintf('ERROR: %s\n',Data.ErrorStr)
             end
         end
         
@@ -489,7 +489,7 @@ if ~Data.ErrorID,
             done = 1;
             Data.ErrorID = 3;
             Data.ErrorStr = 'ReachTarget';
-            fprintf('\nERROR: %s\n',Data.ErrorStr)
+            fprintf('ERROR: %s\n',Data.ErrorStr)
         end
 
         % end if in start target for hold time
@@ -505,15 +505,15 @@ Screen('Flip', Params.WPTR);
 
 % output update times
 if Params.Verbose,
-    fprintf('Screen Update Frequency: Goal=%iHz, Actual=%.2fHz (+/-%.2fHz)\n',...
+    fprintf('      Screen Update: Goal=%iHz, Actual=%.2fHz (+/-%.2fHz)\n',...
         Params.ScreenRefreshRate,mean(1./dt_vec),std(1./dt_vec))
-    fprintf('System Update Frequency: Goal=%iHz, Actual=%.2fHz (+/-%.2fHz)\n',...
+    fprintf('      System Update: Goal=%iHz, Actual=%.2fHz (+/-%.2fHz)\n',...
         Params.UpdateRate,mean(1./dT_vec),std(1./dT_vec))
 end
 
 % output feedback
 if Data.ErrorID==0,
-    fprintf('\nSUCCESS\n')
+    fprintf('SUCCESS\n')
     if Params.FeedbackSound,
         sound(Params.RewardSound,Params.RewardSoundFs)
     end
