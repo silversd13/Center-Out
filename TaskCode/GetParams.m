@@ -81,7 +81,7 @@ Params.ArduinoSync = false;
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
 Params.UpdateRate = 10; % Hz
-Params.BaselineTime = 1; % secs
+Params.BaselineTime = 2; % secs
 
 %% Targets
 Params.TargetSize = 50;
@@ -181,7 +181,7 @@ end
 
 %% Hold Times
 Params.TargetHoldTime = .1;
-Params.InterTrialInterval = 1;
+Params.InterTrialInterval = 3;
 Params.InstructedDelayTime = 0;
 Params.MaxStartTime = 10;
 Params.MaxReachTime = 10;
@@ -200,7 +200,9 @@ sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 %% BlackRock Params
 Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
+Params.UpdateChStatsFlag = true;
 Params.ZscoreFeaturesFlag = false;
+Params.UpdateFeaturesFlag = true;
 Params.SaveProcessed = false;
 Params.SaveRaw = true;
 
