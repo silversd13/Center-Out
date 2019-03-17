@@ -8,6 +8,7 @@ function [Data, Neuro, KF, Params] = RunTrial(Data,Params,Neuro,TaskFlag,KF)
 % 5) Feedback
 
 global Cursor
+Cursor.LastPredictTime = GetSecs;
 
 %% Set up trial
 StartTargetPos = Params.StartTargetPosition;
