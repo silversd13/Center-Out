@@ -18,10 +18,10 @@ end
 
 %% Control
 Params.Gain             = 1;
-Params.CenterReset      = true;
-Params.Assistance       = 0; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type        = 2; % 0-none, 1-refit, 2-smooth batch, 3-RML
-Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lambda for rml
+Params.CenterReset      = false;
+Params.Assistance       = 0.1; % value btw 0 and 1, 1 full assist
+Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
+Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir
 
 %% Current Date and Time
@@ -76,12 +76,12 @@ Params.SerialSync = false;
 Params.SyncDev = '/dev/ttyS1';
 Params.BaudRate = 115200;
 
-Params.ArduinoSync = false;
+Params.ArduinoSync = true;
 
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
 Params.UpdateRate = 10; % Hz
-Params.BaselineTime = 2; % secs
+Params.BaselineTime = 60; % secs
 
 %% Targets
 Params.TargetSize = 50;
@@ -92,7 +92,7 @@ Params.StartTargetPosition  = [0,0];
 Params.TargetRect = ...
     [-Params.TargetSize -Params.TargetSize +Params.TargetSize +Params.TargetSize];
 
-Params.ReachTargetAngles = (0:90:315)';
+Params.ReachTargetAngles = (0:45:315)';
 Params.ReachTargetRadius = 250;
 Params.ReachTargetPositions = ...
     Params.StartTargetPosition ...
@@ -118,8 +118,8 @@ if Params.ControlMode>=3,
     Params.KF.W = [...
         0       0       0       0       0;
         0       0       0       0       0;
-        0       0       500     0       0;
-        0       0       0       500     0;
+        0       0       250   0       0;
+        0       0       0       250   0;
         0       0       0       0       0];
     Params.KF.P = eye(5);
     Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
@@ -136,8 +136,8 @@ Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
 Params.NumImaginedBlocks    = 0;
-Params.NumAdaptBlocks       = 6;
-Params.NumFixedBlocks       = 2;
+Params.NumAdaptBlocks       = 15;
+Params.NumFixedBlocks       = 0;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -173,7 +173,7 @@ switch Params.CLDA.AdaptType,
             case 3, % RML
             Params.CLDA.DeltaAssistance = ... % linearly decrease assistance
                 Params.Assistance...
-                /(Params.NumAdaptBlocks*Params.NumTrialsPerBlock);
+                /((Params.NumAdaptBlocks-5)*Params.NumTrialsPerBlock);
             otherwise, % none or refit
             Params.CLDA.DeltaAssistance = 0;
         end
@@ -183,8 +183,8 @@ end
 Params.TargetHoldTime = .1;
 Params.InterTrialInterval = 3;
 Params.InstructedDelayTime = 0;
-Params.MaxStartTime = 10;
-Params.MaxReachTime = 10;
+Params.MaxStartTime = 15;
+Params.MaxReachTime = 15;
 Params.InterBlockInterval = 10; % 0-10s, if set to 10 use instruction screen
 Params.ImaginedMvmtTime = 4;
 
@@ -198,11 +198,11 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.GenNeuralFeaturesFlag = true;
+Params.GenNeuralFeaturesFlag = false;
 Params.ZscoreRawFlag = true;
 Params.UpdateChStatsFlag = true;
 Params.ZscoreFeaturesFlag = false;
-Params.UpdateFeaturesFlag = true;
+Params.UpdateFeatureStatsFlag = false;
 Params.SaveProcessed = false;
 Params.SaveRaw = true;
 

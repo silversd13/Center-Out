@@ -71,6 +71,8 @@ Neuro.BadChannels       = Params.BadChannels;
 Neuro.ReferenceMode     = Params.ReferenceMode;
 Neuro.NumFeatures       = Params.NumFeatures;
 Neuro.LastUpdateTime    = GetSecs;
+Neuro.UpdateChStatsFlag = Params.UpdateChStatsFlag;
+Neuro.UpdateFeatureStatsFlag = Params.UpdateFeatureStatsFlag;
 
 % initialize filter bank state
 for i=1:length(Params.FilterBank),
