@@ -25,7 +25,7 @@ if norm_evec==0, % set opt vel to [0,0]
 elseif norm_evec<=Params.TargetSize*.75, % in target
     Vopt = 20 * err_vec(:) / norm_evec; % slow
 else,
-    Vopt = 200 * err_vec(:) / norm_evec; % medium
+    Vopt = 250 * err_vec(:) / norm_evec; % medium
 end
 
 end % OptimalCursorUpdate

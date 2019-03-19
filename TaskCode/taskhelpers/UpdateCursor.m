@@ -103,8 +103,8 @@ switch Cursor.ControlMode,
         Vcom = (X(1:2) - X0(1:2))*Params.UpdateRate; % effective velocity command
         if Cursor.Assistance > 0,
             Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
-            if norm(Vass)>100, % fast
-                Vass = 100 * Vass / norm(Vass);
+            if norm(Vass)>250, % fast
+                Vass = 250 * Vass / norm(Vass);
             end
             
             % update cursor state
