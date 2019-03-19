@@ -20,11 +20,17 @@ switch DimRed.Method,
     case 2,
         fprintf('  Factor Analysis\n')
 end
+fprintf('  Data in %s\n', DataDir)
 switch DimRed.AvgTrialsFlag,
     case false,
         fprintf('  Concatenating Trials\n\n')
     case true,
         fprintf('  Averaging Trials\n\n')
+end
+
+% user select data (override)
+if DimRed.InitMode==2,
+    DataDir = uigetdir(DataDir);
 end
 
 % load all data & organize according to DimRed.
@@ -66,7 +72,12 @@ if isempty(DimRed.NumDims),
     % user input
     NumDims = [];
     while isempty(NumDims),
-        NumDims = input('# of PCs to use: ');
+        switch DimRed.Method,
+            case 1, % PCA
+                NumDims = input('# of PCs to use: ');
+            case 2, % FA
+                NumDims = input('# of Factors to use: ');
+        end
     end
 else,
     NumDims = DimRed.NumDims;

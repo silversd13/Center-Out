@@ -22,7 +22,7 @@ Params.CenterReset      = false;
 Params.Assistance       = 0.1; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
-Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir
+Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
 
 %% Current Date and Time
 % get today's date
@@ -49,6 +49,7 @@ end
 addpath(genpath(fullfile(projectdir,'TaskCode')));
 
 % create folders for saving
+Params.ProjectDir = projectdir;
 datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMSS);
 Params.Datadir = datadir;
 % if folders already exist, warn user before continuing (unless,
@@ -76,12 +77,12 @@ Params.SerialSync = false;
 Params.SyncDev = '/dev/ttyS1';
 Params.BaudRate = 115200;
 
-Params.ArduinoSync = true;
+Params.ArduinoSync = false;
 
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
 Params.UpdateRate = 10; % Hz
-Params.BaselineTime = 60; % secs
+Params.BaselineTime = 2; % secs
 
 %% Targets
 Params.TargetSize = 50;
@@ -136,8 +137,8 @@ Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
 Params.NumImaginedBlocks    = 0;
-Params.NumAdaptBlocks       = 15;
-Params.NumFixedBlocks       = 0;
+Params.NumAdaptBlocks       = 1;
+Params.NumFixedBlocks       = 1;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -198,7 +199,7 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.GenNeuralFeaturesFlag = false;
+Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
 Params.UpdateChStatsFlag = true;
 Params.ZscoreFeaturesFlag = false;
@@ -206,10 +207,13 @@ Params.UpdateFeatureStatsFlag = false;
 Params.SaveProcessed = false;
 Params.SaveRaw = true;
 
-Params.DimRed.Flag = false;
-Params.DimRed.Method = 1; % 1-pca, 2-fa
+Params.DimRed.Flag = true;
+Params.DimRed.InitMode = 2; % 1-use imagined mvmts, 2-choose dir
+Params.DimRed.InitAdapt = true;
+Params.DimRed.InitFixed = ~Params.DimRed.InitAdapt;
+Params.DimRed.Method = 2; % 1-pca, 2-fa
 Params.DimRed.AvgTrialsFlag = false; % 0-cat imagined mvmts, 1-avg imagined mvmts
-Params.DimRed.NumDims = 100;
+Params.DimRed.NumDims = [];
 
 Params.Fs = 1000;
 Params.NumChannels = 128;

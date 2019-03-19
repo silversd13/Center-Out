@@ -126,11 +126,14 @@ else,
     fprintf('\n    - reference mode: %s', Params.ReferenceModeStr)
     fprintf('\n    - zscore raw: %s', LogicalStr{Params.ZscoreRawFlag+1})
     fprintf('\n    - zscore features: %s', LogicalStr{Params.ZscoreFeaturesFlag+1})
-    fprintf('\n    - save filtered data: %s', LogicalStr{Params.ZscoreRawFlag+1})
+    fprintf('\n    - save raw data: %s', LogicalStr{Params.SaveRaw+1})
+    fprintf('\n    - save filtered data: %s', LogicalStr{Params.SaveProcessed+1})
 end
 fprintf('\n    - dimensionality reduction: %s', LogicalStr{Params.DimRed.Flag+1})
 if Params.DimRed.Flag,
     fprintf('\n      - method: %s', DimRedStr{Params.DimRed.Method})
+    fprintf('\n      - before clda: %s', LogicalStr{Params.DimRed.InitAdapt+1})
+    fprintf('\n      - before fixed: %s', LogicalStr{Params.DimRed.InitFixed+1})
 end
 
 fprintf('\n\n  BCI Parameters:')

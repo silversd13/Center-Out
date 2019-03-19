@@ -83,7 +83,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
-%                 KF = UpdateCursor(Params,Neuro,TaskFlag,Cursor.State(1:2),KF);
+                %KF = UpdateCursor(Params,Neuro,TaskFlag,Cursor.State(1:2),KF);
             end
             
             % cursor
