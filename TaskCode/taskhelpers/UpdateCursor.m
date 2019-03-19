@@ -84,7 +84,8 @@ switch Cursor.ControlMode,
         
         % Kalman Update Step
         C = KF.C;
-        if KF.CLDA.Type==3 && TaskFlag==2,
+        %if KF.CLDA.Type==3 && TaskFlag==2,
+        if KF.CLDA.Type==3, % continue to use this kalman gain during fixed
             Q = KF.Q; % faster since avoids updating Qinv online
             K = P*C'/(C*P*C' + Q);
         else, % faster once Qinv is computed (fixed decoder or refit/batch)
