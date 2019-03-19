@@ -19,7 +19,7 @@ end
 
 figure;
 subplot(411);
-plot(1:120,alpha)
+plot(1:length(alpha),alpha)
 ylabel('cursor assist')
 title('convergence of KF params')
 
@@ -40,7 +40,7 @@ xlabel('trials')
 
 figure;
 subplot(411);
-plot(1:120,alpha)
+plot(1:length(alpha),alpha)
 ylabel('cursor assist')
 title('convergence of KF params')
 
@@ -62,7 +62,7 @@ xlabel('trials')
 
 figure;
 subplot(411);
-plot(1:120,alpha)
+plot(1:length(alpha),alpha)
 ylabel('cursor assist')
 title('convergence of KF params')
 
@@ -79,6 +79,50 @@ plot(abs(diff(squeeze(C(:,5,:))')))
 ylabel('KF.C (const)')
 xlabel('trials')
 
+%% 
+s = '/media/dsilver/FLASH/Bravo1/20190318';
+s2 = {'110627','112800','113809','135928'};
+C = [];
+for ii=1:length(s2),
+    datafiles = dir(fullfile(s,s2{ii},'BCI_CLDA','Data*.mat'));
+    % load data, grab neural features
+    i = 10;
+    load(fullfile(s,s2{ii},'BCI_CLDA',datafiles(i).name))
+    C = cat(3,C,TrialData.KalmanFilter.C(:,3:4));
+end
+
+%%
+figure
+ax1 = [];
+ax2 = [];
+ax3 = [];
+for i=1:4,
+    ax1(end+1)=subplot(4,3,3*(i-1)+1);
+    stem(C(:,3,i));
+
+    ax2(end+1)=subplot(4,3,3*(i-1)+2);
+    stem(C(:,4,i));
+
+    ax3(end+1)=subplot(4,3,3*(i-1)+3);
+    stem(C(:,5,i));
+end
+YY = cell2mat(get(ax1,'YLim'));
+YY = [min(YY(:)),max(YY(:))];
+set(ax1,'YLim',YY)
+
+YY = cell2mat(get(ax2,'YLim'));
+YY = [min(YY(:)),max(YY(:))];
+set(ax2,'YLim',YY)
+
+YY = cell2mat(get(ax3,'YLim'));
+YY = [min(YY(:)),max(YY(:))];
+set(ax3,'YLim',YY)
+
+% compute angle btw first and other C mats
+for i=1:4,
+    vx_ang(i) = abs(rad2deg(acos(dot(C(:,1,1),C(:,1,i)) / norm(C(:,1,1)) / norm(C(:,1,i)))));
+    vy_ang(i) = abs(rad2deg(acos(dot(C(:,2,1),C(:,2,i)) / norm(C(:,2,1)) / norm(C(:,2,i)))));
+end
 
 
 

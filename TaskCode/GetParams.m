@@ -77,12 +77,12 @@ Params.SerialSync = false;
 Params.SyncDev = '/dev/ttyS1';
 Params.BaudRate = 115200;
 
-Params.ArduinoSync = false;
+Params.ArduinoSync = true;
 
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
 Params.UpdateRate = 10; % Hz
-Params.BaselineTime = 2; % secs
+Params.BaselineTime = 60; % secs
 
 %% Targets
 Params.TargetSize = 50;
@@ -113,14 +113,14 @@ if Params.ControlMode>=3,
     Params.KF.A = [...
         1       0       dt      0       0;
         0       1       0       dt      0;
-        0       0       .8      0       0;
-        0       0       0       .8      0;
+        0       0       .9      0       0;
+        0       0       0       .9      0;
         0       0       0       0       1];
     Params.KF.W = [...
         0       0       0       0       0;
         0       0       0       0       0;
-        0       0       250   0       0;
-        0       0       0       250   0;
+        0       0       1000    0       0;
+        0       0       0       1000    0;
         0       0       0       0       0];
     Params.KF.P = eye(5);
     Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
@@ -137,7 +137,7 @@ Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
 Params.NumImaginedBlocks    = 0;
-Params.NumAdaptBlocks       = 1;
+Params.NumAdaptBlocks       = 3;
 Params.NumFixedBlocks       = 1;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
@@ -174,7 +174,7 @@ switch Params.CLDA.AdaptType,
             case 3, % RML
             Params.CLDA.DeltaAssistance = ... % linearly decrease assistance
                 Params.Assistance...
-                /((Params.NumAdaptBlocks-5)*Params.NumTrialsPerBlock);
+                /((Params.NumAdaptBlocks-1)*Params.NumTrialsPerBlock);
             otherwise, % none or refit
             Params.CLDA.DeltaAssistance = 0;
         end
@@ -199,7 +199,7 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.GenNeuralFeaturesFlag = true;
+Params.GenNeuralFeaturesFlag = false;
 Params.ZscoreRawFlag = true;
 Params.UpdateChStatsFlag = true;
 Params.ZscoreFeaturesFlag = false;
@@ -207,11 +207,11 @@ Params.UpdateFeatureStatsFlag = false;
 Params.SaveProcessed = false;
 Params.SaveRaw = true;
 
-Params.DimRed.Flag = true;
+Params.DimRed.Flag = false;
 Params.DimRed.InitMode = 2; % 1-use imagined mvmts, 2-choose dir
 Params.DimRed.InitAdapt = true;
 Params.DimRed.InitFixed = ~Params.DimRed.InitAdapt;
-Params.DimRed.Method = 2; % 1-pca, 2-fa
+Params.DimRed.Method = 1; % 1-pca, 2-fa
 Params.DimRed.AvgTrialsFlag = false; % 0-cat imagined mvmts, 1-avg imagined mvmts
 Params.DimRed.NumDims = [];
 

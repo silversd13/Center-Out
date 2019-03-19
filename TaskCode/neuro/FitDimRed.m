@@ -30,11 +30,15 @@ end
 
 % user select data (override)
 if DimRed.InitMode==2,
-    DataDir = uigetdir(DataDir);
+    [filenames,DataDir] = uigetfile('*.mat','Select the INPUT DATA FILE(s)','MultiSelect','on');
+    for i=1:length(filenames),
+        datafiles(i) = dir(fullfile(DataDir,filenames{i}));
+    end
+else,
+    % load all data & organize according to DimRed.
+    datafiles = dir(fullfile(DataDir,'Data*.mat'));
 end
 
-% load all data & organize according to DimRed.
-datafiles = dir(fullfile(DataDir,'Data*.mat'));
 X = [];
 for i=1:length(datafiles),
     load(fullfile(DataDir,datafiles(i).name)) %#ok<LOAD>
