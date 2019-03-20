@@ -113,14 +113,14 @@ if Params.ControlMode>=3,
     Params.KF.A = [...
         1       0       dt      0       0;
         0       1       0       dt      0;
-        0       0       .9      0       0;
-        0       0       0       .9      0;
+        0       0       .8      0       0;
+        0       0       0       .8      0;
         0       0       0       0       1];
     Params.KF.W = [...
         0       0       0       0       0;
         0       0       0       0       0;
-        0       0       1000    0       0;
-        0       0       0       1000    0;
+        0       0       1250    0       0;
+        0       0       0       1250    0;
         0       0       0       0       0];
     Params.KF.P = eye(5);
     Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
