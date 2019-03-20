@@ -8,6 +8,6 @@ samps = Neuro.NumSamps;
 % Neuro.FilterDataBuf = circshift(Neuro.FilterDataBuf,-samps);
 % Neuro.FilterDataBuf((end-samps+1):end,:,:) = Neuro.FilteredData;
 Neuro.FilterDataBuf = circshift(Neuro.FilterDataBuf,-samps);
-Neuro.FilterDataBuf((end-samps+1):end,:,:) = Neuro.FilteredData(:,:,1);
+Neuro.FilterDataBuf((end-samps+1):end,:,:) = Neuro.FilteredData(:,:,:);
 
 end % UpdateNeuroBuf
