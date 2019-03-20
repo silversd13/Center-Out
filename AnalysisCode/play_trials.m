@@ -5,6 +5,12 @@ if ~exist('speed','var'), playback_speed = 1; end
 
 % ask user for files
 [files,datadir] = uigetfile('*.mat','Select the INPUT DATA FILE(s)','MultiSelect','on');
+if ~iscell(files),
+    tmp = files;
+    clear files;
+    files{1} = tmp;
+    clear tmp;
+end
 
 % get params
 load(fullfile(datadir,files{1}))

@@ -94,7 +94,7 @@ Neuro.FeatureStats.S      = zeros(1,Params.NumChannels); % aggregate deviation f
 Neuro.FeatureStats.var    = zeros(1,Params.NumChannels); % estimate of variance for each channel
 
 % create low freq buffers
-Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,3);
+Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,1);
 
 %% Kalman Filter
 if Params.ControlMode>=3,
