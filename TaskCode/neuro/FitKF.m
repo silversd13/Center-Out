@@ -41,6 +41,7 @@ end
 if KF.InitializationMode==4 && fitFlag==0,
     f=load(fullfile(Params.ProjectDir,'TaskCode','.kf','kf_params.mat'));
     KF = f.KF;
+    KF.CLDA = Params.CLDA;
     return
 end
 

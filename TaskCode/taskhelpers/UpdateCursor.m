@@ -101,11 +101,10 @@ switch Cursor.ControlMode,
         
         % assisted velocity
         Vcom = (X(1:2) - X0(1:2))*Params.UpdateRate; % effective velocity command
-        [Vcom,X(3:4)]
         if Cursor.Assistance > 0,
             Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
             if norm(Vass)>250, % fast
-                Vass = 250 * Vass / norm(Vass);
+                Vass = 250 * Vass / norm(Vass);p
             end
             
             % update cursor state
@@ -118,6 +117,7 @@ switch Cursor.ControlMode,
         % Update Intended Cursor State
         Cursor.IntendedState = Cursor.State; % current true position
         Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
+        %[Vopt,Vass,Vcom,X(3:4)]
         
         % Update KF Params (RML & Adaptation Block)
         if KF.CLDA.Type==3 && TaskFlag==2,

@@ -19,10 +19,10 @@ end
 %% Control
 Params.Gain             = 1;
 Params.CenterReset      = false;
-Params.Assistance       = 0.1; % value btw 0 and 1, 1 full assist
+Params.Assistance       = 0; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
-Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
-Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
+Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lambda for rml
+Params.InitializationMode = 4; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
 
 %% Current Date and Time
 % get today's date
@@ -136,8 +136,8 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 1;
-Params.NumAdaptBlocks       = 3;
+Params.NumImaginedBlocks    = 0;
+Params.NumAdaptBlocks       = 2;
 Params.NumFixedBlocks       = 1;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
@@ -152,7 +152,7 @@ Params.CLDA.TypeStr     = TypeStrs{Params.CLDA.Type+1};
 
 Params.CLDA.UpdateTime = 80; % secs, for smooth batch
 Params.CLDA.Alpha = exp(log(.5) / (120/Params.CLDA.UpdateTime)); % for smooth batch
-Params.CLDA.Lambda = exp(log(.5) / (30*Params.UpdateRate)); % for RML
+Params.CLDA.Lambda = exp(log(.5) / (5000*Params.UpdateRate)); % for RML
 
 switch Params.CLDA.AdaptType,
     case 'none',
@@ -169,14 +169,14 @@ switch Params.CLDA.AdaptType,
         switch Params.CLDA.Type,
             case 2, % smooth batch
                 Params.CLDA.DeltaAssistance = ... % linearly decrease assistance
-                Params.Assistance...
-                /(Params.NumAdaptBlocks*Params.NumTrialsPerBlock*5/Params.CLDA.UpdateTime);
+                    Params.Assistance...
+                    /(Params.NumAdaptBlocks*Params.NumTrialsPerBlock*5/Params.CLDA.UpdateTime);
             case 3, % RML
-            Params.CLDA.DeltaAssistance = ... % linearly decrease assistance
-                Params.Assistance...
-                /((Params.NumAdaptBlocks-1)*Params.NumTrialsPerBlock);
+                Params.CLDA.DeltaAssistance = ... % linearly decrease assistance
+                    Params.Assistance...
+                    /((Params.NumAdaptBlocks-1)*Params.NumTrialsPerBlock);
             otherwise, % none or refit
-            Params.CLDA.DeltaAssistance = 0;
+                Params.CLDA.DeltaAssistance = 0;
         end
 end
 

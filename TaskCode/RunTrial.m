@@ -473,6 +473,10 @@ if ~Data.ErrorID,
                 yf = y0 + 0.1*Cursor.Vcommand(2);
                 Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
                 Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
+                xf = x0 + 0.1*Cursor.State(3);
+                yf = y0 + 0.1*Cursor.State(4);
+                Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
+                Screen('DrawLine', Params.WPTR, [200,50,50], x0, y0, xf, yf, 3);
             end
             Screen('DrawingFinished', Params.WPTR);
             Screen('Flip', Params.WPTR);
