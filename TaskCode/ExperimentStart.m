@@ -104,6 +104,7 @@ Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,Neuro.NumBuffer)
 if Params.ControlMode>=3,
     KF = Params.KF;
     KF.CLDA = Params.CLDA;
+    KF.Lambda = Params.CLDA.Lambda;
 else,
     KF = [];
 end

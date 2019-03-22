@@ -14,6 +14,7 @@ function KF = FitKF(Params,datadir,fitFlag,KF,TrialBatch,dimRedFunc)
 % Initialization of KF
 if ~exist('KF','var'),
     KF = Params.KF;
+    KF.Lambda = Params.CLDA.Lambda;
 end
 
 % If Initialization Mode = 3, manually choose datadir & fit KF

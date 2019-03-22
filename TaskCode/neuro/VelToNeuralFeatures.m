@@ -30,7 +30,7 @@ Vy = Params.Gain * (y - Params.Center(2));
 
 % rescaling to matrix map
 MdataSizeY=16;
-MdataSizeX=32;
+MdataSizeX=8*Params.NumFeatures;
 
 Vy=MdataSizeY/2 + Vy*(MdataSizeY/(2*600));
 Vx=MdataSizeX/2 + Vx*(MdataSizeX/(2*600));

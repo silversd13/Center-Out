@@ -8,6 +8,7 @@ Screen('CloseAll');
 fclose('all');
 
 % quit
+fprintf('Ending Experiment\n')
 if fromPause, keyboard; end
 
 end % ExperimentStop
