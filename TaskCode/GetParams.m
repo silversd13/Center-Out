@@ -77,7 +77,7 @@ Params.SerialSync = false;
 Params.SyncDev = '/dev/ttyS1';
 Params.BaudRate = 115200;
 
-Params.ArduinoSync = true;
+Params.ArduinoSync = false;
 
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
@@ -161,11 +161,11 @@ switch Params.CLDA.AdaptType,
     case 'linear',
         FinalLambda = exp(log(.5) / (500*Params.UpdateRate));
         DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
-            / (Params.NumAdaptBlocks...
+            / ((Params.NumAdaptBlocks-1)...
             *Params.NumTrialsPerBlock...
-            *Params.UpdateRate...
-            *5); % sec/trial;
+            *Params.UpdateRate * 10); % bins/trial;
         Params.CLDA.DeltaLambda = DeltaLambda; % for RML
+        Params.CLDA.FinalLambda = FinalLambda; % for RML
         switch Params.CLDA.Type,
             case 2, % smooth batch
                 Params.CLDA.DeltaAssistance = ... % linearly decrease assistance
@@ -199,7 +199,7 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.GenNeuralFeaturesFlag = false;
+Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
 Params.UpdateChStatsFlag = true;
 Params.ZscoreFeaturesFlag = false;

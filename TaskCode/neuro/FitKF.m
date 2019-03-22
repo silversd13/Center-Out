@@ -11,21 +11,6 @@ function KF = FitKF(Params,datadir,fitFlag,KF,TrialBatch,dimRedFunc)
 % TrialBatch - cell array of filenames w/ trials to use in smooth batch
 % dimRedFunc - function handle for dimensionality red. redX = dimRedFunc(X)
 
-% ouput to screen
-fprintf('\n\nFitting Kalman Filter:\n')
-switch fitFlag,
-    case 0,
-        fprintf('  Initial Fit\n')
-        fprintf('  Data in %s\n', datadir)
-    case 1,
-        fprintf('  ReFit\n')
-        fprintf('  Data in %s\n', datadir)
-    case 2,
-        fprintf('  Smooth Batch\n')
-        fprintf('  Data in %s\n', datadir)
-        fprintf('  Trials: {%s-%s}\n', TrialBatch{1},TrialBatch{end})
-end
-
 % Initialization of KF
 if ~exist('KF','var'),
     KF = Params.KF;
@@ -36,12 +21,39 @@ if KF.InitializationMode==3 && fitFlag==0,
     datadir = uigetdir(datadir);
 end
 
+% ouput to screen
+fprintf('\n\nFitting Kalman Filter:\n')
+switch fitFlag,
+    case 0,
+        fprintf('  Initial Fit\n')
+        switch KF.InitializationMode,
+            case {1,2,3},
+                fprintf('  Data in %s\n', datadir)
+            case 4,
+                fprintf('  Using most recent KF.\n')
+        end
+    case 1,
+        fprintf('  ReFit\n')
+        fprintf('  Data in %s\n', datadir)
+    case 2,
+        fprintf('  Smooth Batch\n')
+        fprintf('  Data in %s\n', datadir)
+        fprintf('  Trials: {%s-%s}\n', TrialBatch{1},TrialBatch{end})
+end
+
 % If Initialization Mode = 4, manually choose trial and load kf params, do
 % not fit
 if KF.InitializationMode==4 && fitFlag==0,
     f=load(fullfile(Params.ProjectDir,'TaskCode','persistence','kf_params.mat'));
-    KF = f.KF;
-    KF.CLDA = Params.CLDA;
+    KF.Lambda = Params.CLDA.Lambda;
+    KF.R = f.KF.R;
+    KF.S = f.KF.S;
+    KF.T = f.KF.T;
+    KF.ESS = f.KF.ESS;
+    KF.C = f.KF.C;
+    KF.Q = f.KF.Q;
+    KF.Tinv = f.KF.Tinv;
+    KF.Qinv = f.KF.Qinv;
     return
 end
 
@@ -97,6 +109,7 @@ D = size(X,2);
 
 % if initialization mode returns shuffled weights
 if fitFlag==0 && KF.InitializationMode==2, % return shuffled weights
+    fprintf('  *Shuffled Weights\n')
     idx = randperm(size(Y,2));
     Y = Y(:,idx);
 end

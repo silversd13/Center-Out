@@ -18,9 +18,9 @@ ReachTargetPos = Data.TargetPosition;
 fprintf('\nTrial: %i\n',Data.Trial)
 fprintf('  Target: %i\n',Data.TargetAngle)
 if Params.Verbose,
-    fprintf('    Cursor Assistance: %.2f\n',Cursor.Assistance)
+    fprintf('    Cursor Assistance: %i%%\n',round(100*Cursor.Assistance))
     if Params.CLDA.Type==3 && TaskFlag==2,
-        fprintf('    Lambda: %.5g\n',Neuro.CLDA.Lambda)
+        fprintf('    Lambda 1/2 life: %.2fsecs\n',log(.5)/log(KF.Lambda)/Params.UpdateRate)
     end
 end
 

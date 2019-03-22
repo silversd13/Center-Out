@@ -13,7 +13,7 @@ R       = KF.R;
 S       = KF.S;
 T       = KF.T;
 ESS     = KF.ESS;
-Lambda  = KF.CLDA.Lambda;
+Lambda  = KF.Lambda;
 
 if KF.VelKF,
     X = X(3:end);
@@ -39,7 +39,7 @@ KF.T    = T;
 KF.C    = C;
 KF.Q    = Q;
 KF.ESS  = ESS;
-KF.Lambda = Lambda + KF.CLDA.DeltaLambda;
+KF.Lambda = min([Lambda + KF.CLDA.DeltaLambda,KF.CLDA.FinalLambda]); % do not exceed final lambda
 
 % update inverses % this actually seems slower, not implementing
 % Tinv    = KF.Tinv;
