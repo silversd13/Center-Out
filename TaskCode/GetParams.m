@@ -21,7 +21,7 @@ Params.Gain             = 1;
 Params.CenterReset      = false;
 Params.Assistance       = 0; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
-Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lambda for rml
+Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 4; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
 
 %% Current Date and Time
@@ -82,7 +82,7 @@ Params.ArduinoSync = false;
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
 Params.UpdateRate = 10; % Hz
-Params.BaselineTime = 10; % secs
+Params.BaselineTime = 2; % secs
 
 %% Targets
 Params.TargetSize = 50;
@@ -152,7 +152,7 @@ Params.CLDA.TypeStr     = TypeStrs{Params.CLDA.Type+1};
 
 Params.CLDA.UpdateTime = 80; % secs, for smooth batch
 Params.CLDA.Alpha = exp(log(.5) / (120/Params.CLDA.UpdateTime)); % for smooth batch
-Params.CLDA.Lambda = exp(log(.5) / (5000*Params.UpdateRate)); % for RML
+Params.CLDA.Lambda = exp(log(.5) / (30*Params.UpdateRate)); % for RML
 
 switch Params.CLDA.AdaptType,
     case 'none',
@@ -199,7 +199,7 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.GenNeuralFeaturesFlag = false;
+Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
 Params.UpdateChStatsFlag = true;
 Params.ZscoreFeaturesFlag = false;

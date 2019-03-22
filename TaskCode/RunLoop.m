@@ -110,10 +110,10 @@ for Block=1:NumBlocks, % Block Loop
             '-v7.3','-nocompression');
         
         % keep track of useful stats and params
-        ch_stats = Data.ChStats; 
+        ch_stats = TrialData.ChStats; 
         save(fullfile(Params.ProjectDir,'TaskCode','persistence','ch_stats.mat'),...
             'ch_stats','-v7.3','-nocompression');
-        feature_stats = Data.FeatureStats;
+        feature_stats = TrialData.FeatureStats;
         save(fullfile(Params.ProjectDir,'TaskCode','persistence','feature_stats.mat'),...
             'feature_stats','-v7.3','-nocompression');
         if TaskFlag>1,

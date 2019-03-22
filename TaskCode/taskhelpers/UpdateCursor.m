@@ -104,7 +104,7 @@ switch Cursor.ControlMode,
         if Cursor.Assistance > 0,
             Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
             if norm(Vass)>250, % fast
-                Vass = 250 * Vass / norm(Vass);p
+                Vass = 250 * Vass / norm(Vass);
             end
             
             % update cursor state
