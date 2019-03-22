@@ -69,6 +69,10 @@ Neuro.NumChannels       = Params.NumChannels;
 Neuro.BufferSamps       = Params.BufferSamps;
 Neuro.BadChannels       = Params.BadChannels;
 Neuro.ReferenceMode     = Params.ReferenceMode;
+Neuro.NumPhase          = Params.NumPhase;
+Neuro.NumPower          = Params.NumPower;
+Neuro.NumBuffer         = Params.NumBuffer;
+Neuro.NumHilbert        = Params.NumHilbert;
 Neuro.NumFeatures       = Params.NumFeatures;
 Neuro.LastUpdateTime    = GetSecs;
 Neuro.UpdateChStatsFlag = Params.UpdateChStatsFlag;
@@ -94,7 +98,7 @@ Neuro.FeatureStats.S      = zeros(1,Params.NumChannels); % aggregate deviation f
 Neuro.FeatureStats.var    = zeros(1,Params.NumChannels); % estimate of variance for each channel
 
 % create low freq buffers
-Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,11);
+Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,Neuro.NumBuffer);
 
 %% Kalman Filter
 if Params.ControlMode>=3,

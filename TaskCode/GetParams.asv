@@ -199,7 +199,7 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.GenNeuralFeaturesFlag = false;
+Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
 Params.UpdateChStatsFlag = true;
 Params.ZscoreFeaturesFlag = false;
@@ -263,19 +263,19 @@ Params.FilterBank(end).feature = 1;
 % Params.FilterBank(end).buffer_flag = false;
 % Params.FilterBank(end).hilbert_flag = false;
 % Params.FilterBank(end).phase_flag = false;
-% Params.FilterBank(end).feature = 2;
-% 
+% Params.FilterBank(end).feature = 5;
+
 % Params.FilterBank(end+1).fpass = [36,42];   % low gamma2 
 % Params.FilterBank(end).buffer_flag = false;
 % Params.FilterBank(end).hilbert_flag = false;
 % Params.FilterBank(end).phase_flag = false;
-% Params.FilterBank(end).feature = 2;
-% 
+% Params.FilterBank(end).feature = 5;
+
 % Params.FilterBank(end+1).fpass = [42,50];   % low gamma3
 % Params.FilterBank(end).buffer_flag = false;
 % Params.FilterBank(end).hilbert_flag = false;
 % Params.FilterBank(end).phase_flag = false;
-% Params.FilterBank(end).feature = 2;
+% Params.FilterBank(end).feature = 5;
 
 Params.FilterBank(end+1).fpass = [70,77];   % high gamma1
 Params.FilterBank(end).buffer_flag = false;
@@ -335,9 +335,9 @@ end
 % unique pwr feature + all phase features
 Params.NumBuffer = sum([Params.FilterBank.buffer_flag]);
 Params.NumHilbert = sum([Params.FilterBank.hilbert_flag]);
-Params.NumPhase = sum([Params.FilterBank.phase_flag]);
-Params.NumPower = length(unique([Params.FilterBank.feature]));
-Params.NumFeatures = Params.NumPower + Params.NumPhase;
+Params.Nsum([Params.FilterBank.phase_flag]);
+Params.NumFeatures = length(unique([Params.FilterBank.feature])) ...
+    + sum([Params.FilterBank.phase_flag]);
 
 %% Save Parameters
 save(fullfile(Params.Datadir,'Params.mat'),'Params');

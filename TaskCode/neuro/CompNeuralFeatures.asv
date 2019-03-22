@@ -21,7 +21,7 @@ idx = [Neuro.FilterBank.phase_flag];
 idx = idx(1:Neuro.NumBuffer);
 ang = angle(H(:,:,idx)); % instantaneous angle
 for i=1:Neuro.NumPhase,
-    neural_features(i,:) = angle(sum(exp(1i*squeeze(ang(end-samps+1:end,:,i)))));
+    neural_features(1,:) = angle(sum(exp(1i*squeeze(ang(end-samps+1:end,:,i)))));
 end
 
 % compute pwr in low freq bands based on hilbert (only keep last bin)
