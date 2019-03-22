@@ -82,7 +82,7 @@ Params.ArduinoSync = false;
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
 Params.UpdateRate = 10; % Hz
-Params.BaselineTime = 2; % secs
+Params.BaselineTime = 10; % secs
 
 %% Targets
 Params.TargetSize = 50;
@@ -119,8 +119,8 @@ if Params.ControlMode>=3,
     Params.KF.W = [...
         0       0       0       0       0;
         0       0       0       0       0;
-        0       0       1250    0       0;
-        0       0       0       1250    0;
+        0       0       1000    0       0;
+        0       0       0       1000    0;
         0       0       0       0       0];
     Params.KF.P = eye(5);
     Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
@@ -136,7 +136,7 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 0;
+Params.NumImaginedBlocks    = 1;
 Params.NumAdaptBlocks       = 3;
 Params.NumFixedBlocks       = 1;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
@@ -187,7 +187,7 @@ Params.InstructedDelayTime = 0;
 Params.MaxStartTime = 15;
 Params.MaxReachTime = 15;
 Params.InterBlockInterval = 10; % 0-10s, if set to 10 use instruction screen
-Params.ImaginedMvmtTime = 4;
+Params.ImaginedMvmtTime = 1.5;
 
 %% Feedback
 Params.FeedbackSound = false;

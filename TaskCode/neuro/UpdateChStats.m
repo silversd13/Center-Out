@@ -12,7 +12,7 @@ w                   = size(X,1);
 Neuro.ChStats.wSum1 = Neuro.ChStats.wSum1 + w;
 Neuro.ChStats.wSum2 = Neuro.ChStats.wSum2 + w*w;
 meanOld             = Neuro.ChStats.mean;
-Neuro.ChStats.mean  = meanOld + (w / Neuro.ChStats.wSum1) * sum(X - repmat(meanOld,w,1));
+Neuro.ChStats.mean  = meanOld + (w / Neuro.ChStats.wSum1) * mean(X - repmat(meanOld,w,1));
 Neuro.ChStats.S     = Neuro.ChStats.S + w*mean( (X - repmat(meanOld,w,1)).*(X - repmat(Neuro.ChStats.mean,w,1)) );
 Neuro.ChStats.var   = Neuro.ChStats.S / (Neuro.ChStats.wSum1 - 1);
 

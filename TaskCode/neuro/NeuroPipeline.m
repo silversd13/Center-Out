@@ -7,10 +7,10 @@ function varargout = NeuroPipeline(Neuro,Data),
 Neuro = ReadBR(Neuro);
 Neuro = RefNeuralData(Neuro);
 if Neuro.ZscoreRawFlag,
-    Neuro = ZscoreChannels(Neuro);
+%     Neuro = ZscoreChannels(Neuro);
 end
 if Neuro.UpdateChStatsFlag,
-    Neuro = UpdateChStats(Neuro);
+%     Neuro = UpdateChStats(Neuro);
 end
 Neuro = ApplyFilterBank(Neuro);
 Neuro = UpdateNeuroBuf(Neuro);

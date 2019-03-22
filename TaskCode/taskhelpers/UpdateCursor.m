@@ -14,7 +14,7 @@ function KF = UpdateCursor(Params,Neuro,TaskFlag,TargetPos,KF)
 global Cursor
 
 % query optimal control policy
-Vopt = OptimalCursorUpdate(Params,TargetPos);
+Vopt = Params.Gain * OptimalCursorUpdate(Params,TargetPos);
 
 if TaskFlag==1, % do nothing during imagined movements
     return;
@@ -101,6 +101,7 @@ switch Cursor.ControlMode,
         
         % assisted velocity
         Vcom = (X(1:2) - X0(1:2))*Params.UpdateRate; % effective velocity command
+        [Vcom,X(3:4)]
         if Cursor.Assistance > 0,
             Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
             if norm(Vass)>250, % fast
