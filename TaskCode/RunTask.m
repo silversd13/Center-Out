@@ -50,7 +50,7 @@ switch TaskFlag,
                 % Fit Dimensionality Reduction Params & Kalman Filter 
                 % based on imagined mvmts
                 Neuro.DimRed.Flag = Params.DimRed.Flag; % reset for task
-                if Params.DimRed.Flag,
+                if Params.DimRed.Flag && Params.DimRed.InitAdapt,
                     Neuro.DimRed.F = FitDimRed(...
                         fullfile(Params.Datadir,'Imagined'),Neuro.DimRed);
                     KF = FitKF(Params,...
@@ -108,7 +108,7 @@ switch TaskFlag,
                         KF = FitKF(Params,...
                             fullfile(Params.Datadir,'BCI_CLDA'),1,KF);
                     end
-                elseif Params.NumAdaptBlocks==0,
+                elseif Params.NumAdaptBlocks==0 || Neuro.DimRed.InitFixed,
                     if Params.DimRed.Flag,
                         Neuro.DimRed.F = FitDimRed(...
                             fullfile(Params.Datadir,'Imagined'),Neuro.DimRed);

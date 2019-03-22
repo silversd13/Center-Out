@@ -18,11 +18,16 @@ TargetID = [];
 for i=1:length(datafiles),
     % load data, grab neural features
     load(fullfile(datadir,datafiles(i).name)) %#ok<LOAD>
-    Ytrial = cat(2,TrialData.NeuralFeatures{:});
-    %Ytrial = Ytrial(:,1:2:end); % tmp
-    %Ytrial = Ytrial(:,11:end); % tmp
-    Y = cat(3,Y,Ytrial);
-    TargetID = cat(1,TargetID,TrialData.TargetID);
+    % inter trial interval
+    tidx = TrialData.Time < TrialData.Events(2).Time;
+    Ytrial = cat(2,TrialData.NeuralFeatures{tidx});
+    % only look from center to out
+    tidx = TrialData.Time > TrialData.Events(end).Time;
+    Ytrial = cat(2,Ytrial,TrialData.NeuralFeatures{tidx});
+    if size(Ytrial,2)==40,
+        Y = cat(3,Y,Ytrial);
+        TargetID = cat(1,TargetID,TrialData.TargetAngle);
+    end
 end
 
 % channel layout
@@ -40,7 +45,7 @@ leg = cell(1,length(TargetIDList));
 
 % go through each feature and plot erps
 feature_list = 1:Nft;
-feature_list_str = {'delta phase','delta pwr','beta pwr','high gamma pwr'};
+feature_list_str = {'none','lmp power','high gamma pwr'};
 for i=feature_list,
     fig = figure('units','normalized','position',[.1,.1,.8,.8],...
         'name',feature_list_str{i},'numbertitle','off');
@@ -74,12 +79,13 @@ for i=feature_list,
     YY = [min(YY(:,1)),max(YY(:,2))];
     set(ax,'XLim',XX,'YLim',YY,'XTick',[],'YTick',[]);
     
-    % add channel nums
+    % add channel nums & vline at t=0
     for ch=1:Nch,
         [r,c] = find(ecog_grid == ch);
         idx = C*(r-1) + c;
         text(ax(idx),XX(1),YY(1),sprintf('ch%03i',ch),...
             'VerticalAlignment','Bottom')
+        vline(ax(idx),30,'color',[.6,.6,.6]);
     end
     
     % add limits to limch

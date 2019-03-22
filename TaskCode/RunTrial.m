@@ -83,7 +83,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
-%                 KF = UpdateCursor(Params,Neuro,TaskFlag,Cursor.State(1:2),KF);
+                %KF = UpdateCursor(Params,Neuro,TaskFlag,Cursor.State(1:2),KF);
             end
             
             % cursor
@@ -126,7 +126,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
 end % only complete if no errors
 
 %% Go to Start Target
-if ~Data.ErrorID && ~Params.CenterReset,
+if ~Data.ErrorID && ~Params.CenterReset && TaskFlag>1,
     tstart  = GetSecs;
     Data.Events(end+1).Time = tstart;
     Data.Events(end).Str  = 'Start Target';
@@ -473,6 +473,10 @@ if ~Data.ErrorID,
                 yf = y0 + 0.1*Cursor.Vcommand(2);
                 Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
                 Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
+                xf = x0 + 0.1*Cursor.State(3);
+                yf = y0 + 0.1*Cursor.State(4);
+                Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
+                Screen('DrawLine', Params.WPTR, [200,50,50], x0, y0, xf, yf, 3);
             end
             Screen('DrawingFinished', Params.WPTR);
             Screen('Flip', Params.WPTR);

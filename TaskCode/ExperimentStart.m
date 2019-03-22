@@ -69,8 +69,14 @@ Neuro.NumChannels       = Params.NumChannels;
 Neuro.BufferSamps       = Params.BufferSamps;
 Neuro.BadChannels       = Params.BadChannels;
 Neuro.ReferenceMode     = Params.ReferenceMode;
+Neuro.NumPhase          = Params.NumPhase;
+Neuro.NumPower          = Params.NumPower;
+Neuro.NumBuffer         = Params.NumBuffer;
+Neuro.NumHilbert        = Params.NumHilbert;
 Neuro.NumFeatures       = Params.NumFeatures;
 Neuro.LastUpdateTime    = GetSecs;
+Neuro.UpdateChStatsFlag = Params.UpdateChStatsFlag;
+Neuro.UpdateFeatureStatsFlag = Params.UpdateFeatureStatsFlag;
 
 % initialize filter bank state
 for i=1:length(Params.FilterBank),
@@ -92,7 +98,7 @@ Neuro.FeatureStats.S      = zeros(1,Params.NumChannels); % aggregate deviation f
 Neuro.FeatureStats.var    = zeros(1,Params.NumChannels); % estimate of variance for each channel
 
 % create low freq buffers
-Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,3);
+Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,Neuro.NumBuffer);
 
 %% Kalman Filter
 if Params.ControlMode>=3,
@@ -124,11 +130,14 @@ else,
     fprintf('\n    - reference mode: %s', Params.ReferenceModeStr)
     fprintf('\n    - zscore raw: %s', LogicalStr{Params.ZscoreRawFlag+1})
     fprintf('\n    - zscore features: %s', LogicalStr{Params.ZscoreFeaturesFlag+1})
-    fprintf('\n    - save filtered data: %s', LogicalStr{Params.ZscoreRawFlag+1})
+    fprintf('\n    - save raw data: %s', LogicalStr{Params.SaveRaw+1})
+    fprintf('\n    - save filtered data: %s', LogicalStr{Params.SaveProcessed+1})
 end
 fprintf('\n    - dimensionality reduction: %s', LogicalStr{Params.DimRed.Flag+1})
 if Params.DimRed.Flag,
     fprintf('\n      - method: %s', DimRedStr{Params.DimRed.Method})
+    fprintf('\n      - before clda: %s', LogicalStr{Params.DimRed.InitAdapt+1})
+    fprintf('\n      - before fixed: %s', LogicalStr{Params.DimRed.InitFixed+1})
 end
 
 fprintf('\n\n  BCI Parameters:')

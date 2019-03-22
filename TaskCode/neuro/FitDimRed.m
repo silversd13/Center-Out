@@ -20,6 +20,7 @@ switch DimRed.Method,
     case 2,
         fprintf('  Factor Analysis\n')
 end
+fprintf('  Data in %s\n', DataDir)
 switch DimRed.AvgTrialsFlag,
     case false,
         fprintf('  Concatenating Trials\n\n')
@@ -27,8 +28,17 @@ switch DimRed.AvgTrialsFlag,
         fprintf('  Averaging Trials\n\n')
 end
 
-% load all data & organize according to DimRed.
-datafiles = dir(fullfile(DataDir,'Data*.mat'));
+% user select data (override)
+if DimRed.InitMode==2,
+    [filenames,DataDir] = uigetfile('*.mat','Select the INPUT DATA FILE(s)','MultiSelect','on');
+    for i=1:length(filenames),
+        datafiles(i) = dir(fullfile(DataDir,filenames{i}));
+    end
+else,
+    % load all data & organize according to DimRed.
+    datafiles = dir(fullfile(DataDir,'Data*.mat'));
+end
+
 X = [];
 for i=1:length(datafiles),
     load(fullfile(DataDir,datafiles(i).name)) %#ok<LOAD>
@@ -66,7 +76,12 @@ if isempty(DimRed.NumDims),
     % user input
     NumDims = [];
     while isempty(NumDims),
-        NumDims = input('# of PCs to use: ');
+        switch DimRed.Method,
+            case 1, % PCA
+                NumDims = input('# of PCs to use: ');
+            case 2, % FA
+                NumDims = input('# of Factors to use: ');
+        end
     end
 else,
     NumDims = DimRed.NumDims;

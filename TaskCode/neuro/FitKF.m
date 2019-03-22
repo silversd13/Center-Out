@@ -39,9 +39,9 @@ end
 % If Initialization Mode = 4, manually choose trial and load kf params, do
 % not fit
 if KF.InitializationMode==4 && fitFlag==0,
-    [datafile,datadir] = uigetfile(datadir);
-    load(fullfile(datadir,datafile));
-    KF = TrialData.KalmanFilter;
+    f=load(fullfile(Params.ProjectDir,'TaskCode','persistence','kf_params.mat'));
+    KF = f.KF;
+    KF.CLDA = Params.CLDA;
     return
 end
 
