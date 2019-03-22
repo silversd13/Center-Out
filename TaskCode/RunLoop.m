@@ -108,8 +108,16 @@ for Block=1:NumBlocks, % Block Loop
             fullfile(DataDir,sprintf('Data%04i.mat',Trial)),...
             'TrialData',...
             '-v7.3','-nocompression');
+        
+        % keep track of useful stats and params
+        ch_stats = Data.ChStats; 
+        save(fullfile(Params.ProjectDir,'TaskCode','persistence','ch_stats.mat'),...
+            'ch_stats','-v7.3','-nocompression');
+        feature_stats = Data.FeatureStats;
+        save(fullfile(Params.ProjectDir,'TaskCode','persistence','feature_stats.mat'),...
+            'feature_stats','-v7.3','-nocompression');
         if TaskFlag>1,
-            save(fullfile(Params.ProjectDir,'TaskCode','.kf','kf_params.mat'),...
+            save(fullfile(Params.ProjectDir,'TaskCode','persistence','kf_params.mat'),...
                 'KF','-v7.3','-nocompression');
         end
         
@@ -126,6 +134,7 @@ for Block=1:NumBlocks, % Block Loop
     end
     
 end % Block Loop
+%#ok<*NASGU>
 
 end % RunLoop
 
