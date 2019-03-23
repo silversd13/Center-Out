@@ -109,17 +109,17 @@ for Block=1:NumBlocks, % Block Loop
             'TrialData',...
             '-v7.3','-nocompression');
         
-%         % keep track of useful stats and params
-%         ch_stats = TrialData.ChStats; 
-%         save(fullfile(Params.ProjectDir,'TaskCode','persistence','ch_stats.mat'),...
-%             'ch_stats','-v7.3','-nocompression');
-%         feature_stats = TrialData.FeatureStats;
-%         save(fullfile(Params.ProjectDir,'TaskCode','persistence','feature_stats.mat'),...
-%             'feature_stats','-v7.3','-nocompression');
-%         if TaskFlag>1,
-%             save(fullfile(Params.ProjectDir,'TaskCode','persistence','kf_params.mat'),...
-%                 'KF','-v7.3','-nocompression');
-%         end
+        % keep track of useful stats and params
+        ch_stats = TrialData.ChStats; 
+        save(fullfile(Params.ProjectDir,'TaskCode','persistence','ch_stats.mat'),...
+            'ch_stats','-v7.3','-nocompression');
+        feature_stats = TrialData.FeatureStats;
+        save(fullfile(Params.ProjectDir,'TaskCode','persistence','feature_stats.mat'),...
+            'feature_stats','-v7.3','-nocompression');
+        if TaskFlag>1,
+            save(fullfile(Params.ProjectDir,'TaskCode','persistence','kf_params.mat'),...
+                'KF','-v7.3','-nocompression');
+        end
         
     end % Trial Loop
     

@@ -82,7 +82,7 @@ Params.ArduinoSync = false;
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
 Params.UpdateRate = 10; % Hz
-Params.BaselineTime = 2; % secs
+Params.BaselineTime = 0; % secs
 
 %% Targets
 Params.TargetSize = 50;
@@ -136,9 +136,9 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 0;
-Params.NumAdaptBlocks       = 2;
-Params.NumFixedBlocks       = 1;
+Params.NumImaginedBlocks    = 1;
+Params.NumAdaptBlocks       = 0;
+Params.NumFixedBlocks       = 0;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -202,8 +202,8 @@ sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 Params.GenNeuralFeaturesFlag = false;
 Params.ZscoreRawFlag = true;
 Params.UpdateChStatsFlag = true;
-Params.ZscoreFeaturesFlag = false;
-Params.UpdateFeatureStatsFlag = false;
+Params.ZscoreFeaturesFlag = true;
+Params.UpdateFeatureStatsFlag = true;
 Params.SaveProcessed = false;
 Params.SaveRaw = true;
 

@@ -9,8 +9,7 @@ if isempty(Cursor),
     Cursor.LastUpdateTime = GetSecs;
 end
 
-fprintf('Collecting Baseline')
-
+msg = '';
 tstart  = GetSecs;
 tlast = tstart;
 done = 0;
@@ -28,15 +27,18 @@ while ~done,
         
         % grab and process neural data
         if Params.BLACKROCK && ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
-            % update command line with progress
-            fprintf('.')
             Cursor.LastUpdateTime = tim;
             Cursor.LastPredictTime = tim;
             Neuro = NeuroPipeline(Neuro);
         end
         
+        % update command line with progress
+        fprintf(repmat('\b',1,length(msg)-1))
+        msg = sprintf('Computing Baseline: %i%s\n', round(100*(tim-tstart)/Params.BaselineTime),'%%');
+        fprintf(1,msg)
+        
         % update screen with progress
-        tex = sprintf('Computing Baseline: %.1f%% ', 100*(tim-tstart)/Params.BaselineTime);
+        tex = sprintf('Computing Baseline: %.1f%% \n', 100*(tim-tstart)/Params.BaselineTime);
         DrawFormattedText(Params.WPTR, tex,'center','center',255);
         Screen('Flip', Params.WPTR);
         

@@ -93,9 +93,9 @@ Neuro.ChStats.var    = zeros(1,Params.NumChannels); % estimate of variance for e
 % initialize stats for each feature for z-scoring
 Neuro.FeatureStats.wSum1  = 0; % count
 Neuro.FeatureStats.wSum2  = 0; % squared count
-Neuro.FeatureStats.mean   = zeros(1,Params.NumChannels); % estimate of mean for each channel
-Neuro.FeatureStats.S      = zeros(1,Params.NumChannels); % aggregate deviation from estimated mean for each channel
-Neuro.FeatureStats.var    = zeros(1,Params.NumChannels); % estimate of variance for each channel
+Neuro.FeatureStats.mean   = zeros(1,Params.NumFeatures*Params.NumChannels); % estimate of mean for each channel
+Neuro.FeatureStats.S      = zeros(1,Params.NumFeatures*Params.NumChannels); % aggregate deviation from estimated mean for each channel
+Neuro.FeatureStats.var    = zeros(1,Params.NumFeatures*Params.NumChannels); % estimate of variance for each channel
 
 % create low freq buffers
 Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,Neuro.NumBuffer);
@@ -175,7 +175,32 @@ Screen('TextSize',Params.WPTR, 28);
 try
     % Baseline 
     if Params.BaselineTime>0,
+        % turn on update stats flags
+        UpdateChStatsFlag = Params.UpdateChStatsFlag;
+        UpdateFeatureStatsFlag = Params.UpdateFeatureStatsFlag;
+        Params.UpdateChStatsFlag = true;
+        Params.UpdateFeatureStatsFlag = true;
+        
+        % collect data during baseline period
         Neuro = RunBaseline(Params,Neuro);
+        
+        % set flags back to original vals
+        Params.UpdateChStatsFlag = UpdateChStatsFlag;
+        Params.UpdateFeatureStatsFlag = UpdateFeatureStatsFlag;
+        
+        % save of useful stats and params
+        ch_stats = Neuro.ChStats;
+        save(fullfile(Params.ProjectDir,'TaskCode','persistence','ch_stats.mat'),...
+            'ch_stats','-v7.3','-nocompression');
+        feature_stats = Neuro.FeatureStats;
+        save(fullfile(Params.ProjectDir,'TaskCode','persistence','feature_stats.mat'),...
+            'feature_stats','-v7.3','-nocompression');
+    else, % if baseline is set to 0, just load stats
+        f=load(fullfile(Params.ProjectDir,'TaskCode','persistence','ch_stats.mat'));
+        Neuro.ChStats = f.ch_stats;
+        f=load(fullfile(Params.ProjectDir,'TaskCode','persistence','feature_stats.mat'));
+        Neuro.FeatureStats = f.feature_stats;
+        clear('f');
     end
     
     % Imagined Cursor Movements Loop
