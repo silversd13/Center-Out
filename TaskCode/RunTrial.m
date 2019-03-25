@@ -8,7 +8,6 @@ function [Data, Neuro, KF, Params] = RunTrial(Data,Params,Neuro,TaskFlag,KF)
 % 5) Feedback
 
 global Cursor
-Cursor.LastPredictTime = GetSecs;
 
 %% Set up trial
 StartTargetPos = Params.StartTargetPosition;
@@ -32,8 +31,9 @@ dT_vec = [];
 
 % grab blackrock data and run through processing pipeline
 if Params.BLACKROCK,
-    [Neuro,~] = NeuroPipeline(Neuro);
     Cursor.LastPredictTime = GetSecs;
+    Cursor.LastUpdateTime = Cursor.LastPredictTime;
+    Neuro = NeuroPipeline(Neuro);
 end
 
 %% Inter Trial Interval

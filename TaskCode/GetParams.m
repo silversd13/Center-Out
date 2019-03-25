@@ -23,6 +23,7 @@ Params.Assistance       = 0; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 4; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
+Params.BaselineTime     = 10; % secs
 
 %% Current Date and Time
 % get today's date
@@ -52,24 +53,6 @@ addpath(genpath(fullfile(projectdir,'TaskCode')));
 Params.ProjectDir = projectdir;
 datadir = fullfile(projectdir,'Data',Params.Subject,Params.YYYYMMDD,Params.HHMMSS);
 Params.Datadir = datadir;
-% if folders already exist, warn user before continuing (unless,
-% subject='Test')
-if exist(Params.Datadir,'dir'),
-    if ~strcmpi(Params.Subject,'Test'),
-        str = input([...
-            '\n\nData directory already exists.',...
-            '\nAre you sure you want to continue? Y/N ',...
-            '\nThis directory will be overwritten if you continue. '],'s');
-    else, str = 'Y';
-    end
-%     if strcmpi(str,'Y'), % delete all files in directory
-%         recycle('on')
-%         delete(fullfile(datadir,'*'))
-%         delete(fullfile(datadir,'Imagined','*'))
-%         delete(fullfile(datadir,'BCI_CLDA','*'))
-%         delete(fullfile(datadir,'BCI_Fixed','*'))
-%     end
-end
 mkdir(datadir);
 
 %% Sync to Blackrock
@@ -82,7 +65,6 @@ Params.ArduinoSync = false;
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
 Params.UpdateRate = 10; % Hz
-Params.BaselineTime = 0; % secs
 
 %% Targets
 Params.TargetSize = 50;
