@@ -30,6 +30,12 @@ end
 dt_vec = [];
 dT_vec = [];
 
+% grab blackrock data and run through processing pipeline
+if Params.BLACKROCK,
+    [Neuro,~] = NeuroPipeline(Neuro);
+    Cursor.LastPredictTime = GetSecs;
+end
+
 %% Inter Trial Interval
 if ~Data.ErrorID && Params.InterTrialInterval>0,
     tstart  = GetSecs;
@@ -85,7 +91,6 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
-                %KF = UpdateCursor(Params,Neuro,TaskFlag,Cursor.State(1:2),KF);
             end
             
             % cursor
@@ -95,27 +100,10 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                 Cursor.Vcommand = Cursor.State(3:4);
                 ct = ct + 1;
             end
-            CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
             Data.CursorState(:,end+1) = Cursor.State;
             Data.IntendedCursorState(:,end+1) = Cursor.IntendedState;
             Data.CursorAssist(1,end+1) = Cursor.Assistance;
 
-%             % draw
-%             Screen('FillOval', Params.WPTR, Params.CursorColor, CursorRect);
-%             if Params.DrawVelCommand.Flag && TaskFlag>1,
-%                 VelRect = Params.DrawVelCommand.Rect;
-%                 VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
-%                 VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
-%                 x0 = mean(VelRect([1,3]));
-%                 y0 = mean(VelRect([2,4]));
-%                 xf = x0 + 0.1*Cursor.Vcommand(1);
-%                 yf = y0 + 0.1*Cursor.Vcommand(2);
-%                 Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
-%                 Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
-%             end
-%             Screen('DrawingFinished', Params.WPTR);
             Screen('Flip', Params.WPTR);
         end
 
