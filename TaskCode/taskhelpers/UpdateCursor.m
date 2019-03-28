@@ -105,7 +105,7 @@ switch Cursor.ControlMode,
             % Vass w/ vector avg
             %Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
             
-            % Vass w/ circular avg
+            % Vass w/ same speed
             norm_vcom = norm(Vcom);
             Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
             Vass = norm_vcom * Vass / norm(Vass);
@@ -115,8 +115,8 @@ switch Cursor.ControlMode,
             end
             
             % update cursor state
-            Cursor.State(1) = X0(1) + Vass(1)/Params.UpdateRate;
-            Cursor.State(2) = X0(2) + Vass(2)/Params.UpdateRate;
+            %Cursor.State(1) = X0(1) + Vass(1)/Params.UpdateRate;
+            %Cursor.State(2) = X0(2) + Vass(2)/Params.UpdateRate;
             Cursor.State(3) = Vass(1);
             Cursor.State(4) = Vass(2);
         end

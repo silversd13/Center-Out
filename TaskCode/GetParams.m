@@ -18,11 +18,11 @@ end
 
 %% Control
 Params.Gain             = 1;
-Params.CenterReset      = false;
+Params.CenterReset      = true;
 Params.Assistance       = 0.05; %0.05; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type        = 0; % 0-none, 1-refit, 2-smooth batch, 3-RML
+Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
-Params.InitializationMode = 1; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
+Params.InitializationMode = 4; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
 Params.BaselineTime     = 0; % secs
 
 %% Current Date and Time
@@ -101,8 +101,8 @@ if Params.ControlMode>=3,
     Params.KF.W = [...
         0       0       0       0       0;
         0       0       0       0       0;
-        0       0       500   0       0;
-        0       0       0       500   0;
+        0       0       1000   0       0;
+        0       0       0       1000   0;
         0       0       0       0       0];
     Params.KF.P = eye(5);
     Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
@@ -135,12 +135,14 @@ Params.CLDA.TypeStr     = TypeStrs{Params.CLDA.Type+1};
 Params.CLDA.UpdateTime = 80; % secs, for smooth batch
 Params.CLDA.Alpha = exp(log(.5) / (120/Params.CLDA.UpdateTime)); % for smooth batch
 
-Params.CLDA.Lambda = exp(log(.5) / (30*Params.UpdateRate)); % for RML
-FinalLambda = exp(log(.5) / (500*Params.UpdateRate));
+% Lambda
+Params.CLDA.Lambda = 80; %exp(log(.5) / (30*Params.UpdateRate)); % for RML
+FinalLambda = 800; %exp(log(.5) / (500*Params.UpdateRate));
 DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
-    / ((Params.NumAdaptBlocks)...
+    / ((Params.NumAdaptBlocks-1)...
     *Params.NumTrialsPerBlock...
-    *Params.UpdateRate * 10); % bins/trial;
+    *Params.UpdateRate * 5); % bins/trial;
+
 Params.CLDA.DeltaLambda = DeltaLambda; % for RML
 Params.CLDA.FinalLambda = FinalLambda; % for RML
 

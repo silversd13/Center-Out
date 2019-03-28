@@ -18,9 +18,10 @@ fprintf('\nTrial: %i\n',Data.Trial)
 fprintf('  Target: %i\n',Data.TargetAngle)
 if Params.Verbose,
     if TaskFlag==2,
-        fprintf('    Cursor Assistance: %i%%\n',round(100*Cursor.Assistance))
+        fprintf('    Cursor Assistance: %.2f%%\n',100*Cursor.Assistance)
         if Params.CLDA.Type==3,
-            fprintf('    Lambda 1/2 life: %.2fsecs\n',log(.5)/log(KF.Lambda)/Params.UpdateRate)
+            %fprintf('    Lambda 1/2 life: %.2fsecs\n',log(.5)/log(KF.Lambda)/Params.UpdateRate)
+            fprintf('    Lambda 1/2 life: %.2fsecs\n',KF.Lambda)
         end
     end
 end
