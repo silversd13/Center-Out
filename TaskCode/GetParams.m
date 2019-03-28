@@ -19,10 +19,10 @@ end
 %% Control
 Params.Gain             = 1;
 Params.CenterReset      = false;
-Params.Assistance       = 0.01; %0.05; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
-Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lambda for rml
-Params.InitializationMode = 4; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
+Params.Assistance       = 0.05; %0.05; % value btw 0 and 1, 1 full assist
+Params.CLDA.Type        = 0; % 0-none, 1-refit, 2-smooth batch, 3-RML
+Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
+Params.InitializationMode = 1; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
 Params.BaselineTime     = 0; % secs
 
 %% Current Date and Time
@@ -60,7 +60,7 @@ Params.SerialSync = false;
 Params.SyncDev = '/dev/ttyS1';
 Params.BaudRate = 115200;
 
-Params.ArduinoSync = true;
+Params.ArduinoSync = false;
 
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
@@ -135,7 +135,7 @@ Params.CLDA.TypeStr     = TypeStrs{Params.CLDA.Type+1};
 Params.CLDA.UpdateTime = 80; % secs, for smooth batch
 Params.CLDA.Alpha = exp(log(.5) / (120/Params.CLDA.UpdateTime)); % for smooth batch
 
-Params.CLDA.Lambda = exp(log(.5) / (500*Params.UpdateRate)); % for RML
+Params.CLDA.Lambda = exp(log(.5) / (30*Params.UpdateRate)); % for RML
 FinalLambda = exp(log(.5) / (500*Params.UpdateRate));
 DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
     / ((Params.NumAdaptBlocks)...
@@ -182,7 +182,7 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.GenNeuralFeaturesFlag = false;
+Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
 Params.UpdateChStatsFlag = false;
 Params.ZscoreFeaturesFlag = true;
