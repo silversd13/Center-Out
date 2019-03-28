@@ -18,12 +18,12 @@ end
 
 %% Control
 Params.Gain             = 1;
-Params.CenterReset      = false;
-Params.Assistance       = 0; % value btw 0 and 1, 1 full assist
+Params.CenterReset      = true;
+Params.Assistance       = 0.05; %0.05; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 4; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
-Params.BaselineTime     = 10; % secs
+Params.BaselineTime     = 0; % secs
 
 %% Current Date and Time
 % get today's date
@@ -101,8 +101,8 @@ if Params.ControlMode>=3,
     Params.KF.W = [...
         0       0       0       0       0;
         0       0       0       0       0;
-        0       0       1000    0       0;
-        0       0       0       1000    0;
+        0       0       1000   0       0;
+        0       0       0       1000   0;
         0       0       0       0       0];
     Params.KF.P = eye(5);
     Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
@@ -118,8 +118,8 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 1;
-Params.NumAdaptBlocks       = 0;
+Params.NumImaginedBlocks    = 0;
+Params.NumAdaptBlocks       = 2;
 Params.NumFixedBlocks       = 0;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
@@ -134,20 +134,23 @@ Params.CLDA.TypeStr     = TypeStrs{Params.CLDA.Type+1};
 
 Params.CLDA.UpdateTime = 80; % secs, for smooth batch
 Params.CLDA.Alpha = exp(log(.5) / (120/Params.CLDA.UpdateTime)); % for smooth batch
-Params.CLDA.Lambda = exp(log(.5) / (30*Params.UpdateRate)); % for RML
+
+% Lambda
+Params.CLDA.Lambda = 80; %exp(log(.5) / (30*Params.UpdateRate)); % for RML
+FinalLambda = 800; %exp(log(.5) / (500*Params.UpdateRate));
+DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
+    / ((Params.NumAdaptBlocks-1)...
+    *Params.NumTrialsPerBlock...
+    *Params.UpdateRate * 5); % bins/trial;
+
+Params.CLDA.DeltaLambda = DeltaLambda; % for RML
+Params.CLDA.FinalLambda = FinalLambda; % for RML
 
 switch Params.CLDA.AdaptType,
     case 'none',
-        Params.CLDA.DeltaLambda = 0;
+        Params.CLDA.DeltaLambda = 0;  
         Params.CLDA.DeltaAssistance = 0;
     case 'linear',
-        FinalLambda = exp(log(.5) / (500*Params.UpdateRate));
-        DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
-            / ((Params.NumAdaptBlocks-1)...
-            *Params.NumTrialsPerBlock...
-            *Params.UpdateRate * 10); % bins/trial;
-        Params.CLDA.DeltaLambda = DeltaLambda; % for RML
-        Params.CLDA.FinalLambda = FinalLambda; % for RML
         switch Params.CLDA.Type,
             case 2, % smooth batch
                 Params.CLDA.DeltaAssistance = ... % linearly decrease assistance
@@ -169,7 +172,7 @@ Params.InstructedDelayTime = 0;
 Params.MaxStartTime = 15;
 Params.MaxReachTime = 15;
 Params.InterBlockInterval = 10; % 0-10s, if set to 10 use instruction screen
-Params.ImaginedMvmtTime = 1.5;
+Params.ImaginedMvmtTime = 2;
 
 %% Feedback
 Params.FeedbackSound = false;
@@ -181,7 +184,7 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.GenNeuralFeaturesFlag = false;
+Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
 Params.UpdateChStatsFlag = false;
 Params.ZscoreFeaturesFlag = true;
