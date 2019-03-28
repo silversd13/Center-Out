@@ -183,9 +183,9 @@ sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 %% BlackRock Params
 Params.GenNeuralFeaturesFlag = false;
 Params.ZscoreRawFlag = true;
-Params.UpdateChStatsFlag = true;
+Params.UpdateChStatsFlag = false;
 Params.ZscoreFeaturesFlag = true;
-Params.UpdateFeatureStatsFlag = true;
+Params.UpdateFeatureStatsFlag = false;
 Params.SaveProcessed = false;
 Params.SaveRaw = true;
 

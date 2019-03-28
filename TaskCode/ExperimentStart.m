@@ -176,17 +176,15 @@ try
     % Baseline 
     if Params.BaselineTime>0,
         % turn on update stats flags
-        UpdateChStatsFlag = Params.UpdateChStatsFlag;
-        UpdateFeatureStatsFlag = Params.UpdateFeatureStatsFlag;
-        Params.UpdateChStatsFlag = true;
-        Params.UpdateFeatureStatsFlag = true;
+        Neuro.UpdateChStatsFlag = true;
+        Neuro.UpdateFeatureStatsFlag = true;
         
         % collect data during baseline period
         Neuro = RunBaseline(Params,Neuro);
         
         % set flags back to original vals
-        Params.UpdateChStatsFlag = UpdateChStatsFlag;
-        Params.UpdateFeatureStatsFlag = UpdateFeatureStatsFlag;
+        Neuro.UpdateChStatsFlag = Params.UpdateChStatsFlag;
+        Neuro.UpdateFeatureStatsFlag = Params.UpdateFeatureStatsFlag;
         
         % save of useful stats and params
         ch_stats = Neuro.ChStats;
