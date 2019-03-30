@@ -299,11 +299,12 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                     Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
-                KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
+                %KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
             end
             
             % cursor
             if TaskFlag==1, % imagined movements
+                ct
                 Cursor.State(3:4) = (OptimalCursorTraj(ct,:)'-Cursor.State(1:2))/dt;
                 Cursor.State(1:2) = OptimalCursorTraj(ct,:);
                 Cursor.Vcommand = Cursor.State(3:4);
@@ -497,7 +498,6 @@ end % only complete if no errors
 
 
 %% Completed Trial - Give Feedback
-Screen('Flip', Params.WPTR);
 
 % output update times
 if Params.Verbose,
@@ -513,7 +513,11 @@ if Data.ErrorID==0,
     if Params.FeedbackSound,
         sound(Params.RewardSound,Params.RewardSoundFs)
     end
-else
+else,
+    % reset cursor
+    Cursor.State = [0,0,0,0,1]';
+    Cursor.IntendedState = [0,0,0,0,1]';
+    
     if Params.FeedbackSound,
         sound(Params.ErrorSound,Params.ErrorSoundFs)
     end

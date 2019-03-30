@@ -17,6 +17,27 @@ disp(datadir)
 disp(files{1})
 disp(files{end})
 
+% type of trials
+block_str = strsplit(datadir,'/');
+block_str = block_str{end-1};
+switch block_str,
+    case 'BCI_Imagined',
+        block_flag = 1;
+    case 'BCI_CLDA',
+        block_flag = 2;
+    case 'BCI_Fixed',
+        block_flag = 3;
+end
+
+% for movie
+if saveFlag,
+    savefile = input('Movie File Name: ','s');
+    vidObj = VideoWriter(sprintf('%s',savefile),'MPEG-4');
+    vidObj.FrameRate = playback_speed/.1;
+    vidObj.Quality = 100;
+    open(vidObj);
+end
+
 % get params
 load(fullfile(datadir,files{1}))
 screen_sz = TrialData.Params.ScreenRectangle(3:4);
@@ -31,23 +52,17 @@ hold on
 start = plot(0,0,'.','MarkerSize',target_sz,'color',target_col/255);
 target = plot(nan,nan,'.','MarkerSize',target_sz,'color',target_col/255);
 cursor = plot(nan,nan,'.','MarkerSize',cursor_sz,'color',cursor_col/255);
-KFvel = plot([-400,nan],[400,nan],'-r');
-OPTvel = plot([-400,nan],[400,nan],'-b');
-INTvel = plot([-400,nan],[400,nan],'-g');
-txt = text(500,-450,{'',''},...
-    'horizontalalignment','right',...
-    'verticalalignment','bottom');
+INTvel = plot([-400,nan],[-400,nan],'-g');
+OPTvel = plot([-400,nan],[-400,nan],'-b');
+KFvel = plot([-400,nan],[-400,nan],'-r','linewidth',1.8);
+txt = text(400,400,{'',''},...
+    'horizontalalignment','left',...
+    'verticalalignment','bottom',...
+    'fontsize',12);
 axis equal
 xlim([-500,+500])
 ylim([-500,+500])
-
-% for movie
-if saveFlag,
-    savefile = input('Movie File Name: ','s');
-    vidObj = VideoWriter(sprintf('%s',savefile),'MPEG-4');
-    vidObj.FrameRate = playback_speed/.1;
-    open(vidObj);
-end
+set(gca,'YDir','reverse')
 
 % go through each file, load and play movie
 for n=1:length(files),
@@ -79,8 +94,8 @@ for n=1:length(files),
                 end
             else, % error on start target
                 Flag = 1;
-                start.Visible = 'on';
-                target.Visible = 'off';
+                start.Visible = 'off';
+                target.Visible = 'on';
             end
         end
         
@@ -94,20 +109,36 @@ for n=1:length(files),
         % plot KF vel, assist vel, C vel
         if Flag>0,
             KFvel.XData(2)  = (TrialData.CursorState(3,t)/5-400);
-            KFvel.YData(2)  = (TrialData.CursorState(4,t)/5+400);
+            KFvel.YData(2)  = (TrialData.CursorState(4,t)/5-400);
             OPTvel.XData(2) = (TrialData.IntendedCursorState(3,t)/5-400);
-            OPTvel.YData(2) = (TrialData.IntendedCursorState(4,t)/5+400);
+            OPTvel.YData(2) = (TrialData.IntendedCursorState(4,t)/5-400);
             INTvel.XData(2) = (int_state(1)/5-400);
-            INTvel.YData(2) = (int_state(2)/5+400);
+            INTvel.YData(2) = (int_state(2)/5-400);
         end
         
         % text
-        txt.String = {
-            sprintf('Trial: %i',TrialData.Trial)
-            sprintf('Assist: %.2f',TrialData.CursorAssist(1))
-            sprintf('Lambda: %.2f',log(.5)/(log(TrialData.KalmanFilter.Lambda)*10))
-            sprintf('Time: %.1f',time-TrialData.Time(1))
-            };
+        switch block_flag,
+            case 1,
+                txt.String = {
+                    sprintf('Visual Feedback')
+                    sprintf('Trial: %i',TrialData.Trial)
+                    sprintf('Time: %.1f',time-TrialData.Time(1))
+                    };
+            case 2,
+                txt.String = {
+                    sprintf('Adaptation')
+                    sprintf('Trial: %i',TrialData.Trial)
+                    sprintf('Assist: %.2f',TrialData.CursorAssist(1))
+                    sprintf('Lambda: %.2f',TrialData.KalmanFilter.Lambda)
+                    sprintf('Time: %.1f',time-TrialData.Time(1))
+                    };
+            case 3,
+                txt.String = {
+                    sprintf('Fixed')
+                    sprintf('Trial: %i',TrialData.Trial)
+                    sprintf('Time: %.1f',time-TrialData.Time(1))
+                    };
+        end
         
         
         % for saving movie

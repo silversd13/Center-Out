@@ -45,12 +45,12 @@ TrialBatch = {};
 tlast = GetSecs;
 Cursor.LastPredictTime = tlast;
 Cursor.LastUpdateTime = tlast;
-Cursor.State = [0,0,0,0,1]';
-Cursor.IntendedState = [0,0,0,0,1]';
 for Block=1:NumBlocks, % Block Loop
 
     % random order of reach targets for each block
     TargetOrder = Params.TargetFunc(Params.NumTrialsPerBlock);
+    Cursor.State = [0,0,0,0,1]';
+    Cursor.IntendedState = [0,0,0,0,1]';
 
     for TrialPerBlock=1:Params.NumTrialsPerBlock, % Trial Loop
         % if smooth batch on & enough time has passed, update KF btw trials

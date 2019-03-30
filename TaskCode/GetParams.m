@@ -118,9 +118,9 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 0;
+Params.NumImaginedBlocks    = 2;
 Params.NumAdaptBlocks       = 2;
-Params.NumFixedBlocks       = 0;
+Params.NumFixedBlocks       = 2;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -168,15 +168,15 @@ end
 %% Hold Times
 Params.TargetHoldTime = .1;
 Params.InterTrialInterval = 3;
-Params.InstructedDelayTime = 0;
+Params.InstructedDelayTime = .5;
 Params.MaxStartTime = 15;
 Params.MaxReachTime = 15;
 Params.InterBlockInterval = 10; % 0-10s, if set to 10 use instruction screen
-Params.ImaginedMvmtTime = 2;
+Params.ImaginedMvmtTime = 3;
 
 %% Feedback
 Params.FeedbackSound = false;
-Params.ErrorWaitTime = 2;
+Params.ErrorWaitTime = 0;
 Params.ErrorSound = 1000*audioread('buzz.wav');
 Params.ErrorSoundFs = 8192;
 [Params.RewardSound,Params.RewardSoundFs] = audioread('reward1.wav');
