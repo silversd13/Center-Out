@@ -17,6 +17,8 @@ switch TaskFlag,
         InstructionScreen(Params,Instructions);
         Cursor.Assistance = Params.Assistance;
         Cursor.DeltaAssistance = 0;
+        InstructedDelayTime = Params.InstructedDelayTime;
+        Params.InstructedDelayTime = .5;
         mkdir(fullfile(Params.Datadir,'Imagined'));
         
         % output to screen
@@ -28,6 +30,7 @@ switch TaskFlag,
         
         Neuro.DimRed.Flag = false; % set to false for imagined mvmts
         [Neuro,~,Params] = RunLoop(Params,Neuro,TaskFlag,fullfile(Params.Datadir,'Imagined'),[]);
+        Params.InstructedDelayTime = InstructedDelayTime;
         
     case 2, % Control Mode with Assist & CLDA
         switch Params.ControlMode,
