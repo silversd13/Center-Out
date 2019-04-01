@@ -304,7 +304,6 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
             
             % cursor
             if TaskFlag==1, % imagined movements
-                ct
                 Cursor.State(3:4) = (OptimalCursorTraj(ct,:)'-Cursor.State(1:2))/dt;
                 Cursor.State(1:2) = OptimalCursorTraj(ct,:);
                 Cursor.Vcommand = Cursor.State(3:4);

@@ -51,6 +51,7 @@ for Block=1:NumBlocks, % Block Loop
     TargetOrder = Params.TargetFunc(Params.NumTrialsPerBlock);
     Cursor.State = [0,0,0,0,1]';
     Cursor.IntendedState = [0,0,0,0,1]';
+    Cursor.Vcommand = [0,0]';
 
     for TrialPerBlock=1:Params.NumTrialsPerBlock, % Trial Loop
         % if smooth batch on & enough time has passed, update KF btw trials
