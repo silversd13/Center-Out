@@ -1,4 +1,4 @@
-function KF = UpdateRmlKF(KF,X,Y)
+function KF = UpdateRmlKF(KF,X,Y,Params)
 % function KF = UpdateRmlKF(KF,X,Y)
 % updates kalman filter for each iteration
 % follows eqs in Dangi et al., Neural Computation (2014)
@@ -13,7 +13,7 @@ R       = KF.R;
 S       = KF.S;
 T       = KF.T;
 ESS     = KF.ESS;
-Lambda  = exp(log(.5) / (KF.Lambda * 10));
+Lambda  = exp(log(.5) / (KF.Lambda * Params.UpdateRate));
 
 if KF.VelKF,
     X = X(3:end);
@@ -39,7 +39,8 @@ KF.T    = T;
 KF.C    = C;
 KF.Q    = Q;
 KF.ESS  = ESS;
-KF.Lambda = min([log(.5)/(log(Lambda)*10) + KF.CLDA.DeltaLambda,KF.CLDA.FinalLambda]); % do not exceed final lambda
+KF.Lambda = min([log(.5)/(log(Lambda)*Params.UpdateRate) ...
+    + KF.CLDA.DeltaLambda,KF.CLDA.FinalLambda]); % do not exceed final lambda
 
 % update inverses % this actually seems slower, not implementing
 % Tinv    = KF.Tinv;
