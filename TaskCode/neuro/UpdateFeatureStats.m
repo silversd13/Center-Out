@@ -16,4 +16,9 @@ Neuro.FeatureStats.mean     = meanOld + (w / Neuro.FeatureStats.wSum1) * (X - me
 Neuro.FeatureStats.S        = Neuro.FeatureStats.S + w*(X - meanOld).*(X - Neuro.FeatureStats.mean);
 Neuro.FeatureStats.var      = Neuro.FeatureStats.S / (Neuro.FeatureStats.wSum1 - 1);
 
+% ignore phase features
+NumPhase = sum([Neuro.FilterBank.phase_flag]);
+Neuro.FeatureStats.mean(1:NumPhase*128) = 0;
+Neuro.FeatureStats.var(1:NumPhase*128) = 0;
+
 end % UpdateNeuralStats
