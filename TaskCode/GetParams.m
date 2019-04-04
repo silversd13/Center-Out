@@ -63,8 +63,8 @@ Params.BaudRate = 115200;
 Params.ArduinoSync = false;
 
 %% Timing
-Params.ScreenRefreshRate = 5; % Hz
-Params.UpdateRate = 5; % Hz
+Params.ScreenRefreshRate = 10; % Hz
+Params.UpdateRate = 10; % Hz
 
 %% Targets
 Params.TargetSize = 50;
@@ -118,7 +118,7 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 0;
+Params.NumImaginedBlocks    = 1;
 Params.NumAdaptBlocks       = 6;
 Params.NumFixedBlocks       = 2;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
