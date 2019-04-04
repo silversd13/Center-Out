@@ -206,6 +206,7 @@ Params.DimRed.NumDims = [];
 
 Params.Fs = 1000;
 Params.NumChannels = 128;
+Params.NumFeatureBins = 2;
 Params.BufferTime = 2; % secs longer for better phase estimation of low frqs
 Params.BufferSamps = Params.BufferTime * Params.Fs;
 Params.BadChannels = [];

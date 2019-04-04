@@ -63,6 +63,7 @@ end
 % changes
 Neuro.ZscoreRawFlag     = Params.ZscoreRawFlag;
 Neuro.ZscoreFeaturesFlag= Params.ZscoreFeaturesFlag;
+Neuro.NumFeatureBins    = Params.NumFeatureBins;
 Neuro.DimRed            = Params.DimRed;
 Neuro.CLDA              = Params.CLDA;
 Neuro.SaveProcessed     = Params.SaveProcessed;
