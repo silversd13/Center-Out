@@ -18,7 +18,7 @@ Neuro.FeatureStats.var      = Neuro.FeatureStats.S / (Neuro.FeatureStats.wSum1 -
 
 % ignore phase features
 NumPhase = sum([Neuro.FilterBank.phase_flag]);
-Neuro.FeatureStats.mean(1:NumPhase*128) = 0;
-Neuro.FeatureStats.var(1:NumPhase*128) = 0;
+Neuro.FeatureStats.mean(1:NumPhase*Neuro.NumChannels) = 0;
+Neuro.FeatureStats.var(1:NumPhase*Neuro.NumChannels) = 0;
 
 end % UpdateNeuralStats

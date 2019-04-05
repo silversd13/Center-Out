@@ -43,9 +43,16 @@ end
 
 % set bad channels to 0
 neural_features(:,Neuro.BadChannels) = 0;
+neural_features = reshape(neural_features',[],1);
 
-% put features in Neuro
-Neuro.NeuralFeatures = reshape(neural_features',[],1);
+% buffer of neural features
+if Neuro.NumFeatureBins>1,
+    Neuro.NeuralFeaturesBuf = circshift(Neuro.NeuralFeaturesBuf,[0,-1]);
+    Neuro.NeuralFeaturesBuf(:,Neuro.NumFeatureBins) = neural_features;
+    Neuro.NeuralFeatures = mean(Neuro.NeuralFeaturesBuf,2);
+else, % put features straight into Neuro
+    Neuro.NeuralFeatures = neural_features;
+end
 
 end % CompNeuralFeatures
 

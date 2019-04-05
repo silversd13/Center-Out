@@ -63,8 +63,8 @@ Params.BaudRate = 115200;
 Params.ArduinoSync = true;
 
 %% Timing
-Params.ScreenRefreshRate = 5; % Hz
-Params.UpdateRate = 5; % Hz
+Params.ScreenRefreshRate = 10; % Hz
+Params.UpdateRate = 10; % Hz
 
 %% Targets
 Params.TargetSize = 50;
@@ -118,8 +118,8 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 12;
-Params.NumAdaptBlocks       = 10;
+Params.NumImaginedBlocks    = 1;
+Params.NumAdaptBlocks       = 6;
 Params.NumFixedBlocks       = 2;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
@@ -206,6 +206,7 @@ Params.DimRed.NumDims = [];
 
 Params.Fs = 1000;
 Params.NumChannels = 128;
+Params.NumFeatureBins = 1;
 Params.BufferTime = 2; % secs longer for better phase estimation of low frqs
 Params.BufferSamps = Params.BufferTime * Params.Fs;
 Params.BadChannels = [];
