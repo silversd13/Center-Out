@@ -53,9 +53,6 @@ if Params.ArduinoSync,
     Params.ArduinoPin = 'D13';
     writeDigitalPin(Params.ArduinoPtr, Params.ArduinoPin, 0); % make sure the pin is at 0
     PulseArduino(Params.ArduinoPtr,Params.ArduinoPin,20);
-    
-    Params.ArduinoVelPin = 'DAQ0';
-    VelocityToArduino(Params.ArduinoPtr,Params.ArduinoVelPin,0)
 end
 
 %% Neural Signal Processing
@@ -103,6 +100,10 @@ Neuro.FeatureStats.var    = zeros(1,Params.NumFeatures*Params.NumChannels); % es
 
 % create low freq buffers
 Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,Neuro.NumBuffer);
+if Neuro.NumFeatureBins>1,
+    Neuro.NeuralFeaturesBuf = zeros(Neuro.NumFeatures*Neuro.NumChannels,...
+        Neuro.NumFeatureBins);
+end
 
 %% Kalman Filter
 if Params.ControlMode>=3,
