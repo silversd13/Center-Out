@@ -32,7 +32,11 @@ end
 % for movie
 if saveFlag,
     savefile = input('Movie File Name: ','s');
-    vidObj = VideoWriter(sprintf('%s',savefile),'MPEG-4');
+    if ismac,
+        vidObj = VideoWriter(sprintf('%s',savefile),'MPEG-4');
+    else,
+        vidObj = VideoWriter(sprintf('%s.avi',savefile));
+    end
     vidObj.FrameRate = playback_speed/.1;
     vidObj.Quality = 100;
     open(vidObj);
@@ -69,7 +73,8 @@ xlim([-500,+500])
 ylim([-500,+500])
 set(gca,'YDir','reverse')
 legend(gca,[INTvel,OPTvel,KFvel,AvgIntVel,AvgKFVel],...
-    'Intended Vel', 'Optimal Vel', 'KF Vel (x5)', 'Avg Intended Vel (4 bins)', 'Avg KF Vel (4 bins; x5)', ...
+    {'Intended Vel', 'Optimal Vel', 'KF Vel (x5)', ...
+    'Avg Intended Vel (4 bins)', 'Avg KF Vel (4 bins; x5)'}, ...
     'location','southwest','fontsize',12)
 
 % % track angle btw velocities
