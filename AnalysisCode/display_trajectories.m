@@ -17,6 +17,9 @@ load(fullfile(datadir,files{1}))
 target_sz = 4*TrialData.Params.TargetSize;
 target_col = TrialData.Params.OutTargetColor;
 target_rad = TrialData.Params.ReachTargetRadius;
+% cc = brewermap(8,'Paired');
+% cc = get(groot,'defaultAxesColorOrder');
+cc = hsv(8);
 
 % set up figure
 figure('units','normalized','position',[.1,.1,.6,.8]);
@@ -24,14 +27,18 @@ figure('units','normalized','position',[.1,.1,.6,.8]);
 % screen output
 hold on
 plot(0,0,'.','MarkerSize',target_sz,'color',target_col/255);
-plot(target_rad*cosd(0:45:360-45),target_rad*sind(0:45:360-45),'.','MarkerSize',target_sz,'color',target_col/255);
+angs = 0:45:360-45;
+for i=1:length(angs),
+    ang = angs(i);
+    plot(target_rad*cosd(ang),target_rad*sind(ang),'.',...
+        'MarkerSize',target_sz,'color',cc(i,:));
+end
 axis equal
 xlim([-300,+300])
 ylim([-300,+300])
 set(gca,'YDir','reverse')
 
 % plot each trajectory
-cc = brewermap(8,'Paired');
 for n=1:length(files),
     load(fullfile(datadir,files{n}))
     cc_idx = TrialData.TargetID;
