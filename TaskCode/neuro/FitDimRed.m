@@ -58,6 +58,9 @@ if DimRed.AvgTrialsFlag,
     X = mean(X,3);
 end
 
+% ignore "bad features"
+X = X(Params.FeatureMask,:);
+
 % use interactive PCA plot if num dims is not given
 if isempty(DimRed.NumDims),
     % PCA

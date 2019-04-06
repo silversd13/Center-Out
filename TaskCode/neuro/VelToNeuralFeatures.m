@@ -60,6 +60,9 @@ end
 % vectorize output
 Z = Z(:);
 
+% zero out "bad channels"
+Z(Params.BadChannels*(1:Params.NumChannels:Params.NumFeatures)) = 0;
+
 % update data structure if given
 if exist('Data','var')
     Data.NeuralFeatures{end+1} = Z;
