@@ -85,18 +85,18 @@ for i=1:length(Params.FilterBank),
 end
 
 % initialize stats for each channel for z-scoring
-Neuro.ChStats.wSum1  = 0; % count
-Neuro.ChStats.wSum2  = 0; % squared count
-Neuro.ChStats.mean   = zeros(1,Params.NumChannels); % estimate of mean for each channel
-Neuro.ChStats.S      = zeros(1,Params.NumChannels); % aggregate deviation from estimated mean for each channel
-Neuro.ChStats.var    = zeros(1,Params.NumChannels); % estimate of variance for each channel
+Neuro.ChStats.mean      = zeros(1,Params.NumChannels); % estimate of mean for each channel
+Neuro.ChStats.var       = zeros(1,Params.NumChannels); % estimate of variance for each channel
+Neuro.ChStats.Idx       = 1;
+Neuro.ChStats.BufSize   = Params.ZBufSize * Params.UpdateRate;
+Neuro.ChStats.Buf       = cell(Neuro.ChStats.BufSize);
 
 % initialize stats for each feature for z-scoring
-Neuro.FeatureStats.wSum1  = 0; % count
-Neuro.FeatureStats.wSum2  = 0; % squared count
-Neuro.FeatureStats.mean   = zeros(1,Params.NumFeatures*Params.NumChannels); % estimate of mean for each channel
-Neuro.FeatureStats.S      = zeros(1,Params.NumFeatures*Params.NumChannels); % aggregate deviation from estimated mean for each channel
-Neuro.FeatureStats.var    = zeros(1,Params.NumFeatures*Params.NumChannels); % estimate of variance for each channel
+Neuro.FeatureStats.mean     = zeros(1,Params.NumFeatures*Params.NumChannels); % estimate of mean for each channel
+Neuro.FeatureStats.var      = zeros(1,Params.NumFeatures*Params.NumChannels); % estimate of variance for each channel
+Neuro.FeatureStats.Idx      = 1;
+Neuro.FeatureStats.BufSize  = Params.ZBufSize * Params.UpdateRate;
+Neuro.FeatureStats.Buf      = cell(Neuro.FeatureStats.BufSize);
 
 % create low freq buffers
 Neuro.FilterDataBuf = zeros(Neuro.BufferSamps,Neuro.NumChannels,Neuro.NumBuffer);
