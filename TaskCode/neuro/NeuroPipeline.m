@@ -22,7 +22,7 @@ if Neuro.ZscoreFeaturesFlag,
     Neuro = ZscoreFeatures(Neuro);
 end
 if Neuro.DimRed.Flag,
-    Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
+    Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures(Neuro.FeatureMask));
 end
 varargout{1} = Neuro;
 

@@ -20,13 +20,6 @@ switch DimRed.Method,
     case 2,
         fprintf('  Factor Analysis\n')
 end
-fprintf('  Data in %s\n', DataDir)
-switch DimRed.AvgTrialsFlag,
-    case false,
-        fprintf('  Concatenating Trials\n\n')
-    case true,
-        fprintf('  Averaging Trials\n\n')
-end
 
 % user select data (override)
 if DimRed.InitMode==2,
@@ -38,6 +31,15 @@ else,
     % load all data & organize according to DimRed.
     datafiles = dir(fullfile(DataDir,'Data*.mat'));
 end
+
+fprintf('  Data in %s\n', DataDir)
+switch DimRed.AvgTrialsFlag,
+    case false,
+        fprintf('  Concatenating Trials\n\n')
+    case true,
+        fprintf('  Averaging Trials\n\n')
+end
+
 
 X = [];
 for i=1:length(datafiles),

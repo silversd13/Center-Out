@@ -61,7 +61,7 @@ end
 Z = Z(:);
 
 % zero out "bad channels"
-Z(Params.BadChannels*(1:Params.NumChannels:Params.NumFeatures)) = 0;
+Z(~Params.FeatureMask) = 0;
 
 % update data structure if given
 if exist('Data','var')
