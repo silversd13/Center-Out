@@ -74,28 +74,29 @@ ylabel('cursor assist')
 title('convergence of KF params')
 
 subplot(412)
-plot(abs(diff(squeeze(C(:,3,:))')))
+plot((diff(squeeze(C(:,3,:))')))
 ylabel('KF.C (xvel)')
 
 subplot(413)
-plot(abs(diff(squeeze(C(:,4,:))')))
+plot((diff(squeeze(C(:,4,:))')))
 ylabel('KF.C (yvel)')
 
 subplot(414)
-plot(abs(diff(squeeze(C(:,5,:))')))
+plot((diff(squeeze(C(:,5,:))')))
 ylabel('KF.C (const)')
 xlabel('trials')
 
 %% 
-s = '/Volumes/FLASH/Bravo1/20190329/GangulyServer/Center-Out/20190329';
-s2 = {'105659','112251','113642','134633','141119'};
+s = '/Volumes/FLASH/Bravo1/20190403/GangulyServer/Center-Out/20190403';
+s2 = {'105510','111944','135357'};
 C = [];
 Q = [];
+feature = 1;
 for ii=1:length(s2),
     datafiles = dir(fullfile(s,s2{ii},'BCI_Fixed','Data0001.mat'));
     % load data, grab neural features
     load(fullfile(s,s2{ii},'BCI_Fixed',datafiles(1).name))
-    C = cat(3,C,TrialData.KalmanFilter.C(:,3:5));
+    C = cat(3,C,TrialData.KalmanFilter.C(128*(feature-1)+1:128*feature,3:5));
     Q = cat(3,Q,TrialData.KalmanFilter.Q);
 end
 
@@ -105,14 +106,18 @@ ax1 = [];
 ax2 = [];
 ax3 = [];
 for i=1:size(C,3),
-    ax1(end+1)=subplot(5,3,3*(i-1)+1);
+    ax1(end+1)=subplot(length(s2),3,3*(i-1)+1);
     stem(C(:,1,i));
+    if i==1, title('V_x'); end
+    ylabel(sprintf('session %i',i))
 
-    ax2(end+1)=subplot(5,3,3*(i-1)+2);
+    ax2(end+1)=subplot(length(s2),3,3*(i-1)+2);
     stem(C(:,2,i));
+    if i==1, title('V_y'); end
 
-    ax3(end+1)=subplot(5,3,3*(i-1)+3);
+    ax3(end+1)=subplot(length(s2),3,3*(i-1)+3);
     stem(C(:,3,i));
+    if i==1, title('Constant'); end
 end
 YY = cell2mat(get(ax1,'YLim'));
 YY = [min(YY(:)),max(YY(:))];
@@ -134,3 +139,5 @@ for i=1:size(C,3)-1,
         / norm(C(:,2,i)) / norm(C(:,2,i+1)))));
 end
 
+vx_ang
+vy_ang

@@ -197,12 +197,12 @@ Params.SaveProcessed = false;
 Params.SaveRaw = true;
 
 Params.DimRed.Flag = false;
-Params.DimRed.InitMode = 2; % 1-use imagined mvmts, 2-choose dir
+Params.DimRed.InitMode = 1; % 1-use imagined mvmts, 2-choose dir
 Params.DimRed.InitAdapt = true;
 Params.DimRed.InitFixed = ~Params.DimRed.InitAdapt;
 Params.DimRed.Method = 1; % 1-pca, 2-fa
 Params.DimRed.AvgTrialsFlag = false; % 0-cat imagined mvmts, 1-avg imagined mvmts
-Params.DimRed.NumDims = [];
+Params.DimRed.NumDims = 20;
 
 Params.Fs = 1000;
 Params.NumChannels = 128;

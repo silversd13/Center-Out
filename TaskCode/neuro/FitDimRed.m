@@ -1,5 +1,5 @@
-function F = FitDimRed(DataDir, DimRed)
-% F = FitDimRed(DataDir, Neuro)
+function F = FitDimRed(DataDir, DimRed, Params)
+% F = FitDimRed(DataDir, DimRed)
 % Use dimensionality reduction teckniques to find low-dim or latent space
 % for neural features.
 % 
@@ -42,24 +42,20 @@ end
 X = [];
 for i=1:length(datafiles),
     load(fullfile(DataDir,datafiles(i).name)) %#ok<LOAD>
+    Xtrial = cat(2,TrialData.NeuralFeatures{:});
+    Xtrial = Xtrial(Params.FeatureMask,:); % ignore "bad features"
     switch DimRed.AvgTrialsFlag,
         case false, % concatenate trials
-            X = cat(2,X,TrialData.NeuralFeatures{:});
+            X = cat(2,X,Xtrial);
             econstr = 'on';
         case true, % going to avg trials, cat in 3rd dim for now
-            Xtrial = cat(2,TrialData.NeuralFeatures{:});
-            if size(Xtrial,2)==80, % ignore trials w/ weird sizes
-                X = cat(3,X,Xtrial);
-                econstr = 'off';
-            end
+            X = cat(3,X,Xtrial);
+            econstr = 'off';
     end
 end
 if DimRed.AvgTrialsFlag,
     X = mean(X,3);
 end
-
-% ignore "bad features"
-X = X(Params.FeatureMask,:);
 
 % use interactive PCA plot if num dims is not given
 if isempty(DimRed.NumDims),
