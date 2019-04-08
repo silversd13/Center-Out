@@ -41,8 +41,7 @@ for i=(Neuro.NumPhase+1):Neuro.NumFeatures,
     neural_features(i,:) = mean(pwr(idx,:),1);
 end
 
-% set bad channels to 0
-neural_features(:,Neuro.BadChannels) = 0;
+% vectorize
 neural_features = reshape(neural_features',[],1);
 
 % buffer of neural features

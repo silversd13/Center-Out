@@ -75,6 +75,8 @@ switch Cursor.ControlMode,
             Y = Neuro.NeuralFactors;
         else,
             Y = Neuro.NeuralFeatures;
+            % ignore "bad features"
+            Y = Y(Params.FeatureMask,:);
         end
         A = KF.A;
         W = KF.W;

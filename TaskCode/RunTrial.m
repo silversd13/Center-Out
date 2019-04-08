@@ -89,7 +89,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                     end
                 end
                 if Neuro.DimRed.Flag,
-                    Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
+                    Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures(Params.FeatureMask));
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
             end
@@ -171,7 +171,7 @@ if ~Data.ErrorID && ~Params.CenterReset && TaskFlag>1,
                     end
                 end
                 if Neuro.DimRed.Flag,
-                    Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
+                    Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures(Params.FeatureMask));
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
                 KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
@@ -296,7 +296,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                     end
                 end
                 if Neuro.DimRed.Flag,
-                    Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
+                    Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures(Params.FeatureMask));
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
                 %KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
@@ -424,7 +424,7 @@ if ~Data.ErrorID,
                     end
                 end
                 if Neuro.DimRed.Flag,
-                    Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures);
+                    Neuro.NeuralFactors = Neuro.DimRed.F(Neuro.NeuralFeatures(Params.FeatureMask));
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
                 KF = UpdateCursor(Params,Neuro,TaskFlag,ReachTargetPos,KF);

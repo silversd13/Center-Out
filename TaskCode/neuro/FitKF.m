@@ -100,6 +100,9 @@ else,
     X = Xfull;
 end
 
+% ignore "bad features"
+Y = Y(Params.FeatureMask,:);
+
 % if DimRed is on, reduce dimensionality of neural features
 if exist('dimRedFunc','var'),
     Y = dimRedFunc(Y);

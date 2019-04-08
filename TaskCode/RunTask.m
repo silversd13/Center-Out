@@ -55,7 +55,7 @@ switch TaskFlag,
                 Neuro.DimRed.Flag = Params.DimRed.Flag; % reset for task
                 if Params.DimRed.Flag && Params.DimRed.InitAdapt,
                     Neuro.DimRed.F = FitDimRed(...
-                        fullfile(Params.Datadir,'Imagined'),Neuro.DimRed);
+                        fullfile(Params.Datadir,'Imagined'),Neuro.DimRed,Params);
                     KF = FitKF(Params,...
                         fullfile(Params.Datadir,'Imagined'),0,KF,[],Neuro.DimRed.F);
                 else, % no dim reduction
@@ -114,7 +114,7 @@ switch TaskFlag,
                 elseif Params.NumAdaptBlocks==0 || Neuro.DimRed.InitFixed,
                     if Params.DimRed.Flag,
                         Neuro.DimRed.F = FitDimRed(...
-                            fullfile(Params.Datadir,'Imagined'),Neuro.DimRed);
+                            fullfile(Params.Datadir,'Imagined'),Neuro.DimRed,Params);
                         KF = FitKF(Params,...
                             fullfile(Params.Datadir,'Imagined'),0,KF,[],Neuro.DimRed.F);
                     else,

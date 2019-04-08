@@ -22,8 +22,8 @@ Params.CenterReset      = true;
 Params.Assistance       = 0.1; %0.05; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
-Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
-Params.BaselineTime     = 60; % secs
+Params.InitializationMode = 1; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
+Params.BaselineTime     = 5; % secs
 
 %% Current Date and Time
 % get today's date
@@ -118,9 +118,9 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 8;
-Params.NumAdaptBlocks       = 3;
-Params.NumFixedBlocks       = 0;
+Params.NumImaginedBlocks    = 0;
+Params.NumAdaptBlocks       = 4;
+Params.NumFixedBlocks       = 2;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -198,19 +198,19 @@ Params.SaveProcessed = false;
 Params.SaveRaw = true;
 
 Params.DimRed.Flag = false;
-Params.DimRed.InitMode = 2; % 1-use imagined mvmts, 2-choose dir
+Params.DimRed.InitMode = 1; % 1-use imagined mvmts, 2-choose dir
 Params.DimRed.InitAdapt = true;
 Params.DimRed.InitFixed = ~Params.DimRed.InitAdapt;
 Params.DimRed.Method = 1; % 1-pca, 2-fa
 Params.DimRed.AvgTrialsFlag = false; % 0-cat imagined mvmts, 1-avg imagined mvmts
-Params.DimRed.NumDims = [];
+Params.DimRed.NumDims = 20;
 
 Params.Fs = 1000;
 Params.NumChannels = 128;
 Params.NumFeatureBins = 3;
 Params.BufferTime = 2; % secs longer for better phase estimation of low frqs
 Params.BufferSamps = Params.BufferTime * Params.Fs;
-Params.BadChannels = [];
+Params.BadChannels = [1:45,99];
 RefModeStr = {'none','common_mean','common_median'};
 Params.ReferenceMode = 2; % 0-no ref, 1-common mean, 2-common median
 Params.ReferenceModeStr = RefModeStr{Params.ReferenceMode+1};
