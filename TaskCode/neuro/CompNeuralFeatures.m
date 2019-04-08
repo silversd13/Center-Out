@@ -49,7 +49,14 @@ neural_features = reshape(neural_features',[],1);
 if Neuro.NumFeatureBins>1,
     Neuro.NeuralFeaturesBuf = circshift(Neuro.NeuralFeaturesBuf,[0,-1]);
     Neuro.NeuralFeaturesBuf(:,Neuro.NumFeatureBins) = neural_features;
-    Neuro.NeuralFeatures = mean(Neuro.NeuralFeaturesBuf,2);
+    % circular mean for phase features
+    phase_idx = 1:Neuro.NumPhase*Neuro.NumChannels;
+    Neuro.NeuralFeatures(phase_idx,1) = ...
+        angle(sum(exp(1i * Neuro.NeuralFeaturesBuf(phase_idx,:)),2));
+    % regular mean for pwr features
+    pwr_idx = Neuro.NumPhase*Neuro.NumChannels+1:Neuro.NumFeatures*Neuro.NumChannels;
+    Neuro.NeuralFeatures(pwr_idx,1) = ...
+        mean(Neuro.NeuralFeaturesBuf(pwr_idx,:),2);
 else, % put features straight into Neuro
     Neuro.NeuralFeatures = neural_features;
 end
