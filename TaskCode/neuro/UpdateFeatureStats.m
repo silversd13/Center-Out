@@ -11,11 +11,12 @@ X = Neuro.NeuralFeatures';
 idx = Neuro.FeatureStats.Idx + 1;
 idx = mod(idx-1, Neuro.FeatureStats.BufSize)+1;
 Neuro.FeatureStats.Buf{idx} = X;
+Neuro.FeatureStats.Idx = idx;
 
 % compute stats
 X2 = cat(1,Neuro.FeatureStats.Buf{:});
-Neuro.FeatureStats.mean = mean(X2);
-Neuro.FeatureStats.var = var(X2);
+Neuro.FeatureStats.mean = mean(X2,1);
+Neuro.FeatureStats.var = var(X2,[],1);
 
 % % updates w/ Welford's Alg.
 % w                           = 1;

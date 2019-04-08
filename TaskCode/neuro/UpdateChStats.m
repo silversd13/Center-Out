@@ -11,11 +11,12 @@ X = Neuro.BroadbandData;
 idx = Neuro.ChStats.Idx + 1;
 idx = mod(idx-1, Neuro.ChStats.BufSize)+1;
 Neuro.ChStats.Buf{idx} = X;
+Neuro.ChStats.Idx = idx;
 
 % compute stats
 X2 = cat(1,Neuro.ChStats.Buf{:});
-Neuro.ChStats.mean = mean(X2);
-Neuro.ChStats.var = var(X2);
+Neuro.ChStats.mean = mean(X2,1);
+Neuro.ChStats.var = var(X2,[],1);
 
 % % updates w/ Welford's Alg.
 % w                   = size(X,1);

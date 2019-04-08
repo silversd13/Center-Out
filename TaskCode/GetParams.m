@@ -23,7 +23,7 @@ Params.Assistance       = 0.1; %0.05; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
-Params.BaselineTime     = 60; % secs
+Params.BaselineTime     = 0; % secs
 
 %% Current Date and Time
 % get today's date
@@ -60,7 +60,7 @@ Params.SerialSync = false;
 Params.SyncDev = '/dev/ttyS1';
 Params.BaudRate = 115200;
 
-Params.ArduinoSync = true;
+Params.ArduinoSync = false;
 
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
@@ -118,9 +118,9 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 1;
-Params.NumAdaptBlocks       = 6;
-Params.NumFixedBlocks       = 2;
+Params.NumImaginedBlocks    = 3;
+Params.NumAdaptBlocks       = 0;
+Params.NumFixedBlocks       = 0;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -191,9 +191,9 @@ sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 Params.ZBufSize = 60; % secs
 Params.GenNeuralFeaturesFlag = false;
 Params.ZscoreRawFlag = true;
-Params.UpdateChStatsFlag = false;
+Params.UpdateChStatsFlag = true;
 Params.ZscoreFeaturesFlag = true;
-Params.UpdateFeatureStatsFlag = false;
+Params.UpdateFeatureStatsFlag = true;
 Params.SaveProcessed = false;
 Params.SaveRaw = true;
 
