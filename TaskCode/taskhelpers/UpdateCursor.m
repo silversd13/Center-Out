@@ -89,13 +89,13 @@ switch Cursor.ControlMode,
         %if KF.CLDA.Type==3 && TaskFlag==2,
         if KF.CLDA.Type==3, % continue to use this kalman gain during fixed
             Q = KF.Q; % faster since avoids updating Qinv online
-            K = P*C'/(C*P*C' + Q);
+            KF.K = P*C'/(C*P*C' + Q);
         else, % faster once Qinv is computed (fixed decoder or refit/batch)
             Qinv = KF.Qinv;
-            K = P*C'*Qinv*(eye(size(Y,1)) - C/(inv(P) + C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (~8ms)
+            KF.K = P*C'*Qinv*(eye(size(Y,1)) - C/(inv(P) + C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (~8ms)
         end
-        X = X + K*(Y - C*X);
-        P = P - K*C*P;
+        X = X + KF.K*(Y - C*X);
+        P = P - KF.K*C*P;
         
         % Store Params
         Cursor.State = X;

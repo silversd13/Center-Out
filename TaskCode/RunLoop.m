@@ -91,7 +91,11 @@ for Block=1:NumBlocks, % Block Loop
         TrialData.TargetID = TrialIdx;
         TrialData.TargetAngle = Params.ReachTargetAngles(TrialIdx);
         TrialData.TargetPosition = Params.ReachTargetPositions(TrialIdx,:);
-        TrialData.KalmanFilter = KF;
+        
+        % save kalman filter
+        if Params.ControlMode>=3 && TaskFlag>1,
+            TrialData.KalmanFilter = KF;
+        end
         
         % Run Trial
         TrialData.TrialStartTime  = GetSecs;
