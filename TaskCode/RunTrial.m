@@ -175,6 +175,10 @@ if ~Data.ErrorID && ~Params.CenterReset && TaskFlag>1,
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
                 KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
+                % save kalman filter
+                if Params.ControlMode>=3 && TaskFlag>1,
+                    Data.KalmanFilter{end+1} = KF;
+                end
             end
             
             % cursor
@@ -300,6 +304,10 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
                 %KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
+                % save kalman filter
+                %if Params.ControlMode>=3 && TaskFlag>1,
+                %    Data.KalmanFilter{end+1} = KF;
+                %end
             end
             
             % cursor
@@ -428,6 +436,10 @@ if ~Data.ErrorID,
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
                 KF = UpdateCursor(Params,Neuro,TaskFlag,ReachTargetPos,KF);
+                % save kalman filter
+                if Params.ControlMode>=3 && TaskFlag>1,
+                    Data.KalmanFilter{end+1} = KF;
+                end
             end
             
             % cursor
