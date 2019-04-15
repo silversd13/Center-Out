@@ -104,6 +104,13 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
             Data.CursorState(:,end+1) = Cursor.State;
             Data.IntendedCursorState(:,end+1) = Cursor.IntendedState;
             Data.CursorAssist(1,end+1) = Cursor.Assistance;
+            % save empty kalman filters
+            if Params.ControlMode>=3 && TaskFlag>1,
+                Data.KalmanGain{end+1} = [];
+                if TaskFlag==2,
+                    Data.KalmanFilter{end+1} = [];
+                end
+            end
 
             Screen('Flip', Params.WPTR);
         end
@@ -177,7 +184,13 @@ if ~Data.ErrorID && ~Params.CenterReset && TaskFlag>1,
                 KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
                 % save kalman filter
                 if Params.ControlMode>=3 && TaskFlag>1,
-                    Data.KalmanFilter{end+1} = KF;
+                    Data.KalmanGain{end+1} = [];
+                    Data.KalmanGain{end}.K = KF.K;
+                    if TaskFlag==2,
+                        Data.KalmanFilter{end+1} = [];
+                        Data.KalmanFilter{end}.C = KF.C;
+                        Data.KalmanFilter{end}.Q = KF.Q;
+                    end
                 end
             end
             
@@ -304,9 +317,15 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                     Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
                 end
                 %KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
-                % save kalman filter
+                %% save kalman filter
                 %if Params.ControlMode>=3 && TaskFlag>1,
-                %    Data.KalmanFilter{end+1} = KF;
+                %    Data.KalmanGain{end+1} = [];
+                %    Data.KalmanGain{end}.K = KF.K;
+                %    if TaskFlag==2,
+                %        Data.KalmanFilter{end+1} = [];
+                %        Data.KalmanFilter{end}.C = KF.C;
+                %        Data.KalmanFilter{end}.Q = KF.Q;
+                %    end
                 %end
             end
             
@@ -438,7 +457,13 @@ if ~Data.ErrorID,
                 KF = UpdateCursor(Params,Neuro,TaskFlag,ReachTargetPos,KF);
                 % save kalman filter
                 if Params.ControlMode>=3 && TaskFlag>1,
-                    Data.KalmanFilter{end+1} = KF;
+                    Data.KalmanGain{end+1} = [];
+                    Data.KalmanGain{end}.K = KF.K;
+                    if TaskFlag==2,
+                        Data.KalmanFilter{end+1} = [];
+                        Data.KalmanFilter{end}.C = KF.C;
+                        Data.KalmanFilter{end}.Q = KF.Q;
+                    end
                 end
             end
             
