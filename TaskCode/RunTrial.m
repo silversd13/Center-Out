@@ -158,6 +158,9 @@ if ~Data.ErrorID && ~Params.CenterReset && TaskFlag>1,
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
             
+            % kalman filter predict
+            KF = AnimateCursor(Params,TaskFlag,KF);
+            
             % grab and process neural data
             if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
                 dT = tim-Cursor.LastUpdateTime;
@@ -431,6 +434,9 @@ if ~Data.ErrorID,
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
 
+            % kalman filter predict
+            KF = AnimateCursor(Params,TaskFlag,KF);
+            
             % grab and process neural data
             if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
                 dT = tim-Cursor.LastUpdateTime;

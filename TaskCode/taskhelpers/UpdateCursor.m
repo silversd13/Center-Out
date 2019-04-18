@@ -3,7 +3,8 @@ function KF = UpdateCursor(Params,Neuro,TaskFlag,TargetPos,KF)
 % Updates the state of the cursor using the method in Params.ControlMode
 %   1 - position control
 %   2 - velocity control
-%   3 - kalman filter  velocity
+%   3 - kalman filter position/velocity
+%   4 - kalman filter velocity
 %
 % Cursor - global structure with state of cursor [px,py,vx,vy,1]
 % TaskFlag - 0-imagined mvmts, 1-clda, 2-fixed decoder
@@ -29,15 +30,12 @@ switch Cursor.ControlMode,
         vy = ((y-Params.Center(2)) - Cursor.State(2))*Params.UpdateRate;
         
         % update cursor
-        Cursor.State(1) = x - Params.Center(1);
-        Cursor.State(2) = y - Params.Center(2);
         Cursor.State(3) = vx;
         Cursor.State(4) = vy;
         
         % Update Intended Cursor State
         X = Cursor.State;
         Vcom = (X(1:2) - X0(1:2))*Params.UpdateRate; % effective velocity command
-        Cursor.IntendedState = Cursor.State; % current true position
         Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
         
     case 2, % Use Mouse Position as a Velocity Input (Center-Joystick)
@@ -67,10 +65,9 @@ switch Cursor.ControlMode,
         Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
         
     case {3,4}, % Kalman Filter Input
-        X0 = Cursor.State; % initial state, useful for assistance
         
-        % Kalman Predict Step
-        X = X0;
+        % Kalman Vars
+        X = Cursor.State;
         if Neuro.DimRed.Flag,
             Y = Neuro.NeuralFactors;
         else,
@@ -81,32 +78,32 @@ switch Cursor.ControlMode,
         A = KF.A;
         W = KF.W;
         P = KF.P;
+        C = KF.C;
+        if KF.CLDA.Type==3, Q = KF.Q;
+        else, Qinv = KF.Qinv;
+        end
+        
+        % Kalman Predict Step
         X = A*X;
         P = A*P*A' + W;
         
         % Kalman Update Step
-        C = KF.C;
-        %if KF.CLDA.Type==3 && TaskFlag==2,
         if KF.CLDA.Type==3, % continue to use this kalman gain during fixed
-            Q = KF.Q; % faster since avoids updating Qinv online
-            KF.K = P*C'/(C*P*C' + Q);
+            K = P*C'/(C*P*C' + Q);
         else, % faster once Qinv is computed (fixed decoder or refit/batch)
-            Qinv = KF.Qinv;
-            KF.K = P*C'*Qinv*(eye(size(Y,1)) - C/(inv(P) + C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (~8ms)
+            K = P*C'*Qinv*(eye(size(Y,1)) - C/(inv(P) + C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (~8ms)
         end
-        X = X + KF.K*(Y - C*X);
-        P = P - KF.K*C*P;
+        X = X + K*(Y - C*X);
+        P = P - K*C*P;
         
         % Store Params
         Cursor.State = X;
         KF.P = P;
+        KF.K = K;
         
         % assisted velocity
         Vcom = X(3:4); % effective velocity command
         if Cursor.Assistance > 0,
-            % Vass w/ vector avg
-            %Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
-            
             % Vass w/ same speed
             norm_vcom = norm(Vcom);
             Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
@@ -117,8 +114,6 @@ switch Cursor.ControlMode,
             end
             
             % update cursor state
-            %Cursor.State(1) = X0(1) + Vass(1)/Params.UpdateRate;
-            %Cursor.State(2) = X0(2) + Vass(2)/Params.UpdateRate;
             Cursor.State(3) = Vass(1);
             Cursor.State(4) = Vass(2);
         end
