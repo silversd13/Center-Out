@@ -186,11 +186,11 @@ if ~Data.ErrorID && ~Params.CenterReset && TaskFlag>1,
                 if Params.ControlMode>=3 && TaskFlag>1,
                     Data.KalmanGain{end+1} = [];
                     Data.KalmanGain{end}.K = KF.K;
-                    if TaskFlag==2,
+%                     if TaskFlag==2,
                         Data.KalmanFilter{end+1} = [];
                         Data.KalmanFilter{end}.C = KF.C;
                         Data.KalmanFilter{end}.Q = KF.Q;
-                    end
+%                     ends
                 end
             end
             
@@ -459,11 +459,11 @@ if ~Data.ErrorID,
                 if Params.ControlMode>=3 && TaskFlag>1,
                     Data.KalmanGain{end+1} = [];
                     Data.KalmanGain{end}.K = KF.K;
-                    if TaskFlag==2,
+%                     if TaskFlag==2,
                         Data.KalmanFilter{end+1} = [];
                         Data.KalmanFilter{end}.C = KF.C;
                         Data.KalmanFilter{end}.Q = KF.Q;
-                    end
+%                     end
                 end
             end
             

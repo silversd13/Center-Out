@@ -129,7 +129,9 @@ switch Cursor.ControlMode,
         
         % Update KF Params (RML & Adaptation Block)
         if KF.CLDA.Type==3 && TaskFlag==2,
-            KF = UpdateRmlKF(KF,Cursor.IntendedState,Y,Params);
+            KF = UpdateRmlKF(KF,Cursor.IntendedState,Y,Params,TaskFlag);
+        elseif KF.CLDA.Type==3 && TaskFlag==3, % (RML & Fixed)
+            KF = UpdateRmlKF(KF,Cursor.State,Y,Params,TaskFlag);
         end
         
 end
