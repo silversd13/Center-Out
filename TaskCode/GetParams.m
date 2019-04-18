@@ -65,7 +65,7 @@ Params.ArduinoSync = false;
 
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
-Params.UpdateRate = 2; % Hz
+Params.UpdateRate = 1; % Hz
 
 %% Targets
 Params.TargetSize = 50;
