@@ -19,29 +19,21 @@ function varargout = VelToNeuralFeatures(Params,Data,noise,PLOT)
 % 
 % ---------User Input---------------------
 
-global Cursor
 % inputs
 if ~exist('noise','var'), noise=150; end
 if ~exist('PLOT','var'), PLOT = 0; end
-if ~isfield(Cursor,'MousePos'), Cursor.MousePos = [0,0]; end
 
 % compute velocities
-x1 = Cursor.MousePos(1);
-y1 = Cursor.MousePos(2);
-[x2,y2] = GetMouse();
-x2 = x2 - Params.Center(1);
-y2 = y2 - Params.Center(2);
-Cursor.MousePos(1) = x2;
-Cursor.MousePos(2) = y2;
-Vx = Params.Gain * (x2 - x1) * Params.UpdateRate;
-Vy = Params.Gain * (y2 - y1) * Params.UpdateRate;
+[x,y] = GetMouse();
+Vx = Params.Gain * (x - Params.Center(1));
+Vy = Params.Gain * (y - Params.Center(2));
 
 % rescaling to matrix map
 MdataSizeY=16;
 MdataSizeX=8*Params.NumFeatures;
 
-Vx=MdataSizeX/2 + Vx*(MdataSizeX/(2*250));
-Vy=MdataSizeY/2 + Vy*(MdataSizeY/(2*250));
+Vy=MdataSizeY/2 + Vy*(MdataSizeY/(2*600));
+Vx=MdataSizeX/2 + Vx*(MdataSizeX/(2*600));
 
 % generate centroid
 [X,Y] = meshgrid(1:MdataSizeX,1:MdataSizeY);
