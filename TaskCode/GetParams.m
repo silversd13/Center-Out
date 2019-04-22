@@ -65,7 +65,7 @@ Params.ArduinoSync = false;
 
 %% Timing
 Params.ScreenRefreshRate = 10; % Hz
-Params.UpdateRate = 1; % Hz
+Params.UpdateRate = 5; % Hz
 
 %% Targets
 Params.TargetSize = 50;
@@ -120,9 +120,9 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 0;
-Params.NumAdaptBlocks       = 0;
-Params.NumFixedBlocks       = 2;
+Params.NumImaginedBlocks    = 10;
+Params.NumAdaptBlocks       = 10;
+Params.NumFixedBlocks       = 0;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -143,7 +143,7 @@ FinalLambda = 500; %exp(log(.5) / (500*Params.UpdateRate));
 DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
     / ((Params.NumAdaptBlocks-1)...
     *Params.NumTrialsPerBlock...
-    *Params.UpdateRate * 3); % bins/trial;
+    *Params.UpdateRate * 6); % bins/trial;
 
 Params.CLDA.DeltaLambda = DeltaLambda; % for RML
 Params.CLDA.FinalLambda = FinalLambda; % for RML

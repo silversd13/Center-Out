@@ -11,7 +11,7 @@ dist = sqrt(sum(endpos-startpos).^2);
 uvec = [endpos(1)-startpos(1),endpos(2)-startpos(2)] / dist;
 
 % generic 1D trajectory
-x1d = linspace(-.5,.5,time*Params.UpdateRate);
+x1d = linspace(-.5,.5,time*Params.ScreenRefreshRate);
 pos1d = normcdf(x1d,0,.2);
 
 % stretch and project trajectory to match distance and direction

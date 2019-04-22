@@ -193,6 +193,7 @@ if ~Data.ErrorID && ~Params.CenterReset && TaskFlag>1,
                         Data.KalmanFilter{end+1} = [];
                         Data.KalmanFilter{end}.C = KF.C;
                         Data.KalmanFilter{end}.Q = KF.Q;
+                        Data.KalmanFilter{end}.Lambda = KF.Lambda;
 %                     end
                 end
             end
@@ -328,6 +329,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                 %        Data.KalmanFilter{end+1} = [];
                 %        Data.KalmanFilter{end}.C = KF.C;
                 %        Data.KalmanFilter{end}.Q = KF.Q;
+                %        Data.KalmanFilter{end}.Lambda = KF.Lambda;
                 %    end
                 %end
             end
@@ -469,6 +471,7 @@ if ~Data.ErrorID,
                         Data.KalmanFilter{end+1} = [];
                         Data.KalmanFilter{end}.C = KF.C;
                         Data.KalmanFilter{end}.Q = KF.Q;
+                        Data.KalmanFilter{end}.Lambda = KF.Lambda;
 %                     end
                 end
             end
