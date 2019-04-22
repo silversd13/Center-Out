@@ -124,6 +124,7 @@ switch TaskFlag,
                 elseif Neuro.CLDA.Type==3, % update Qinv
                     KF.Qinv = inv(KF.Q);
                     KF.Lambda = Params.CLDA.FixedLambda;
+                    KF.CLDA.DeltaLambda = 0;
                 end
         end
         

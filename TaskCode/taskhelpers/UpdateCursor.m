@@ -96,6 +96,11 @@ switch Cursor.ControlMode,
         X = X + K*(Y - C*X);
         P = P - K*C*P;
         
+        % Limit velocity
+        if norm(X(3:4))>250, % cap V
+            X(3:4) = 250 * X(3:4) / norm(X(3:4));
+        end
+        
         % Store Params
         Cursor.State = X;
         KF.P = P;
@@ -125,7 +130,7 @@ switch Cursor.ControlMode,
         % Update KF Params (RML & Adaptation Block)
         if KF.CLDA.Type==3 && TaskFlag==2,
             KF = UpdateRmlKF(KF,Cursor.IntendedState,Y,Params,TaskFlag);
-        elseif KF.CLDA.Type==3 && TaskFlag==3, % (RML & Fixed)
+        elseif KF.CLDA.Type==3 && TaskFlag==3 && Params.UpdateConstantFixed, % (RML & Fixed)
             KF = UpdateRmlKF(KF,Cursor.State,Y,Params,TaskFlag);
         end
         

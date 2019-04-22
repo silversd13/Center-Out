@@ -120,9 +120,9 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 10;
-Params.NumAdaptBlocks       = 10;
-Params.NumFixedBlocks       = 0;
+Params.NumImaginedBlocks    = 0;
+Params.NumAdaptBlocks       = 2;
+Params.NumFixedBlocks       = 2;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -147,7 +147,8 @@ DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
 
 Params.CLDA.DeltaLambda = DeltaLambda; % for RML
 Params.CLDA.FinalLambda = FinalLambda; % for RML
-Params.CLDA.FixedLambda = 10; % for RML during fixed
+Params.UpdateConstantFixed = true; % for RML during fixed
+Params.CLDA.FixedLambda = 500; % for RML during fixed
 
 switch Params.CLDA.AdaptType,
     case 'none',
