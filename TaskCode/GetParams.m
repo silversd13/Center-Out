@@ -19,7 +19,7 @@ end
 %% Control
 Params.Gain             = 1;
 Params.CenterReset      = true;
-Params.Assistance       = 0.1; %0.05; % value btw 0 and 1, 1 full assist
+Params.Assistance       = 0; %0.05; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 1; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
@@ -147,6 +147,7 @@ DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
 
 Params.CLDA.DeltaLambda = DeltaLambda; % for RML
 Params.CLDA.FinalLambda = FinalLambda; % for RML
+Params.CLDA.FixedLambda = 10; % for RML during fixed
 
 switch Params.CLDA.AdaptType,
     case 'none',

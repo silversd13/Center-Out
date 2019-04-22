@@ -1,4 +1,4 @@
-function KF = UpdateRmlKF(KF,X,Y,Params)
+function KF = UpdateRmlKF(KF,X,Y,Params,TaskFlag)
 % function KF = UpdateRmlKF(KF,X,Y)
 % updates kalman filter for each iteration
 % follows eqs in Dangi et al., Neural Computation (2014)
@@ -19,17 +19,30 @@ if KF.VelKF,
     X = X(3:end);
 end
 
-% update sufficient stats & half life
-R  = Lambda*R  + X*X';
-S  = Lambda*S  + Y*X';
-T  = Lambda*T  + Y*Y';
-ESS= Lambda*ESS+ 1;
+switch TaskFlag,
+    case 2, % normal RML during adaptation
+        % update sufficient stats & half life
+        R  = Lambda*R  + X*X';
+        S  = Lambda*S  + Y*X';
+        T  = Lambda*T  + Y*Y';
+        ESS= Lambda*ESS+ 1;
 
-% update kalman matrices (neural mapping matrices)
-C = S/R;
-Q = (1/ESS) * (T - C*S'); % ignore Q since updating inv(Q) directly
-if KF.VelKF,
-    C = [zeros(size(C,1),2),C];
+        % update kalman matrices (neural mapping matrices)
+        C = S/R;
+        Q = (1/ESS) * (T - C*S'); % ignore Q since updating inv(Q) directly
+        if KF.VelKF,
+            C = [zeros(size(C,1),2),C];
+        end
+    case 3, % fixed rml (only update const term)
+        S(:,end)    = Lambda*S(:,end) + Y;
+        T           = Lambda*T  + Y*Y';
+        ESS         = Lambda*ESS+ 1;
+        % update kalman matrices (neural mapping matrices)
+        C = S/R;
+        Q = (1/ESS) * (T - C*S'); % ignore Q since updating inv(Q) directly
+        if KF.VelKF,
+            C = [zeros(size(C,1),2),C];
+        end
 end
 
 % store params
