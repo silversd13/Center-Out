@@ -84,7 +84,8 @@ switch Cursor.ControlMode,
         end
         
         % Kalman Predict Step
-        X = A*X;
+        Xtmp = A*X; % avoids double integrating vel
+        X(3:4) = Xtmp; % avoids double integrating vel
         P = A*P*A' + W;
         
         % Kalman Update Step
