@@ -17,7 +17,7 @@ switch Params.ControlMode,
 end
 
 %% Control
-Params.Gain             = 1;
+Params.Gain             = 2;
 Params.CenterReset      = true;
 Params.Assistance       = 0; %0.05; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
@@ -121,7 +121,7 @@ Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
 Params.NumImaginedBlocks    = 0;
-Params.NumAdaptBlocks       = 8;
+Params.NumAdaptBlocks       = 4;
 Params.NumFixedBlocks       = 4;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
@@ -138,8 +138,8 @@ Params.CLDA.UpdateTime = 80; % secs, for smooth batch
 Params.CLDA.Alpha = exp(log(.5) / (120/Params.CLDA.UpdateTime)); % for smooth batch
 
 % Lambda
-Params.CLDA.Lambda = 80; %exp(log(.5) / (30*Params.UpdateRate)); % for RML
-FinalLambda = 1000; %exp(log(.5) / (500*Params.UpdateRate));
+Params.CLDA.Lambda = 500; %exp(log(.5) / (30*Params.UpdateRate)); % for RML
+FinalLambda = 500; %exp(log(.5) / (500*Params.UpdateRate));
 DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
     / ((Params.NumAdaptBlocks-2)...
     *Params.NumTrialsPerBlock...
@@ -202,13 +202,13 @@ Params.UpdateFeatureStatsFlag = false;
 Params.SaveRaw = true;
 Params.SaveProcessed = false;
 
-Params.DimRed.Flag = false;
+Params.DimRed.Flag = true;
 Params.DimRed.InitMode = 2; % 1-use imagined mvmts, 2-choose dir
 Params.DimRed.InitAdapt = true;
 Params.DimRed.InitFixed = ~Params.DimRed.InitAdapt;
-Params.DimRed.Method = 2; % 1-pca, 2-fa
+Params.DimRed.Method = 1; % 1-pca, 2-fa
 Params.DimRed.AvgTrialsFlag = false; % 0-cat imagined mvmts, 1-avg imagined mvmts
-Params.DimRed.NumDims = 20;
+Params.DimRed.NumDims = 500;
 
 Params.Fs = 1000;
 Params.NumChannels = 128;

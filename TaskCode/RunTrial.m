@@ -62,10 +62,10 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
     while ~done,
         % Update Time & Position
         tim = GetSecs;
-
+        
         % for pausing and quitting expt
         if CheckPause, [Neuro,Data,Params] = ExperimentPause(Params,Neuro,Data); end
-
+        
         % Update Screen Every Xsec
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
             % time
@@ -117,15 +117,15 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
                     Data.KalmanFilter{end+1} = [];
                 end
             end
-
+            
             Screen('Flip', Params.WPTR);
         end
-
+        
         % end if takes too long
         if TotalTime > Params.InterTrialInterval,
             done = 1;
         end
-
+        
     end % Inter Trial Interval
 end % only complete if no errors
 
@@ -150,10 +150,10 @@ if ~Data.ErrorID && ~Params.CenterReset && TaskFlag>1,
     while ~done,
         % Update Time & Position
         tim = GetSecs;
-
+        
         % for pausing and quitting expt
         if CheckPause, [Neuro,Data,Params] = ExperimentPause(Params,Neuro,Data); end
-
+        
         % Update Screen Every Xsec
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
             tic;
@@ -192,80 +192,80 @@ if ~Data.ErrorID && ~Params.CenterReset && TaskFlag>1,
                 if Params.ControlMode>=3 && TaskFlag>1 && Params.SaveKalmanFlag,
                     Data.KalmanGain{end+1} = [];
                     Data.KalmanGain{end}.K = KF.K;
-%                     if TaskFlag==2,
-                        Data.KalmanFilter{end+1} = [];
-                        Data.KalmanFilter{end}.C = KF.C;
-                        Data.KalmanFilter{end}.Q = KF.Q;
-                        Data.KalmanFilter{end}.Lambda = KF.Lambda;
-                    end
+                    %                     if TaskFlag==2,
+                    Data.KalmanFilter{end+1} = [];
+                    Data.KalmanFilter{end}.C = KF.C;
+                    Data.KalmanFilter{end}.Q = KF.Q;
+                    Data.KalmanFilter{end}.Lambda = KF.Lambda;
                 end
             end
-            
-            % cursor
-            if TaskFlag==1, % imagined movements
-                Cursor.State(3:4) = (OptimalCursorTraj(ct,:)'-Cursor.State(1:2))/dt;
-                Cursor.State(1:2) = OptimalCursorTraj(ct,:);
-                Cursor.Vcommand = Cursor.State(3:4);
-                ct = ct + 1;
-            end
-            CursorRect = Params.CursorRect;
-            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
-            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
-            Data.CursorState(:,end+1) = Cursor.State;
-            Data.IntendedCursorState(:,end+1) = Cursor.IntendedState;
-            Data.CursorAssist(1,end+1) = Cursor.Assistance;
-
-            % start target
-            StartRect = Params.TargetRect; % centered at (0,0)
-            StartRect([1,3]) = StartRect([1,3]) + StartTargetPos(1) + Params.Center(1); % add x-pos
-            StartRect([2,4]) = StartRect([2,4]) + StartTargetPos(2) + Params.Center(2); % add y-pos
-            inFlag = InTarget(Cursor,StartTargetPos,Params.TargetSize);
-            if inFlag, StartCol = Params.InTargetColor;
-            else, StartCol = Params.OutTargetColor;
-            end
-            
-            % draw
-            Screen('FillOval', Params.WPTR, ...
-                cat(1,StartCol,Params.CursorColor)', ...
-                cat(1,StartRect,CursorRect)')
-            if Params.DrawVelCommand.Flag && TaskFlag>1,
-                VelRect = Params.DrawVelCommand.Rect;
-                VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
-                VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
-                x0 = mean(VelRect([1,3]));
-                y0 = mean(VelRect([2,4]));
-                xf = x0 + 0.1*Cursor.Vcommand(1);
-                yf = y0 + 0.1*Cursor.Vcommand(2);
-                Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
-                Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
-            end
-            Screen('DrawingFinished', Params.WPTR);
-            Screen('Flip', Params.WPTR);
-            
-            % start counting time if cursor is in target
-            if inFlag,
-                InTargetTotalTime = InTargetTotalTime + dt;
-            else
-                InTargetTotalTime = 0;
-            end
         end
-
-        % end if takes too long
-        if TotalTime > Params.MaxStartTime,
-            done = 1;
-            Data.ErrorID = 1;
-            Data.ErrorStr = 'StartTarget';
-            fprintf('ERROR: %s\n',Data.ErrorStr)
+        
+        % cursor
+        if TaskFlag==1, % imagined movements
+            Cursor.State(3:4) = (OptimalCursorTraj(ct,:)'-Cursor.State(1:2))/dt;
+            Cursor.State(1:2) = OptimalCursorTraj(ct,:);
+            Cursor.Vcommand = Cursor.State(3:4);
+            ct = ct + 1;
         end
-
-        % end if in start target for hold time
-        if InTargetTotalTime > Params.TargetHoldTime,
-            done = 1;
+        CursorRect = Params.CursorRect;
+        CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
+        CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
+        Data.CursorState(:,end+1) = Cursor.State;
+        Data.IntendedCursorState(:,end+1) = Cursor.IntendedState;
+        Data.CursorAssist(1,end+1) = Cursor.Assistance;
+        
+        % start target
+        StartRect = Params.TargetRect; % centered at (0,0)
+        StartRect([1,3]) = StartRect([1,3]) + StartTargetPos(1) + Params.Center(1); % add x-pos
+        StartRect([2,4]) = StartRect([2,4]) + StartTargetPos(2) + Params.Center(2); % add y-pos
+        inFlag = InTarget(Cursor,StartTargetPos,Params.TargetSize);
+        if inFlag, StartCol = Params.InTargetColor;
+        else, StartCol = Params.OutTargetColor;
         end
-    end % Start Target Loop
+        
+        % draw
+        Screen('FillOval', Params.WPTR, ...
+            cat(1,StartCol,Params.CursorColor)', ...
+            cat(1,StartRect,CursorRect)')
+        if Params.DrawVelCommand.Flag && TaskFlag>1,
+            VelRect = Params.DrawVelCommand.Rect;
+            VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
+            VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
+            x0 = mean(VelRect([1,3]));
+            y0 = mean(VelRect([2,4]));
+            xf = x0 + 0.1*Cursor.Vcommand(1);
+            yf = y0 + 0.1*Cursor.Vcommand(2);
+            Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
+            Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
+        end
+        Screen('DrawingFinished', Params.WPTR);
+        Screen('Flip', Params.WPTR);
+        
+        % start counting time if cursor is in target
+        if inFlag,
+            InTargetTotalTime = InTargetTotalTime + dt;
+        else
+            InTargetTotalTime = 0;
+        end
+    end
+    
+    % end if takes too long
+    if TotalTime > Params.MaxStartTime,
+        done = 1;
+        Data.ErrorID = 1;
+        Data.ErrorStr = 'StartTarget';
+        fprintf('ERROR: %s\n',Data.ErrorStr)
+    end
+    
+    % end if in start target for hold time
+    if InTargetTotalTime > Params.TargetHoldTime,
+        done = 1;
+    end
+    
 else % only complete if no errors and no automatic reset to center
     Cursor.State = [0,0,0,0,1]';
-end
+end  % Start Target Loop
 
 %% Instructed Delay
 if ~Data.ErrorID && Params.InstructedDelayTime>0,
@@ -287,7 +287,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
     while ~done,
         % Update Time & Position
         tim = GetSecs;
-
+        
         % for pausing and quitting expt
         if CheckPause, [Neuro,Data,Params] = ExperimentPause(Params,Neuro,Data); end
         
@@ -299,7 +299,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
             dt_vec(end+1) = dt;
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
-
+            
             % grab and process neural data
             if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
                 dT = tim-Cursor.LastUpdateTime;
@@ -350,7 +350,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
             Data.CursorState(:,end+1) = Cursor.State;
             Data.IntendedCursorState(:,end+1) = Cursor.IntendedState;
             Data.CursorAssist(1,end+1) = Cursor.Assistance;
-
+            
             % start target
             StartRect = Params.TargetRect; % centered at (0,0)
             StartRect([1,3]) = StartRect([1,3]) + StartTargetPos(1) + Params.Center(1); % add x-pos
@@ -365,7 +365,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
             ReachRect([1,3]) = ReachRect([1,3]) + ReachTargetPos(1) + Params.Center(1); % add x-pos
             ReachRect([2,4]) = ReachRect([2,4]) + ReachTargetPos(2) + Params.Center(2); % add y-pos
             ReachCol = Params.OutTargetColor;
-                        
+            
             % draw
             %Screen('FillOval', Params.WPTR, ...
             %    cat(1,StartCol,ReachCol,Params.CursorColor)', ...
@@ -426,10 +426,10 @@ if ~Data.ErrorID,
     while ~done,
         % Update Time & Position
         tim = GetSecs;
-
+        
         % for pausing and quitting expt
         if CheckPause, [Neuro,Data,Params] = ExperimentPause(Params,Neuro,Data); end
-
+        
         % Update Screen
         if (tim-Cursor.LastPredictTime) > 1/Params.ScreenRefreshRate,
             % time
@@ -438,7 +438,7 @@ if ~Data.ErrorID,
             dt_vec(end+1) = dt;
             Cursor.LastPredictTime = tim;
             Data.Time(1,end+1) = tim;
-
+            
             % grab and process neural data
             if ((tim-Cursor.LastUpdateTime)>1/Params.UpdateRate),
                 dT = tim-Cursor.LastUpdateTime;
@@ -467,11 +467,11 @@ if ~Data.ErrorID,
                 if Params.ControlMode>=3 && TaskFlag>1 && Params.SaveKalmanFlag,
                     Data.KalmanGain{end+1} = [];
                     Data.KalmanGain{end}.K = KF.K;
-%                     if TaskFlag==2,
-                        Data.KalmanFilter{end+1} = [];
-                        Data.KalmanFilter{end}.C = KF.C;
-                        Data.KalmanFilter{end}.Q = KF.Q;
-                        Data.KalmanFilter{end}.Lambda = KF.Lambda;
+                    %                     if TaskFlag==2,
+                    Data.KalmanFilter{end+1} = [];
+                    Data.KalmanFilter{end}.C = KF.C;
+                    Data.KalmanFilter{end}.Q = KF.Q;
+                    Data.KalmanFilter{end}.Lambda = KF.Lambda;
                 end
             end
             
@@ -488,14 +488,14 @@ if ~Data.ErrorID,
             Data.CursorState(:,end+1) = Cursor.State;
             Data.IntendedCursorState(:,end+1) = Cursor.IntendedState;
             Data.CursorAssist(1,end+1) = Cursor.Assistance;
-
+            
             % reach target
             ReachRect = Params.TargetRect; % centered at (0,0)
             ReachRect([1,3]) = ReachRect([1,3]) + ReachTargetPos(1) + Params.Center(1); % add x-pos
             ReachRect([2,4]) = ReachRect([2,4]) + ReachTargetPos(2) + Params.Center(2); % add y-pos
-
+            
             % draw
-            inFlag = InTarget(Cursor,ReachTargetPos,Params.TargetSize);            
+            inFlag = InTarget(Cursor,ReachTargetPos,Params.TargetSize);
             if inFlag, ReachCol = Params.InTargetColor;
             else, ReachCol = Params.OutTargetColor;
             end
@@ -527,7 +527,7 @@ if ~Data.ErrorID,
                 InTargetTotalTime = 0;
             end
         end
-
+        
         % end if takes too long
         if TotalTime > Params.MaxReachTime,
             done = 1;
@@ -535,7 +535,7 @@ if ~Data.ErrorID,
             Data.ErrorStr = 'ReachTarget';
             fprintf('ERROR: %s\n',Data.ErrorStr)
         end
-
+        
         % end if in start target for hold time
         if InTargetTotalTime > Params.TargetHoldTime,
             done = 1;
