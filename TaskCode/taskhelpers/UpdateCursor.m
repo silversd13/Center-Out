@@ -87,13 +87,13 @@ switch Cursor.ControlMode,
         % Kalman Update Step
         C = KF.C;
         %if KF.CLDA.Type==3 && TaskFlag==2,
-        if KF.CLDA.Type==3, % continue to use this kalman gain during fixed
+%         if KF.CLDA.Type==3, % continue to use this kalman gain during fixed
             Q = KF.Q; % faster since avoids updating Qinv online
             KF.K = P*C'/(C*P*C' + Q);
-        else, % faster once Qinv is computed (fixed decoder or refit/batch)
-            Qinv = KF.Qinv;
-            KF.K = P*C'*Qinv*(eye(size(Y,1)) - C/(inv(P) + C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (~8ms)
-        end
+%         else, % faster once Qinv is computed (fixed decoder or refit/batch)
+%             Qinv = KF.Qinv;
+%             KF.K = P*C'*Qinv*(eye(size(Y,1)) - C/(inv(P) + C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (~8ms)
+%         end
         X = X + KF.K*(Y - C*X);
         P = P - KF.K*C*P;
         
@@ -129,7 +129,9 @@ switch Cursor.ControlMode,
         
         % Update KF Params (RML & Adaptation Block)
         if KF.CLDA.Type==3 && TaskFlag==2,
-            KF = UpdateRmlKF(KF,Cursor.IntendedState,Y,Params);
+            KF = UpdateRmlKF(KF,Cursor.IntendedState,Y,Params,TaskFlag);
+        elseif KF.CLDA.Type==3 && TaskFlag==3 && Params.CLDA.FixedRmlFlag, % (RML & Fixed)
+            KF = UpdateRmlKF(KF,Cursor.State,Y,Params,TaskFlag);
         end
         
 end

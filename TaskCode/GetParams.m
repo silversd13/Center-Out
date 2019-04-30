@@ -19,12 +19,12 @@ end
 %% Control
 Params.Gain             = 1;
 Params.CenterReset      = true;
-Params.Assistance       = 0.1; %0.05; % value btw 0 and 1, 1 full assist
+Params.Assistance       = 0; %0.05; % value btw 0 and 1, 1 full assist
 Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
-Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
+Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 1; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
 Params.BaselineTime     = 0; % secs
-Params.BadChannels      = [1,3];
+Params.BadChannels      = [];
 
 %% Current Date and Time
 % get today's date
@@ -91,6 +91,7 @@ Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
     +Params.CursorSize +Params.CursorSize];
 
 %% Kalman Filter Properties
+Params.SaveKalmanFlag = false; % if true, saves kf at each time bin, if false, saves kf 1x per trial
 dt = 1/Params.UpdateRate;
 if Params.ControlMode>=3,
     Params.KF.A = [...
@@ -102,8 +103,8 @@ if Params.ControlMode>=3,
     Params.KF.W = [...
         0       0       0       0       0;
         0       0       0       0       0;
-        0       0       750    0       0;
-        0       0       0       750  0;
+        0       0       750     0       0;
+        0       0       0       750     0;
         0       0       0       0       0];
     Params.KF.P = eye(5);
     Params.KF.InitializationMode = Params.InitializationMode; % 1-imagined mvmts, 2-shuffled
@@ -121,7 +122,7 @@ Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 %% Trial and Block Types
 Params.NumImaginedBlocks    = 0;
 Params.NumAdaptBlocks       = 8;
-Params.NumFixedBlocks       = 0;
+Params.NumFixedBlocks       = 4;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random
 switch Params.TargetSelectionFlag,
@@ -138,14 +139,17 @@ Params.CLDA.Alpha = exp(log(.5) / (120/Params.CLDA.UpdateTime)); % for smooth ba
 
 % Lambda
 Params.CLDA.Lambda = 80; %exp(log(.5) / (30*Params.UpdateRate)); % for RML
-FinalLambda = 500; %exp(log(.5) / (500*Params.UpdateRate));
+FinalLambda = 1000; %exp(log(.5) / (500*Params.UpdateRate));
 DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
-    / ((Params.NumAdaptBlocks-1)...
+    / ((Params.NumAdaptBlocks-2)...
     *Params.NumTrialsPerBlock...
     *Params.UpdateRate * 3); % bins/trial;
 
 Params.CLDA.DeltaLambda = DeltaLambda; % for RML
 Params.CLDA.FinalLambda = FinalLambda; % for RML
+
+Params.CLDA.FixedRmlFlag = true; % for RML during fixed
+Params.CLDA.FixedLambda = FinalLambda; % for RML during fixed
 
 switch Params.CLDA.AdaptType,
     case 'none',
@@ -189,16 +193,16 @@ Params.ErrorSoundFs = 8192;
 sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
-Params.ZBufSize = 60; % secs
+Params.ZBufSize = 120; % secs
 Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
-Params.UpdateChStatsFlag = true;
+Params.UpdateChStatsFlag = false;
 Params.ZscoreFeaturesFlag = true;
-Params.UpdateFeatureStatsFlag = true;
+Params.UpdateFeatureStatsFlag = false;
 Params.SaveRaw = true;
 Params.SaveProcessed = false;
 
-Params.DimRed.Flag = true;
+Params.DimRed.Flag = false;
 Params.DimRed.InitMode = 2; % 1-use imagined mvmts, 2-choose dir
 Params.DimRed.InitAdapt = true;
 Params.DimRed.InitFixed = ~Params.DimRed.InitAdapt;
@@ -208,7 +212,7 @@ Params.DimRed.NumDims = 20;
 
 Params.Fs = 1000;
 Params.NumChannels = 128;
-Params.NumFeatureBins = 3;
+Params.NumFeatureBins = 1;
 Params.BufferTime = 2; % secs longer for better phase estimation of low frqs
 Params.BufferSamps = Params.BufferTime * Params.Fs;
 RefModeStr = {'none','common_mean','common_median'};
