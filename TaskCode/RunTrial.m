@@ -13,6 +13,12 @@ global Cursor
 StartTargetPos = Params.StartTargetPosition;
 ReachTargetPos = Data.TargetPosition;
 
+if ~Params.SaveKalmanFlag, % save kf once instead of throughout trial
+    Data.KalmanFilter{end+1} = [];
+    Data.KalmanFilter{end}.C = KF.C;
+    Data.KalmanFilter{end}.Q = KF.Q;
+end
+
 % Output to Command Line
 fprintf('\nTrial: %i\n',Data.Trial)
 fprintf('  Target: %i\n',Data.TargetAngle)
@@ -105,7 +111,7 @@ if ~Data.ErrorID && Params.InterTrialInterval>0,
             Data.IntendedCursorState(:,end+1) = Cursor.IntendedState;
             Data.CursorAssist(1,end+1) = Cursor.Assistance;
             % save empty kalman filters
-            if Params.ControlMode>=3 && TaskFlag>1,
+            if Params.ControlMode>=3 && TaskFlag>1 && Params.SaveKalmanFlag,
                 Data.KalmanGain{end+1} = [];
                 if TaskFlag==2,
                     Data.KalmanFilter{end+1} = [];
@@ -183,7 +189,7 @@ if ~Data.ErrorID && ~Params.CenterReset && TaskFlag>1,
                 end
                 KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
                 % save kalman filter
-                if Params.ControlMode>=3 && TaskFlag>1,
+                if Params.ControlMode>=3 && TaskFlag>1 && Params.SaveKalmanFlag,
                     Data.KalmanGain{end+1} = [];
                     Data.KalmanGain{end}.K = KF.K;
 %                     if TaskFlag==2,
@@ -318,7 +324,7 @@ if ~Data.ErrorID && Params.InstructedDelayTime>0,
                 end
                 %KF = UpdateCursor(Params,Neuro,TaskFlag,StartTargetPos,KF);
                 %% save kalman filter
-                %if Params.ControlMode>=3 && TaskFlag>1,
+                %if Params.ControlMode>=3 && TaskFlag>1 && Params.SaveKalmanFlag,
                 %    Data.KalmanGain{end+1} = [];
                 %    Data.KalmanGain{end}.K = KF.K;
                 %    if TaskFlag==2,
@@ -456,7 +462,7 @@ if ~Data.ErrorID,
                 end
                 KF = UpdateCursor(Params,Neuro,TaskFlag,ReachTargetPos,KF);
                 % save kalman filter
-                if Params.ControlMode>=3 && TaskFlag>1,
+                if Params.ControlMode>=3 && TaskFlag>1 && Params.SaveKalmanFlag,
                     Data.KalmanGain{end+1} = [];
                     Data.KalmanGain{end}.K = KF.K;
 %                     if TaskFlag==2,

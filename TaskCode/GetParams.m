@@ -19,8 +19,8 @@ end
 %% Control
 Params.Gain             = 1;
 Params.CenterReset      = true;
-Params.Assistance       = 0.2; %0.05; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type        = 2; % 0-none, 1-refit, 2-smooth batch, 3-RML
+Params.Assistance       = 0; %0.05; % value btw 0 and 1, 1 full assist
+Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 1; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
 Params.BaselineTime     = 0; % secs
@@ -91,6 +91,7 @@ Params.CursorRect = [-Params.CursorSize -Params.CursorSize ...
     +Params.CursorSize +Params.CursorSize];
 
 %% Kalman Filter Properties
+Params.SaveKalmanFlag = false; % if true, saves kf at each time bin, if false, saves kf 1x per trial
 dt = 1/Params.UpdateRate;
 if Params.ControlMode>=3,
     Params.KF.A = [...
@@ -119,7 +120,7 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 10;
+Params.NumImaginedBlocks    = 0;
 Params.NumAdaptBlocks       = 8;
 Params.NumFixedBlocks       = 4;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
@@ -146,7 +147,9 @@ DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
 
 Params.CLDA.DeltaLambda = DeltaLambda; % for RML
 Params.CLDA.FinalLambda = FinalLambda; % for RML
-Params.CLDA.FixedLambda = 500; % for RML during fixed
+
+Params.CLDA.FixedRmlFlag = true; % for RML during fixed
+Params.CLDA.FixedLambda = FinalLambda; % for RML during fixed
 
 switch Params.CLDA.AdaptType,
     case 'none',
