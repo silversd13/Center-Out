@@ -13,7 +13,7 @@ global Cursor
 StartTargetPos = Params.StartTargetPosition;
 ReachTargetPos = Data.TargetPosition;
 
-if ~Params.SaveKalmanFlag, % save kf once instead of throughout trial
+if ~Params.SaveKalmanFlag && Params.ControlMode>=3 && TaskFlag>1, % save kf once instead of throughout trial
     Data.KalmanFilter{end+1} = [];
     Data.KalmanFilter{end}.C = KF.C;
     Data.KalmanFilter{end}.Q = KF.Q;
@@ -199,68 +199,68 @@ if ~Data.ErrorID && ~Params.CenterReset && TaskFlag>1,
                     Data.KalmanFilter{end}.Lambda = KF.Lambda;
                 end
             end
+            
+            % cursor
+            if TaskFlag==1, % imagined movements
+                Cursor.State(3:4) = (OptimalCursorTraj(ct,:)'-Cursor.State(1:2))/dt;
+                Cursor.State(1:2) = OptimalCursorTraj(ct,:);
+                Cursor.Vcommand = Cursor.State(3:4);
+                ct = ct + 1;
+            end
+            CursorRect = Params.CursorRect;
+            CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
+            CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
+            Data.CursorState(:,end+1) = Cursor.State;
+            Data.IntendedCursorState(:,end+1) = Cursor.IntendedState;
+            Data.CursorAssist(1,end+1) = Cursor.Assistance;
+            
+            % start target
+            StartRect = Params.TargetRect; % centered at (0,0)
+            StartRect([1,3]) = StartRect([1,3]) + StartTargetPos(1) + Params.Center(1); % add x-pos
+            StartRect([2,4]) = StartRect([2,4]) + StartTargetPos(2) + Params.Center(2); % add y-pos
+            inFlag = InTarget(Cursor,StartTargetPos,Params.TargetSize);
+            if inFlag, StartCol = Params.InTargetColor;
+            else, StartCol = Params.OutTargetColor;
+            end
+            
+            % draw
+            Screen('FillOval', Params.WPTR, ...
+                cat(1,StartCol,Params.CursorColor)', ...
+                cat(1,StartRect,CursorRect)')
+            if Params.DrawVelCommand.Flag && TaskFlag>1,
+                VelRect = Params.DrawVelCommand.Rect;
+                VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
+                VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
+                x0 = mean(VelRect([1,3]));
+                y0 = mean(VelRect([2,4]));
+                xf = x0 + 0.1*Cursor.Vcommand(1);
+                yf = y0 + 0.1*Cursor.Vcommand(2);
+                Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
+                Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
+            end
+            Screen('DrawingFinished', Params.WPTR);
+            Screen('Flip', Params.WPTR);
+            
+            % start counting time if cursor is in target
+            if inFlag,
+                InTargetTotalTime = InTargetTotalTime + dt;
+            else
+                InTargetTotalTime = 0;
+            end
         end
         
-        % cursor
-        if TaskFlag==1, % imagined movements
-            Cursor.State(3:4) = (OptimalCursorTraj(ct,:)'-Cursor.State(1:2))/dt;
-            Cursor.State(1:2) = OptimalCursorTraj(ct,:);
-            Cursor.Vcommand = Cursor.State(3:4);
-            ct = ct + 1;
-        end
-        CursorRect = Params.CursorRect;
-        CursorRect([1,3]) = CursorRect([1,3]) + Cursor.State(1) + Params.Center(1); % add x-pos
-        CursorRect([2,4]) = CursorRect([2,4]) + Cursor.State(2) + Params.Center(2); % add y-pos
-        Data.CursorState(:,end+1) = Cursor.State;
-        Data.IntendedCursorState(:,end+1) = Cursor.IntendedState;
-        Data.CursorAssist(1,end+1) = Cursor.Assistance;
-        
-        % start target
-        StartRect = Params.TargetRect; % centered at (0,0)
-        StartRect([1,3]) = StartRect([1,3]) + StartTargetPos(1) + Params.Center(1); % add x-pos
-        StartRect([2,4]) = StartRect([2,4]) + StartTargetPos(2) + Params.Center(2); % add y-pos
-        inFlag = InTarget(Cursor,StartTargetPos,Params.TargetSize);
-        if inFlag, StartCol = Params.InTargetColor;
-        else, StartCol = Params.OutTargetColor;
+        % end if takes too long
+        if TotalTime > Params.MaxStartTime,
+            done = 1;
+            Data.ErrorID = 1;
+            Data.ErrorStr = 'StartTarget';
+            fprintf('ERROR: %s\n',Data.ErrorStr)
         end
         
-        % draw
-        Screen('FillOval', Params.WPTR, ...
-            cat(1,StartCol,Params.CursorColor)', ...
-            cat(1,StartRect,CursorRect)')
-        if Params.DrawVelCommand.Flag && TaskFlag>1,
-            VelRect = Params.DrawVelCommand.Rect;
-            VelRect([1,3]) = VelRect([1,3]) + Params.Center(1);
-            VelRect([2,4]) = VelRect([2,4]) + Params.Center(2);
-            x0 = mean(VelRect([1,3]));
-            y0 = mean(VelRect([2,4]));
-            xf = x0 + 0.1*Cursor.Vcommand(1);
-            yf = y0 + 0.1*Cursor.Vcommand(2);
-            Screen('FrameOval', Params.WPTR, [100,100,100], VelRect);
-            Screen('DrawLine', Params.WPTR, [100,100,100], x0, y0, xf, yf, 3);
+        % end if in start target for hold time
+        if InTargetTotalTime > Params.TargetHoldTime,
+            done = 1;
         end
-        Screen('DrawingFinished', Params.WPTR);
-        Screen('Flip', Params.WPTR);
-        
-        % start counting time if cursor is in target
-        if inFlag,
-            InTargetTotalTime = InTargetTotalTime + dt;
-        else
-            InTargetTotalTime = 0;
-        end
-    end
-    
-    % end if takes too long
-    if TotalTime > Params.MaxStartTime,
-        done = 1;
-        Data.ErrorID = 1;
-        Data.ErrorStr = 'StartTarget';
-        fprintf('ERROR: %s\n',Data.ErrorStr)
-    end
-    
-    % end if in start target for hold time
-    if InTargetTotalTime > Params.TargetHoldTime,
-        done = 1;
     end
     
 else % only complete if no errors and no automatic reset to center
