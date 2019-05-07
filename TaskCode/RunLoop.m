@@ -15,6 +15,8 @@ DataFields = struct(...
     'TargetAngle',NaN,...
     'TargetPosition',NaN,...
     'Time',[],...
+    'ChStats',[],...
+    'FeatureStats',[],...
     'CursorAssist',[],...
     'CursorState',[],...
     'IntendedCursorState',[],...
@@ -47,7 +49,12 @@ Cursor.LastUpdateTime = tlast;
 for Block=1:NumBlocks, % Block Loop
 
     % random order of reach targets for each block
-    TargetOrder = Params.TargetFunc(Params.NumTrialsPerBlock);
+    switch Params.TargetSelectionFlag,
+        case {1,2},
+            TargetOrder = Params.TargetFunc(Params.NumTrialsPerBlock);
+        case 3,
+            TargetOrder = Params.TargetFunc(Block,Params.NumTrialsPerBlock);
+    end
     Cursor.State = [0,0,0,0,1]';
     Cursor.IntendedState = [0,0,0,0,1]';
     Cursor.Vcommand = [0,0]';
@@ -93,12 +100,19 @@ for Block=1:NumBlocks, % Block Loop
         TrialData.TargetAngle = Params.ReachTargetAngles(TrialIdx);
         TrialData.TargetPosition = Params.ReachTargetPositions(TrialIdx,:);
         % save kalman filter
-        if Params.ControlMode>=3 && TaskFlag==3,
-            Data.KalmanFilter{1}.A = KF.A;
-            Data.KalmanFilter{1}.W = KF.W;
-            Data.KalmanFilter{1}.C = KF.C;
-            Data.KalmanFilter{1}.Q = KF.Q;
+        if Params.ControlMode>=3 && TaskFlag>=2 && ~Params.SaveKalmanFlag,
+            TrialData.KalmanFilter{1}.A = KF.A;
+            TrialData.KalmanFilter{1}.W = KF.W;
+            TrialData.KalmanFilter{1}.C = KF.C;
+            TrialData.KalmanFilter{1}.Q = KF.Q;
+            TrialData.KalmanFilter{1}.P = KF.P;
+            TrialData.KalmanFilter{1}.Lambda = KF.Lambda;
         end
+        % save ch stats and feature stats in each trial
+        TrialData.ChStats.Mean = Neuro.ChStats.mean;
+        TrialData.ChStats.Var = Neuro.ChStats.var;
+        TrialData.FeatureStats.Mean = Neuro.FeatureStats.mean;
+        TrialData.FeatureStats.Var = Neuro.FeatureStats.var;
         
         % Run Trial
         TrialData.TrialStartTime  = GetSecs;

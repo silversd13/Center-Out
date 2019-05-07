@@ -13,12 +13,6 @@ global Cursor
 StartTargetPos = Params.StartTargetPosition;
 ReachTargetPos = Data.TargetPosition;
 
-if ~Params.SaveKalmanFlag && Params.ControlMode>=3 && TaskFlag>1, % save kf once instead of throughout trial
-    Data.KalmanFilter{end+1} = [];
-    Data.KalmanFilter{end}.C = KF.C;
-    Data.KalmanFilter{end}.Q = KF.Q;
-end
-
 % Output to Command Line
 fprintf('\nTrial: %i\n',Data.Trial)
 fprintf('  Target: %i\n',Data.TargetAngle)
