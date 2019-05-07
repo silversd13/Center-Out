@@ -81,25 +81,22 @@ switch Cursor.ControlMode,
         A = KF.A;
         W = KF.W;
         P = KF.P;
+        C = KF.C;
+        Q = KF.Q;
+        
+        % Kalman Predict Step
         X = A*X;
         P = A*P*A' + W;
         
         % Kalman Update Step
-        C = KF.C;
-        %if KF.CLDA.Type==3 && TaskFlag==2,
-%         if KF.CLDA.Type==3, % continue to use this kalman gain during fixed
-            Q = KF.Q; % faster since avoids updating Qinv online
-            KF.K = P*C'/(C*P*C' + Q);
-%         else, % faster once Qinv is computed (fixed decoder or refit/batch)
-%             Qinv = KF.Qinv;
-%             KF.K = P*C'*Qinv*(eye(size(Y,1)) - C/(inv(P) + C'*Qinv*C)*(C'*Qinv)); % RML Kalman Gain eq (~8ms)
-%         end
-        X = X + KF.K*(Y - C*X);
-        P = P - KF.K*C*P;
+        K = P*C'/(C*P*C' + Q);
+        X = X + K*(Y - C*X);
+        P = P - K*C*P;
         
         % Store Params
         Cursor.State = X;
         KF.P = P;
+        KF.K = K;
         
         % assisted velocity
         Vcom = X(3:4); % effective velocity command
