@@ -40,6 +40,10 @@ if BLACKROCK,
     cbmex('close'); % always close
     cbmex('open'); % open library
     cbmex('trialconfig', 1); % empty the buffer
+    
+    % load channel layout file and store in params
+    f = load(fullfile('gridmaps',Params.ChMapFile));
+    Params.ChMap = f.ecog_grid;
 end
 
 %% Initialize Sync to Blackrock
@@ -78,6 +82,7 @@ Neuro.NumFeatures       = Params.NumFeatures;
 Neuro.LastUpdateTime    = GetSecs;
 Neuro.UpdateChStatsFlag = Params.UpdateChStatsFlag;
 Neuro.UpdateFeatureStatsFlag = Params.UpdateFeatureStatsFlag;
+Neuro.ChMap             = Params.ChMap;
 
 % create a bad feature mask
 Mask = ones(Params.NumChannels*Params.NumFeatures,1);
