@@ -42,7 +42,7 @@ for i=(Neuro.NumPhase+1):Neuro.NumFeatures,
 end
 
 % remap features to reflect spatial layout of ecog grid
-[R,C] = size(ecog_grid);
+[R,C] = size(Neuro.ChMap);
 Nch = 128; % channels
 feature_map = cell(1,Neuro.NumFeatures);
 for i=1:Neuro.NumFeatures,
@@ -56,9 +56,13 @@ end
 % perform spatial filter per feature w/ param in filter bank
 feature_map_filt = cell(1,Neuro.NumFeatures);
 for i=1:Neuro.NumFeatures,
-    idx = find([Neuro.FilterBank.feature]==i,1);
-    sz = Neuro.FilterBank(idx).spatial_filt_sz;
-    feature_map_filt{i} = medfilt2(feature_map{i},sz);
+    if i==Neuro.NumPhase,
+        sz = 1;
+    else,
+        idx = find([Neuro.FilterBank.feature]==i,1);
+        sz = Neuro.FilterBank(idx).spatial_filt_sz;
+    end
+    feature_map_filt{i} = medfilt2(feature_map{i},[sz,sz]);
 end
 
 % remap to 2d matrix [ features x channels ]

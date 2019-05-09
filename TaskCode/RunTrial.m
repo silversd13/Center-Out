@@ -13,7 +13,8 @@ global Cursor
 StartTargetPos = Params.StartTargetPosition;
 ReachTargetPos = Data.TargetPosition;
 
-if ~Params.SaveKalmanFlag, % save kf once instead of throughout trial
+% save kf once instead of throughout trial
+if ~Params.SaveKalmanFlag && Params.ControlMode>=3 && TaskFlag>1, 
     Data.KalmanFilter{end+1} = [];
     Data.KalmanFilter{end}.C = KF.C;
     Data.KalmanFilter{end}.Q = KF.Q;

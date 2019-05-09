@@ -33,6 +33,7 @@ if exist('Data','var') && ~isempty(Data),
     Data.NeuralFeatures{end+1} = Neuro.NeuralFeatures;
     if Neuro.SaveRaw,
         Data.BroadbandData{end+1} = Neuro.BroadbandData;
+        Data.Reference{end+1} = Neuro.Reference;
     end
     if Neuro.DimRed.Flag,
         Data.NeuralFactors{end+1} = Neuro.NeuralFactors;
