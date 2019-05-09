@@ -1,9 +1,10 @@
 function KF = UpdateCursor(Params,Neuro,TaskFlag,TargetPos,KF)
-% UpdateCursor(Params,Neuro)
+% KF = UpdateCursor(Params,Neuro)
 % Updates the state of the cursor using the method in Params.ControlMode
 %   1 - position control
 %   2 - velocity control
-%   3 - kalman filter  velocity
+%   3 - kalman filter position & velocity
+% 	4 - kalman filter velocity
 %
 % Cursor - global structure with state of cursor [px,py,vx,vy,1]
 % TaskFlag - 0-imagined mvmts, 1-clda, 2-fixed decoder
@@ -109,10 +110,6 @@ switch Cursor.ControlMode,
             Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
             Vass = norm_vcom * Vass / norm(Vass);
             
-            if norm(Vass)>250*Params.Gain, % cap Vass
-                Vass = Params.Gain * 250 * Vass / norm(Vass);
-            end
-            
             % update cursor state
             %Cursor.State(1) = X0(1) + Vass(1)/Params.UpdateRate;
             %Cursor.State(2) = X0(2) + Vass(2)/Params.UpdateRate;
@@ -130,6 +127,11 @@ switch Cursor.ControlMode,
         elseif KF.CLDA.Type==3 && TaskFlag==3 && Params.CLDA.FixedRmlFlag, % (RML & Fixed)
             KF = UpdateRmlKF(KF,Cursor.State,Y,Params,TaskFlag);
         end
+
+        % Apply Velocity Transform
+        [Vx,Vy] = VelocityTransform(Cursor.State(3),Cursor.State(4),Params.Gain);
+        Cursor.State(3) = Vx;
+        Cursor.State(4) = Vy;
         
 end
 
