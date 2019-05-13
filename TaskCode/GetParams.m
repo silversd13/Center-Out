@@ -25,6 +25,7 @@ Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & la
 Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
 Params.BaselineTime     = 120; % secs
 Params.BadChannels      = [];
+Params.VelocityTransformFlag = true;
 
 %% Current Date and Time
 % get today's date

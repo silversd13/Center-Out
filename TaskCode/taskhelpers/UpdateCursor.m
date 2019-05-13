@@ -121,17 +121,19 @@ switch Cursor.ControlMode,
         Cursor.IntendedState = Cursor.State; % current true position
         Cursor.IntendedState(3:4) = Vopt; % update vel w/ optimal vel
         
+        % Apply Velocity Transform
+        if Params.VelocityTransformFlag,
+            [Vx,Vy] = VelocityTransform(Cursor.State(3),Cursor.State(4),Params.Gain);
+            Cursor.State(3) = Vx;
+            Cursor.State(4) = Vy;
+        end
+        
         % Update KF Params (RML & Adaptation Block)
         if KF.CLDA.Type==3 && TaskFlag==2,
             KF = UpdateRmlKF(KF,Cursor.IntendedState,Y,Params,TaskFlag);
         elseif KF.CLDA.Type==3 && TaskFlag==3 && Params.CLDA.FixedRmlFlag, % (RML & Fixed)
             KF = UpdateRmlKF(KF,Cursor.State,Y,Params,TaskFlag);
         end
-
-        % Apply Velocity Transform
-        [Vx,Vy] = VelocityTransform(Cursor.State(3),Cursor.State(4),Params.Gain);
-        Cursor.State(3) = Vx;
-        Cursor.State(4) = Vy;
         
 end
 
