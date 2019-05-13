@@ -63,7 +63,7 @@ if Neuro.SpatialFiltering,
             idx = find([Neuro.FilterBank.feature]==i,1);
             sz = Neuro.FilterBank(idx).spatial_filt_sz;
         end
-        feature_map_filt{i} = medfilt2(feature_map{i},[sz,sz]);
+        feature_map_filt{i} = medfilt2(feature_map{i},[sz,sz],'symmetric');
     end
 
     % remap to 2d matrix [ features x channels ]
