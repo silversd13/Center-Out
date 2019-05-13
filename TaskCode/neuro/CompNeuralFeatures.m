@@ -58,7 +58,8 @@ if Neuro.SpatialFiltering,
     feature_map_filt = cell(1,Neuro.NumFeatures);
     for i=1:Neuro.NumFeatures,
         if i==Neuro.NumPhase,
-            sz = 1;
+            idx = find([Neuro.FilterBank.feature]==i+1,1);
+            sz = Neuro.FilterBank(idx).spatial_filt_sz;
         else,
             idx = find([Neuro.FilterBank.feature]==i,1);
             sz = Neuro.FilterBank(idx).spatial_filt_sz;
