@@ -122,7 +122,7 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 10;
+Params.NumImaginedBlocks    = 0;
 Params.NumAdaptBlocks       = 8;
 Params.NumFixedBlocks       = 0;
 Params.NumTrialsPerBlock    = length(Params.ReachTargetAngles);
