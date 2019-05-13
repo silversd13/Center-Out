@@ -8,6 +8,7 @@ function Neuro = RefNeuralData(Neuro),
 
 switch Neuro.ReferenceMode,
     case 0, % no reference
+        mu = zeros(size(Neuro.BroadbandData,1),1);
         ref_data = Neuro.BroadbandData;
         mu = zeros(size(Neuro.BroadbandData,1),1);
     case 1, % common mean

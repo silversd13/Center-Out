@@ -26,6 +26,7 @@ Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-
 Params.BaselineTime     = 120; % secs
 Params.BadChannels      = [];
 Params.VelocityTransformFlag = true;
+Params.SpatialFiltering = true;
 
 %% Current Date and Time
 % get today's date
@@ -223,6 +224,8 @@ RefModeStr = {'none','common_mean','common_median'};
 Params.ReferenceMode = 2; % 0-no ref, 1-common mean, 2-common median
 Params.ReferenceModeStr = RefModeStr{Params.ReferenceMode+1};
 
+Params.ChMapFile = 'ECOG_Grid_8596-002135';
+
 % filter bank - each element is a filter bank
 % fpass - bandpass cutoff freqs
 % feature - # of feature (can have multiple filters for a single feature
@@ -233,96 +236,112 @@ Params.FilterBank(end).buffer_flag = true;
 Params.FilterBank(end).hilbert_flag = true;
 Params.FilterBank(end).phase_flag = true;
 Params.FilterBank(end).feature = 2;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [4,8];     % theta
 Params.FilterBank(end).buffer_flag = true;
 Params.FilterBank(end).hilbert_flag = true;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 3;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [8,13];    % alpha
 Params.FilterBank(end).buffer_flag = true;
 Params.FilterBank(end).hilbert_flag = true;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 4;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [13,19];   % beta1
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 5;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [19,30];   % beta2
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 5;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [30,36];   % low gamma1 
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 6;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [36,42];   % low gamma2 
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 6;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [42,50];   % low gamma3
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 6;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [70,77];   % high gamma1
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 7;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [77,85];   % high gamma2
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 7;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [85,93];   % high gamma3
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 7;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [93,102];  % high gamma4
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 7;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [102,113]; % high gamma5
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 7;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [113,124]; % high gamma6
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 7;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [124,136]; % high gamma7
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 7;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 Params.FilterBank(end+1).fpass = [136,150]; % high gamma8
 Params.FilterBank(end).buffer_flag = false;
 Params.FilterBank(end).hilbert_flag = false;
 Params.FilterBank(end).phase_flag = false;
 Params.FilterBank(end).feature = 7;
+Params.FilterBank(end).spatial_filt_sz = 3;
 
 % compute filter coefficients
 for i=1:length(Params.FilterBank),
@@ -337,6 +356,17 @@ Params.NumHilbert = sum([Params.FilterBank.hilbert_flag]);
 Params.NumPhase = sum([Params.FilterBank.phase_flag]);
 Params.NumPower = length(unique([Params.FilterBank.feature]));
 Params.NumFeatures = Params.NumPower + Params.NumPhase;
+
+% make sure spatial filter sizes are consistent within features
+features = [Params.FilterBank.feature];
+for feature=Params.NumPhase+1:Params.NumFeatures,
+    idx = features == feature;
+    spatial_filt_szs = [Params.FilterBank(idx).spatial_filt_sz];
+    if length(spatial_filt_szs)>1,
+        assert(all(spatial_filt_szs==spatial_filt_szs(1)),...
+            'Spatial Filter Sizes are Inconsistent')
+    end
+end
 
 end % GetParams
 

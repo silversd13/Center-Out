@@ -41,13 +41,52 @@ for i=(Neuro.NumPhase+1):Neuro.NumFeatures,
     neural_features(i,:) = mean(pwr(idx,:),1);
 end
 
-% vectorize
-neural_features = reshape(neural_features',[],1);
+if Neuro.SpatialFiltering,
+    % remap features to reflect spatial layout of ecog grid
+    [R,C] = size(Neuro.ChMap);
+    Nch = 128; % channels
+    feature_map = cell(1,Neuro.NumFeatures);
+    for i=1:Neuro.NumFeatures,
+        feature_map{i} = zeros(R,C);
+        for ch=1:Nch,
+            [r,c] = find(Neuro.ChMap == ch);
+            feature_map{i}(r,c) = neural_features(i,ch);
+        end
+    end
+
+    % perform spatial filter per feature w/ param in filter bank
+    feature_map_filt = cell(1,Neuro.NumFeatures);
+    for i=1:Neuro.NumFeatures,
+        if i==Neuro.NumPhase,
+            sz = 1;
+        else,
+            idx = find([Neuro.FilterBank.feature]==i,1);
+            sz = Neuro.FilterBank(idx).spatial_filt_sz;
+        end
+        feature_map_filt{i} = medfilt2(feature_map{i},[sz,sz]);
+    end
+
+    % remap to 2d matrix [ features x channels ]
+    new_neural_features = zeros(size(neural_features));
+    for i=1:Neuro.NumFeatures,
+        for ch=1:Nch,
+            [r,c] = find(Neuro.ChMap == ch);
+            new_neural_features(i,ch) = feature_map_filt{i}(r,c);
+        end
+    end
+
+    % vectorize
+    new_neural_features = reshape(new_neural_features',[],1);
+
+else, % spatial filtering off
+    % vectorize
+    new_neural_features = reshape(neural_features',[],1);
+end
 
 % buffer of neural features
 if Neuro.NumFeatureBins>1,
     Neuro.NeuralFeaturesBuf = circshift(Neuro.NeuralFeaturesBuf,[0,-1]);
-    Neuro.NeuralFeaturesBuf(:,Neuro.NumFeatureBins) = neural_features;
+    Neuro.NeuralFeaturesBuf(:,Neuro.NumFeatureBins) = new_neural_features;
     % circular mean for phase features
     phase_idx = 1:Neuro.NumPhase*Neuro.NumChannels;
     Neuro.NeuralFeatures(phase_idx,1) = ...
@@ -57,7 +96,7 @@ if Neuro.NumFeatureBins>1,
     Neuro.NeuralFeatures(pwr_idx,1) = ...
         mean(Neuro.NeuralFeaturesBuf(pwr_idx,:),2);
 else, % put features straight into Neuro
-    Neuro.NeuralFeatures = neural_features;
+    Neuro.NeuralFeatures = new_neural_features;
 end
 
 end % CompNeuralFeatures
