@@ -25,6 +25,7 @@ Params.CLDA.AdaptType   = 'none'; % {'none','linear'}, affects assistance & lamb
 Params.InitializationMode = 1; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
 Params.BaselineTime     = 10; % secs
 Params.BadChannels      = [];
+Params.SpatialFiltering = true;
 
 %% Current Date and Time
 % get today's date

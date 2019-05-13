@@ -83,6 +83,7 @@ Neuro.LastUpdateTime    = GetSecs;
 Neuro.UpdateChStatsFlag = Params.UpdateChStatsFlag;
 Neuro.UpdateFeatureStatsFlag = Params.UpdateFeatureStatsFlag;
 Neuro.ChMap             = Params.ChMap;
+Neuro.SpatialFiltering  = Params.SpatialFiltering;
 
 % create a bad feature mask
 Mask = ones(Params.NumChannels*Params.NumFeatures,1);
