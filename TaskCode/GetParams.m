@@ -25,6 +25,7 @@ Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & la
 Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
 Params.BaselineTime     = 120; % secs
 Params.BadChannels      = [];
+Params.VelocityTransformFlag = true;
 
 %% Current Date and Time
 % get today's date
@@ -151,7 +152,7 @@ DeltaLambda = (FinalLambda - Params.CLDA.Lambda) ...
 Params.CLDA.DeltaLambda = DeltaLambda; % for RML
 Params.CLDA.FinalLambda = FinalLambda; % for RML
 
-Params.CLDA.FixedRmlFlag = true; % for RML during fixed
+Params.CLDA.FixedRmlFlag = false; % for RML during fixed
 Params.CLDA.FixedLambda = FinalLambda; % for RML during fixed
 
 switch Params.CLDA.AdaptType,
@@ -181,8 +182,8 @@ if Params.CenterReset,
 else,
     Params.InstructedDelayTime = 0;
 end
-Params.MaxStartTime = 15;
-Params.MaxReachTime = 15;
+Params.MaxStartTime = 25;
+Params.MaxReachTime = 25;
 Params.InterBlockInterval = 10; % 0-10s, if set to 10 use instruction screen
 Params.ImaginedMvmtTime = 3;
 
@@ -197,7 +198,7 @@ sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
 Params.ZBufSize = 120; % secs
-Params.GenNeuralFeaturesFlag = false;
+Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
 Params.UpdateChStatsFlag = false;
 Params.ZscoreFeaturesFlag = true;
@@ -336,9 +337,6 @@ Params.NumHilbert = sum([Params.FilterBank.hilbert_flag]);
 Params.NumPhase = sum([Params.FilterBank.phase_flag]);
 Params.NumPower = length(unique([Params.FilterBank.feature]));
 Params.NumFeatures = Params.NumPower + Params.NumPhase;
-
-%% Save Parameters
-save(fullfile(Params.Datadir,'Params.mat'),'Params');
 
 end % GetParams
 

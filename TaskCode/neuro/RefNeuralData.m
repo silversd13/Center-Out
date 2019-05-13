@@ -22,6 +22,6 @@ end % reference mode
 
 % put in Neuro structure
 Neuro.BroadbandData = ref_data;
-Neuro.Reference = mu;
+Neuro.Reference     = mu;
 
 end % RefNeuralData
