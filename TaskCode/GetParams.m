@@ -17,17 +17,23 @@ switch Params.ControlMode,
 end
 
 %% Control
-Params.Gain             = 1;
 Params.CenterReset      = true;
 Params.Assistance       = 0.1; %0.05; % value btw 0 and 1, 1 full assist
+Params.DaggerAssist = false;
+
 Params.CLDA.Type        = 0; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
+
 Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
 Params.BaselineTime     = 0; % secs
 Params.BadChannels      = [];
-Params.VelocityTransformFlag = false;
 Params.SpatialFiltering = false;
-Params.DaggerAssist = false;
+
+%% Cursor Velocity
+Params.Gain             = 1;
+Params.VelocityTransformFlag = false;
+Params.MaxVelocityFlag = false;
+Params.MaxVelocity = 200;
 
 %% Current Date and Time
 % get today's date
@@ -200,7 +206,7 @@ sound(0*Params.ErrorSound,Params.ErrorSoundFs)
 
 %% BlackRock Params
 Params.ZBufSize = 120; % secs
-Params.GenNeuralFeaturesFlag = false;
+Params.GenNeuralFeaturesFlag = true;
 Params.ZscoreRawFlag = true;
 Params.UpdateChStatsFlag = false;
 Params.ZscoreFeaturesFlag = true;

@@ -134,6 +134,11 @@ switch Cursor.ControlMode,
             [Vx,Vy] = VelocityTransform(Cursor.State(3),Cursor.State(4),Params.Gain);
             Cursor.State(3) = Vx;
             Cursor.State(4) = Vy;
+        elseif Params.MaxVelocityFlag,
+            speed = norm(Cursor.State(3:4));
+            new_speed = max([speed,Params.MaxVelocity]);
+            Cursor.State(3) = Cursor.State(3) * new_speed / speed;
+            Cursor.State(4) = Cursor.State(4) * new_speed / speed;
         end
         
         % Update KF Params (RML & Adaptation Block)
