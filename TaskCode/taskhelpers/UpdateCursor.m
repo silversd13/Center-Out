@@ -105,10 +105,18 @@ switch Cursor.ControlMode,
             % Vass w/ vector avg
             %Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
             
-            % Vass w/ same speed
-            norm_vcom = norm(Vcom);
-            Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
-            Vass = norm_vcom * Vass / norm(Vass);
+            if ~Params.DaggerAssist, % Vass w/ same speed
+                norm_vcom = norm(Vcom);
+                Vass = Cursor.Assistance*Vopt + (1-Cursor.Assistance)*Vcom;
+                Vass = norm_vcom * Vass / norm(Vass);
+            else, % Dagger Assist
+                sample_optimal = rand(1)<Cursor.Assistance;
+                if sample_optimal,
+                    Vass = Vopt;
+                else, % sample regular
+                    Vass = Vcom;
+                end
+            end
             
             % update cursor state
             %Cursor.State(1) = X0(1) + Vass(1)/Params.UpdateRate;

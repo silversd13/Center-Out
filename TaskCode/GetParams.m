@@ -20,13 +20,14 @@ end
 Params.Gain             = 1;
 Params.CenterReset      = true;
 Params.Assistance       = 0.1; %0.05; % value btw 0 and 1, 1 full assist
-Params.CLDA.Type        = 3; % 0-none, 1-refit, 2-smooth batch, 3-RML
+Params.CLDA.Type        = 0; % 0-none, 1-refit, 2-smooth batch, 3-RML
 Params.CLDA.AdaptType   = 'linear'; % {'none','linear'}, affects assistance & lambda for rml
 Params.InitializationMode = 3; % 1-imagined mvmts, 2-shuffled imagined mvmts, 3-choose dir, 4-most recent KF
-Params.BaselineTime     = 10; % secs
+Params.BaselineTime     = 0; % secs
 Params.BadChannels      = [];
-Params.VelocityTransformFlag = true;
-Params.SpatialFiltering = true;
+Params.VelocityTransformFlag = false;
+Params.SpatialFiltering = false;
+Params.DaggerAssist = false;
 
 %% Current Date and Time
 % get today's date
@@ -66,8 +67,8 @@ Params.BaudRate = 115200;
 Params.ArduinoSync = false;
 
 %% Timing
-Params.ScreenRefreshRate = 10; % Hz
-Params.UpdateRate = 10; % Hz
+Params.ScreenRefreshRate = 5; % Hz
+Params.UpdateRate = 5; % Hz
 
 %% Targets
 Params.TargetSize = 50;
@@ -124,8 +125,8 @@ Params.DrawVelCommand.Flag = true;
 Params.DrawVelCommand.Rect = [-425,-425,-350,-350];
 
 %% Trial and Block Types
-Params.NumImaginedBlocks    = 1;
-Params.NumAdaptBlocks       = 0;
+Params.NumImaginedBlocks    = 0;
+Params.NumAdaptBlocks       = 2;
 Params.NumFixedBlocks       = 0;
 Params.NumTrialsPerBlock    = 2;length(Params.ReachTargetAngles);
 Params.TargetSelectionFlag  = 1; % 1-pseudorandom, 2-random, 3-repeat
